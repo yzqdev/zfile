@@ -49,28 +49,33 @@ spring:
       enabled: ${zfile.debug}
   datasource:
     # h2 内存数据库 配置
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:${zfile.db.path}
-    username: zfile
-    password: 123456
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:${zfile.db.path}
+#    username: zfile
+#    password: 123456
 
     # MySQL 配置
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://127.0.0.1:3306/zfile?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
-#      username: root
-#      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/zfile?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+      username: root
+      password: 123456
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
   jpa:
+
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: false
-    show-sql: false
+        format_sql: true
+
+    show-sql: true
+
     generate-ddl: true
     defer-datasource-initialization: true
+
+
   profiles:
     active: prod
 

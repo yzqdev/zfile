@@ -81,7 +81,7 @@
 
     <!-- hibernate logger -->
     <logger name="org.hibernate.SQL" additivity="false" level="debug"/>
-
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
     <springProfile name="dev">
         <logger name="im.zhaojun" additivity="true" level="debug"/>
     </springProfile>

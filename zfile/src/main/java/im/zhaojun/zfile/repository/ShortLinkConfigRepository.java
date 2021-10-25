@@ -54,8 +54,8 @@ public interface ShortLinkConfigRepository extends JpaRepository<ShortLinkConfig
     /**
      * 获取驱动器下的所有规则
      *
-     * @param       url
-     *              短链 URL
+     * @param       url 短链 URL
+     *
      */
     ShortLinkConfig findFirstByUrl(String url);
 
