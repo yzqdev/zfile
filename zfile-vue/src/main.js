@@ -37,7 +37,7 @@ import "@/assets/table-animation.less";
 
 // 允许跨域携带 cookie
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL="http://localhost:9101"
+// axios.defaults.baseURL="http://localhost:9101"
 // 对 URL 中对每个参数进行 encode 编码
 axios.interceptors.request.use(
     config => {
@@ -81,6 +81,7 @@ Vue.filter('fileSizeFormat', (bytes) => {
 })
 
 axios.get('/zfile.config.json').then((result) => {
+    // axios.defaults.baseURL = 'http://49.234.131.170:9101';
     axios.defaults.baseURL = result.data.baseUrl;
     new Vue({
         render: h => h(App),
