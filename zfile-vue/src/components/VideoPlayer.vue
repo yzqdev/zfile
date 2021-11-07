@@ -73,7 +73,13 @@
         props: {
             data: Object
         },
+      beforeMount() {
+        window.addEventListener('orientationchange', () => {
+         // alert("切换了屏幕")
+        })
+      },
         async mounted() {
+
             this.options.container = document.getElementById("dplayer");
 
             let currData = this.data;

@@ -25,5 +25,5 @@ axios.interceptors.response.use(function (response) {
     // 对响应错误做点什么
     return Promise.reject(error);
 });
-axios.defaults.baseURL= 'http://localhost:9101'
+axios.defaults.baseURL= 'http://192.168.0.105:9101'
 export default axios
