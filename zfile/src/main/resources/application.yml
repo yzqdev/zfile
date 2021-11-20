@@ -31,6 +31,7 @@ zfile:
     scope: offline_access User.Read Files.ReadWrite.All
 
 server:
+
   port: 9101
   servlet:
     context-path: ''
@@ -86,3 +87,6 @@ spring:
       mode: always
       data-locations: classpath*:db/data.sql
       encoding: utf-8
+  mvc:
+    pathmatch:
+      matching-strategy: path_pattern_parser

@@ -5,6 +5,7 @@ import im.zhaojun.zfile.util.AudioUtil;
 import im.zhaojun.zfile.util.HttpUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -38,7 +39,7 @@ public class FileParseController {
      * @return 音频信息, 标题封面等信息
      */
     @GetMapping("/audio-info")
-    public ResultBean getAudioInfo(String url) throws Exception {
+    public ResultBean getAudioInfo(@RequestParam("url") String url) throws Exception {
         return ResultBean.success(AudioUtil.getAudioInfo(url));
     }
 

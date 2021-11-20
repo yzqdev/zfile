@@ -32,8 +32,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 添加对 URL 中特殊符号的支持.
         webServerFactory.addConnectorCustomizers(connector -> {
-            connector.setAttribute("relaxedPathChars", "<>[\\]^`{|}");
-            connector.setAttribute("relaxedQueryChars", "<>[\\]^`{|}");
+            connector.setProperty("relaxedPathChars", "<>[\\]^`{|}");
+            connector.setProperty("relaxedQueryChars", "<>[\\]^`{|}");
         });
         return webServerFactory;
     }

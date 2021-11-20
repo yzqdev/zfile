@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import im.zhaojun.zfile.exception.InvalidDriveException;
 import im.zhaojun.zfile.model.entity.DriveConfig;
 import im.zhaojun.zfile.model.enums.StorageTypeEnum;
+import im.zhaojun.zfile.repository.DriverConfigRepository;
 import im.zhaojun.zfile.service.DriveConfigService;
 import im.zhaojun.zfile.service.base.AbstractBaseFileService;
 import im.zhaojun.zfile.util.SpringContextHolder;
@@ -37,7 +38,7 @@ public class DriveContext implements ApplicationContextAware {
     private static Map<Integer, AbstractBaseFileService> drivesServiceMap = new ConcurrentHashMap<>();
 
     @Resource
-    private DriveConfigService driveConfigService;
+    private DriverConfigRepository driverConfigRepository;
 
 
     /**
@@ -45,7 +46,7 @@ public class DriveContext implements ApplicationContextAware {
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        List<DriveConfig> list = driveConfigService.list();
+        List<DriveConfig> list = driverConfigRepository.findAll();
         for (DriveConfig driveConfig : list) {
             try {
                 init(driveConfig.getId());
@@ -118,7 +119,7 @@ public class DriveContext implements ApplicationContextAware {
      * @return  驱动器对应未初始化的 Service
      */
     private AbstractBaseFileService getBeanByDriveId(Integer driveId) {
-        StorageTypeEnum storageTypeEnum = driveConfigService.findStorageTypeById(driveId);
+        StorageTypeEnum storageTypeEnum =driverConfigRepository.findById(driveId).get().getType() ;
         Map<String, AbstractBaseFileService> beansOfType = SpringContextHolder.getBeansOfType(AbstractBaseFileService.class);
         for (AbstractBaseFileService value : beansOfType.values()) {
             if (Objects.equals(value.getStorageTypeEnum(), storageTypeEnum)) {

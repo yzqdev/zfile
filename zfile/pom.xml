@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.5</version>
+        <version>2.6.0</version>
         <relativePath/>
     </parent>
 
@@ -50,7 +50,9 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+
         </dependency>
+
         <!-- 数据库驱动-->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -67,7 +69,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.14</version>
+            <version>5.7.16</version>
         </dependency>
 
         <!-- 存储策略相关 API, 对象存储、FTP、 Rest API-->
@@ -109,16 +111,16 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.78</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-security</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-security</artifactId>-->
+        <!--        </dependency>-->
 
         <!-- Sa-Token 权限认证, 在线文档：http://sa-token.dev33.cn/ -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot-starter</artifactId>
-            <version>1.27.0</version>
+            <version>1.28.0</version>
         </dependency>
 
     </dependencies>
@@ -126,28 +128,37 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.uyoqu.framework</groupId>-->
-<!--                <artifactId>maven-plugin-starter</artifactId>-->
-<!--                <version>1.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>bin</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <jvms>-->
-<!--                        <jvm>-Djava.security.egd=file:/dev/./urandom</jvm>-->
-<!--                        <jvm>-Dfile.encoding=utf-8</jvm>-->
-<!--                    </jvms>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>com.uyoqu.framework</groupId>-->
+            <!--                <artifactId>maven-plugin-starter</artifactId>-->
+            <!--                <version>1.0.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>bin</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <configuration>-->
+            <!--                    <jvms>-->
+            <!--                        <jvm>-Djava.security.egd=file:/dev/./urandom</jvm>-->
+            <!--                        <jvm>-Dfile.encoding=utf-8</jvm>-->
+            <!--                    </jvms>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 
