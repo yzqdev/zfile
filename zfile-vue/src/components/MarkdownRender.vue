@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="markdown-body" v-if="text" v-html="markdownHtml">
+        <div class="markdown-body" v-if="text" >
         </div>
         <template>
             <el-backtop target=".markdown-body" :bottom="20" :right="30">
@@ -20,19 +20,19 @@
 
 <script>
 
-    import marked from 'marked';
+    import {marked} from 'marked';
     import hljs from 'highlight.js/lib/core';
-    import 'github-markdown-css';
-
-    hljs.registerLanguage('markdown', require('highlight.js/lib/languages/markdown'));
-    hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
-    hljs.registerLanguage('css', require('highlight.js/lib/languages/css'));
-    hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'));
-    hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
-    hljs.registerLanguage('java', require('highlight.js/lib/languages/java'));
-    hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
-    hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
-    hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));
+    // import 'github-markdown-css';
+    //
+    // hljs.registerLanguage('markdown', require('highlight.js/lib/languages/markdown'));
+    // hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
+    // hljs.registerLanguage('css', require('highlight.js/lib/languages/css'));
+    // hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'));
+    // hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
+    // hljs.registerLanguage('java', require('highlight.js/lib/languages/java'));
+    // hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
+    // hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
+    // hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));
 
     export default {
         name: "MarkdownRender",
@@ -40,23 +40,23 @@
             text: String
         },
         computed: {
-            markdownHtml() {
-                // url 新窗口打开.
-                let renderer = new marked.Renderer();
-                renderer.link = function() {
-                    let link = marked.Renderer.prototype.link.apply(this, arguments);
-                    return link.replace("<a","<a target='_blank'");
-                };
-                marked.setOptions({
-                    renderer: renderer
-                });
-
-                return marked(this.text, {
-                    highlight: function(code) {
-                        return hljs.highlightAuto(code).value;
-                    }
-                });
-            }
+            // markdownHtml() {
+            //     // url 新窗口打开.
+            //     let renderer = new marked.Renderer();
+            //     renderer.link = function() {
+            //         let link = marked.Renderer.prototype.link.apply(this, arguments);
+            //         return link.replace("<a","<a target='_blank'");
+            //     };
+            //     marked.setOptions({
+            //         renderer: renderer
+            //     });
+            //
+            //     return marked(this.text, {
+            //         highlight: function(code) {
+            //             return hljs.highlightAuto(code).value;
+            //         }
+            //     });
+            // }
         }
     }
 </script>

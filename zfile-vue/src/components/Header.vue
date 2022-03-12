@@ -29,120 +29,131 @@
     </el-form>
 </template>
 
-<script>
+<script setup lang="ts">
     import path from 'path'
-
-    export default {
-        name: "Header",
-        props: ['driveId'],
-        data() {
-            return {
-                imgModel: false,
-                driveList: [],
-                currentDriveId: "",
-                search: '',
-                breadcrumbData: [],
-                searching: false
-            }
-        },
-        created() {
-            this.buildBreadcrumbData();
-        },
-        methods: {
-            resetAdminPwd() {
-                this.$confirm('是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                    callback: action => {
-                        if (action === 'confirm') {
-                            this.$http.get('/debug/resetPwd').then((response) => {
-                                if (response.data.code === 0) {
-                                    this.$message.success("重置成功，请及时关闭 debug 功能，防止出现安全问题！");
-                                } else {
-                                    this.$message.error(response.data.msg)
-                                }
-                            });
-                        }
-                    }
-                });
-            },
-            buildBreadcrumbData() {
-                this.breadcrumbData = [];
-                let fullPath = this.$route.params.pathMatch;
-                fullPath = fullPath ? fullPath : '/';
-
-                while (fullPath !== '/') {
-                    let name = path.basename(fullPath);
-                    this.breadcrumbData.unshift({name, fullPath});
-                    fullPath = path.resolve(fullPath, "../");
-                }
-            },
-	        refreshCurrentStorageStrategy() {
-		        this.driveList.some((item) => {
-			        if (item.id === this.currentDriveId) {
-				        this.$store.commit('updateCurrentStorageStrategy', item);
-			        }
-		        });
-	        }
-        },
-        watch: {
-            'currentDriveId': function (newVal, oldVal) {
-                this.$store.commit('updateOldDriveId', oldVal);
-                this.refreshCurrentStorageStrategy();
-                if (oldVal !== "") {
-                    this.$router.push('/' + newVal + '/main');
-                }
-            },
-            '$store.getters.newImgMode': function (newVal) {
-                this.imgModel = newVal;
-            },
-            'imgModel': function () {
-                this.$store.commit('switchImgMode', this.imgModel);
-            },
-            '$route.fullPath': function () {
-                // 当 URL 变化, 则自动重新 build 面包屑
-                this.buildBreadcrumbData();
-            },
-            'search': function (newVal) {
-                clearTimeout(this.timer);
-                this.timer = setTimeout(() => {
-                    this.$store.commit('updateSearchParam', newVal);
-                }, 150);
-            }
-        },
-        async mounted() {
-            await this.$http.get('/api/drive/list').then((response) => {
-            	if (!response.data.data.isInstall) {
-		            this.$router.push('/install');
-            		return;
-	            }
-
-                this.driveList = response.data.data.driveList;
-                // 如果当前 URL 参数中有驱动器 ID, 则直接用当前的.
-                if (this.driveId) {
-                    this.currentDriveId = Number(this.driveId);
-                } else if (this.driveList.length > 0) {
-                    // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
-                    this.currentDriveId = this.driveList[0].id;
-                    this.$router.push('/' + this.driveList[0].id + '/main');
-                } else if (this.driveList.length === 0) {
-	                this.$confirm('当前无可用驱动器，是否跳转至管理员页面添加驱动器？', '提示', {
-		                confirmButtonText: '确定',
-		                cancelButtonText: '取消',
-		                type: 'info',
-		                callback: action => {
-			                if (action === 'confirm') {
-				                this.$router.push('/login');
-			                }
-		                }
-	                });
-                }
-
-	            this.refreshCurrentStorageStrategy();
+    import {onBeforeMount, onMounted, reactive, toRefs, watch} from 'vue';
+    import {useRoute, useRouter} from "vue-router";
+    import {useStore} from "vuex";
+    import axios from "../utils/http";
+    import {ElMessage} from "element-plus";
+    let props= defineProps({
+      driveId:String
+    })
+    let state=reactive({
+      imgModel: false,
+      driveList: [],
+      currentDriveId: "",
+      search: '',
+      breadcrumbData: [],
+      searching: false
+    })
+    let router=useRouter()
+    let route=useRoute()
+    let store=useStore()
+    console.log(store)
+    let {imgModel,driveList,currentDriveId,search,breadcrumbData,searching} =toRefs(state)
+    function resetAdminPwd() {
+      this.$confirm('是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        callback: action => {
+          if (action === 'confirm') {
+            axios.get('/debug/resetPwd').then((response) => {
+              if (response.data.code === 0) {
+                ElMessage({
+                  type:'success',message:"重置成功，请及时关闭 debug 功能，防止出现安全问题！"
+                })
+              } else {
+                ElMessage({
+                  type:'error',message:response.data.msg
+                })
+              }
             });
+          }
         }
+      });
     }
+    function buildBreadcrumbData() {
+      state.breadcrumbData = [];
+      let fullPath =  route.params.pathMatch;
+      fullPath = fullPath ? fullPath : '/';
+
+      while (fullPath !== '/') {
+        let name = path.basename(fullPath);
+        state.breadcrumbData.unshift({name, fullPath});
+        fullPath = path.resolve(fullPath, "../");
+      }
+    }
+    function refreshCurrentStorageStrategy() {
+      state.driveList.some((item) => {
+        if (item.id === state.currentDriveId) {
+           store.commit('common/updateCurrentStorageStrategy', item);
+        }
+      });
+    }
+    onBeforeMount(() => {
+      buildBreadcrumbData()
+    })
+    onMounted(async () => {
+      await axios.get('/api/drive/list').then((response) => {
+        if (!response.data.data.isInstall) {
+          router.push('/install');
+          return;
+        }
+
+        console.log(`%c这是header`,`color:red;font-size:16px;background:transparent`)
+        state.driveList = response.data.data.driveList;
+        console.log(state.driveList[0].id)
+        console.log(state.driveList.length)
+        // 如果当前 URL 参数中有驱动器 ID, 则直接用当前的.
+        if ( props.driveId) {
+          state.currentDriveId = Number(props.driveId);
+        } else if (state.driveList.length > 0) {
+          // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
+          state.currentDriveId = state.driveList[0].id;
+          console.log('/' + state.driveList[0].id + '/main')
+           router.push('/' + state.driveList[0].id + '/main');
+        } else if (state.driveList.length === 0) {
+          state.$confirm('当前无可用驱动器，是否跳转至管理员页面添加驱动器？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'info',
+            callback: action => {
+              if (action === 'confirm') {
+                 router.push('/login');
+              }
+            }
+          });
+        }
+
+         refreshCurrentStorageStrategy();
+      });
+    })
+
+    watch(state.currentDriveId,(newVal, oldVal) => {
+       store.commit('updateOldDriveId', oldVal);
+      refreshCurrentStorageStrategy();
+      if (oldVal !== "") {
+         router.push('/' + newVal + '/main');
+      }
+    })
+    watch(store.getters.newImgMode,(newVal) => {
+      state.imgModel=newVal
+    })
+    watch( imgModel,() => {
+     store.commit('switchImgMode', state.imgModel);
+    })
+    watch(route ,() => {
+      buildBreadcrumbData()
+    })
+    watch(search,(newVal) => {
+      clearTimeout(state.timer);
+      state.timer = setTimeout(() => {
+        store.commit('updateSearchParam', newVal);
+      }, 150);
+    })
+
 </script>
 
 <style scoped>

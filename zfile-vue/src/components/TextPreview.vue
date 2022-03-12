@@ -5,17 +5,17 @@
         <div id="container" class="editor" v-if="getFileSuffix(file.name) !== 'md'"></div>
 
         <div class="dialog-scroll markdown-body"
-             v-html="markdownHtml" v-if="getFileSuffix(file.name) === 'md'">
+               v-if="getFileSuffix(file.name) === 'md'">
         </div>
     </div>
 </template>
 
 <script>
-    import marked from 'marked';
+    import {marked} from 'marked';
     import hljs from 'highlight.js/lib/core';
-    import 'github-markdown-css';
+    // import 'github-markdown-css';
 
-    hljs.registerLanguage('markdown', require('highlight.js/lib/languages/markdown'));
+    // hljs.registerLanguage('markdown', require('highlight.js/lib/languages/markdown'));
 
     export default {
         name: "TextPreview",
@@ -56,7 +56,7 @@
             },
             initMonaco() {
                 if (this.getFileSuffix(this.file.name) !== 'md') {
-                  import(/* webpackChunkName: "monaco-editor" */'monaco-editor/esm/vs/editor/editor.api')
+                  import( 'monaco-editor/esm/vs/editor/editor.api')
                       .then(({editor}) => {
                         editor.create(document.getElementById('container'), {
                           value: this.text,
@@ -68,23 +68,23 @@
             }
         },
         computed: {
-            markdownHtml() {
-                // url 新窗口打开.
-                let renderer = new marked.Renderer();
-                renderer.link = function() {
-                    let link = marked.Renderer.prototype.link.apply(this, arguments);
-                    return link.replace("<a","<a target='_blank'");
-                };
-                marked.setOptions({
-                    renderer: renderer
-                });
-
-                return marked(this.text, {
-                    highlight: function(code) {
-                        return hljs.highlightAuto(code).value;
-                    }
-                });
-            }
+            // markdownHtml() {
+            //     // url 新窗口打开.
+            //     let renderer = new marked.Renderer();
+            //     renderer.link = function() {
+            //         let link = marked.Renderer.prototype.link.apply(this, arguments);
+            //         return link.replace("<a","<a target='_blank'");
+            //     };
+            //     marked.setOptions({
+            //         renderer: renderer
+            //     });
+            //
+            //     return marked(this.text, {
+            //         highlight: function(code) {
+            //             return hljs.highlightAuto(code).value;
+            //         }
+            //     });
+            // }
         }
     }
 </script>
