@@ -28,7 +28,7 @@
         </template>
         <template #default="scope">
           <template v-if="imgMode && scope.row.icon === 'el-icon-my-image'">
-            <img class="img-mode-img" :src="scope.row.url" />
+            <img class="img-mode-img" :src="scope.row.src" />
           </template>
           <template v-else>
             <svg class="icon" aria-hidden="true">
