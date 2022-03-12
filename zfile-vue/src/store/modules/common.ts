@@ -47,64 +47,64 @@ const mutations = {
 };
 
 const getters = {
-  directLinkPrefix: (state) => {
+  directLinkPrefix: (state: ICommonState) => {
     return state.config && state.config.directLinkPrefix;
   },
-  oldDriveId: (state) => {
+  oldDriveId: (state: ICommonState) => {
     return state.oldDriveId;
   },
-  newImgMode: (state) => {
+  newImgMode: (state: ICommonState) => {
     return state.newImgMode === true;
   },
-  defaultSwitchToImgMode: (state) => {
+  defaultSwitchToImgMode: (state: ICommonState) => {
     return state.config && state.config.defaultSwitchToImgMode;
   },
-  imgMode: (state) => {
+  imgMode: (state: ICommonState) => {
     return state.imgMode;
   },
-  infoEnable: (state) => {
+  infoEnable: (state: ICommonState) => {
     return state.config && state.config.infoEnable;
   },
-  showLinkBtn: (state) => {
+  showLinkBtn: (state: ICommonState) => {
     return state.config && state.config.showLinkBtn;
   },
-  showShortLink: (state) => {
+  showShortLink: (state: ICommonState) => {
     return state.config && state.config.showShortLink;
   },
-  showPathLink: (state) => {
+  showPathLink: (state: ICommonState) => {
     return state.config && state.config.showPathLink;
   },
   tableSize: (state: ICommonState) => {
     return state.config && state.config.tableSize;
   },
-  currentStorageStrategyType: (state) => {
+  currentStorageStrategyType: (state: ICommonState) => {
     return state.currentStorageStrategy.type.key;
   },
-  currentStorageStrategyId: (state) => {
+  currentStorageStrategyId: (state: ICommonState) => {
     return state.currentStorageStrategy.id;
   },
-  showOperator: (state) => {
+  showOperator: (state: ICommonState) => {
     return state.config && state.config.showOperator;
   },
-  showDocument: (state) => {
+  showDocument: (state: ICommonState) => {
     return state.config && state.config.showDocument;
   },
-  debugMode: (state) => {
+  debugMode: (state: ICommonState) => {
     return state.config && state.config.debugMode;
   },
-  domain: (state) => {
+  domain: (state: ICommonState) => {
     return state.config && state.config.domain;
   },
-  announcement: (state) => {
+  announcement: (state: ICommonState) => {
     return state.config && state.config.announcement;
   },
-  layout: (state) => {
+  layout: (state: ICommonState) => {
     return state.config && state.config.layout;
   },
-  showAnnouncement: (state) => {
+  showAnnouncement: (state: ICommonState) => {
     return state.config && state.config.showAnnouncement;
   },
-  searchEnable: (state) => {
+  searchEnable: (state: ICommonState) => {
     return state.config && state.config.searchEnable;
   },
 };

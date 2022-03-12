@@ -6,11 +6,12 @@
 import flvjs from "flv.js";
 import Hls from "hls.js";
 import DPlayer from "dplayer";
+import {defineComponent} from "vue";
 
 window.flvjs = flvjs;
 window.Hls = Hls;
 
-export default {
+export default defineComponent({
   name: "VideoPlayer",
   data() {
     return {
@@ -88,7 +89,8 @@ export default {
 
     let currData = this.data;
 
-    let tableData = this.$store.getters.tableData;
+    console.log(this.$store.getters['file/tableData'])
+    let tableData = this.$store.getters['file/tableData'];
 
     let containerVtt = false;
 
@@ -113,7 +115,7 @@ export default {
     }
     this.player = new DPlayer(this.options);
     this.player.switchVideo({
-      url: currData.url,
+      url: currData.src,
     });
   },
   destroyed() {
@@ -126,7 +128,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style>

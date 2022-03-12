@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="markdown-body" v-if="text"></div>
+    <div class="markdown-body" >
+
+      <md-editor-v3 v-model="text" />
+    </div>
     <template>
       <el-backtop target=".markdown-body" :bottom="20" :right="30">
         <el-tooltip placement="top" content="回到顶部">
@@ -17,8 +20,7 @@
   </div>
 </template>
 
-<script>
-import { marked } from "marked";
+<script setup>
 import hljs from "highlight.js/lib/core";
 // import 'github-markdown-css';
 //
@@ -31,13 +33,10 @@ import hljs from "highlight.js/lib/core";
 // hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
 // hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
 // hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));
+let props=defineProps({
+  text:String
+})
 
-export default {
-  name: "MarkdownRender",
-  props: {
-    text: String,
-  },
-  computed: {
     // markdownHtml() {
     //     // url 新窗口打开.
     //     let renderer = new marked.Renderer();
@@ -55,8 +54,7 @@ export default {
     //         }
     //     });
     // }
-  },
-};
+
 </script>
 
 <style scoped>

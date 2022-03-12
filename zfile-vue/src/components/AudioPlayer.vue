@@ -8,7 +8,7 @@
     :list="fileList"
     @listSwitch="updateCover"
     autoplay
-    music="ffff"
+  music="fff"
   />
 </template>
 

@@ -1,38 +1,50 @@
 
 :deep(#List) {
   overflow: hidden;
+
   .el-table__body-wrapper {
     overflow-x: hidden;
     overflow-y: auto;
   }
+
   .table-header-left {
     margin-left: 38px;
-  }tr {
-     cursor: pointer;
-   }.el-dialog__header {/* 弹窗标题居中, 高度减少 */
-      text-align: center;
-      margin-bottom: -10px;
-      padding: 5px 0 5px 0;
-    }  .img-mode-img {
-         display: block;
-         width: 80%;
-         height: auto;
-         margin: 0 auto;
-       }
-
-  .el-table__header .cell i {
-    margin-right: 5px;
   }
 
+  tr {
+    cursor: pointer;
+  }
+
+  .el-dialog__header { /* 弹窗标题居中, 高度减少 */
+    text-align: center;
+    margin-bottom: -10px;
+    padding: 5px 0 5px 0;
+  }
+
+  .img-mode-img {
+    display: block;
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .el-table {
+    margin: 20px 0 0 20px;
+    padding-right: 30px;
+    overflow-y: hidden;
+
+    .el-table__header {
+      .cell {
+        i {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+
 }
 
-
-
-.el-table {
-  margin: 20px 0 0 20px;
-  padding-right: 30px;
-  overflow-y: hidden;
-}
 
 @media screen and (max-device-width: 769px) {
   .el-table {
@@ -51,39 +63,37 @@
 }
 
 
-.el-scrollbar >>> .el-scrollbar__wrap {
+.el-scrollbar > > > .el-scrollbar__wrap {
   overflow-x: hidden !important;
 }
 
 /*视频弹窗样式 -- 去除内容边框*/
-#videoDialog >>> .el-dialog__body {
+#videoDialog > > > .el-dialog__body {
   padding: 10px 0 0 0;
 }
 
 
-
-
-#videoDialog >>> .el-dialog__headerbtn {
+#videoDialog > > > .el-dialog__headerbtn {
   top: 10px;
 }
 
-#textDialog >>> .el-dialog {
+#textDialog > > > .el-dialog {
   margin-bottom: 0;
 }
 
-.v-contextmenu-item >>> label {
+.v-contextmenu-item > > > label {
   margin-left: 10px;
 }
 
 @media screen and (max-device-width: 1920px) {
-  #videoDialog >>> .el-dialog {
+  #videoDialog > > > .el-dialog {
     margin-top: 5vh !important;
     width: 70% !important;
   }
 }
 
 @media screen and (max-device-width: 769px) {
-  #videoDialog >>> .el-dialog {
+  #videoDialog > > > .el-dialog {
     margin-top: 10vh !important;
     width: 90% !important;
   }
@@ -133,7 +143,6 @@
 }
 
 
-
 .zfile-dialog-link-result-qrcode {
   text-align: center;
 }
@@ -142,6 +151,6 @@
   margin-bottom: 10px;
 }
 
-#batchCopyLinkDialog >>> thead {
+#batchCopyLinkDialog > > > thead {
   cursor: pointer;
 }

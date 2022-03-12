@@ -10,7 +10,7 @@
       @sort-change="sortMethod"
       :data="tableData"
       @row-click="openFolder"
-      :height="showDocument && config.readme !== null ? '50vh' : '84vh'"
+      :height="tableHeight"
       :size="tableSize"
       @row-contextmenu="showMenu"
     >
@@ -67,13 +67,13 @@
       </el-table-column>
 
       <el-table-column
-        v-if="$store.getters.showOperator && !imgMode"
+        v-if="operater"
         label="操作"
         class-name="zfile-table-col-operator"
         :min-width="common.isMobile() ? '35%' : '15%'"
       >
-        <template #header v-if="$store.getters.showLinkBtn">
-          <i class="el-icon-s-operation hidden-xs-only"></i>
+        <template #header v-if="$store.getters[`common/showLinkBtn`]">
+          <el-icon  :size="20"><operation /></el-icon>
           <span>操作</span>
           <el-tooltip
             class="item"
@@ -136,7 +136,7 @@
       width="80%"
       :title="currentClickRow.name"
       v-if="dialogVideoVisible"
-      :visible.sync="dialogVideoVisible"
+      v-model="dialogVideoVisible"
     >
       <video-player
         v-if="dialogVideoVisible"
@@ -353,7 +353,14 @@
         <label>生成直链</label>
       </v-contextmenu-item>
     </v-contextmenu>
+    <el-image
+        style="width: 100px; height: 100px"
 
+        :preview-src-list="imageList"
+        :initial-index="1"
+        fit="cover"
+    >
+    </el-image>
     <template>
       <el-backtop
         target=".el-table__body-wrapper"
@@ -376,7 +383,7 @@
 
 <script setup lang="ts">
 import path from "path";
-
+import {Operation} from '@element-plus/icons-vue';
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
 import AudioPlayer from "./AudioPlayer.vue";
@@ -433,6 +440,7 @@ let state = reactive({
   dialogBatchCopyLinkVisible: false,
   batchCopyLinkList: [],
   batchCopyLinkLoading: false,
+  imageList:[]
 });
 
 let {
@@ -448,7 +456,7 @@ let {
   searchParam,
   currentClickRow,
   contextMenuDataAxis,
-  driveList,
+  driveList,imageList,
   currentCopyLinkRow,
 } = toRefs(state);
 let contextmenuRef = ref(null);
@@ -461,6 +469,7 @@ console.log(audios);
 let tableData = computed(() => {
   return store.getters["file/tableData"];
 });
+
 let tableSize = computed(() => {
   return store.getters["common/tableSize"];
 });
@@ -473,6 +482,13 @@ let config = computed(() => {
 let imgMode = computed(() => {
   return store.getters["common/imgMode"];
 });
+let tableHeight=computed(() => {
+
+  return showDocument.value && config.readme !== null ? '50vh' : '84vh'
+})
+let operater=computed(() => {
+  return  store.getters["common/showOperator"] && !imgMode.value
+})
 // 批量复制直链字段
 function batchCopyLinkField(field) {
   let copyVal = "";
@@ -580,6 +596,7 @@ function haveDocument() {
   );
 }
 function openVideo() {
+
   state.currentClickRow.url = common.removeDuplicateSeparator(
     store.getters.domain +
       "/" +
@@ -591,6 +608,8 @@ function openVideo() {
       "/" +
       encodeURI(state.currentClickRow.name)
   );
+  console.log(state.currentClickRow)
+  console.log(`%c哈哈哈哈`,`color:red;font-size:16px;background:transparent`)
   state.dialogVideoVisible = true;
 }
 // 右键菜单
@@ -612,7 +631,7 @@ function copyShortLink(row) {
   getShortLinkApi(props.driveId, directlink).then((response) => {
     state.currentCopyLinkRow.row = row;
     state.currentCopyLinkRow.link = response.data.data;
-    let directlink = state.common.removeDuplicateSeparator(
+    let directlink =  common.removeDuplicateSeparator(
       store.getters.domain +
         "/" +
         store.getters.directLinkPrefix +
@@ -718,7 +737,8 @@ function loadFile() {
       });
       return;
     }
-
+console.log(response.data.data.config)
+    console.log(`%c哈哈哈`,`color:red;font-size:16px;background:transparent`)
     store.commit("common/updateConfig", response.data.data.config);
     if (props.driveId !== store.getters.oldDriveId) {
       store.commit("common/updateOldDriveId", props.driveId);
@@ -808,12 +828,10 @@ function openFolder(row: any) {
   }
 }
 function openImage() {
-  let imageDate = [];
+console.log(store.getters["file/filterFileByType"]("image"))
   for (let image of store.getters["file/filterFileByType"]("image")) {
-    imageDate.push({
-      alt: image.name,
-      src: image.url,
-    });
+    state.imageList.push(  image.src
+     );
   }
 
   // this.layer.photos({
@@ -861,5 +879,5 @@ watch(route, (newVal, preVal) => {
 </script>
 
 <style lang="scss" scoped>
-@import "List.scss";
+//@import "List.scss";
 </style>
