@@ -1,13 +1,10 @@
 <template>
   <div>
     <!-- 头部: 搜索栏、面包屑、驱动器设置 -->
-    <Header :drive-id="driveId"/>
+    <Header :drive-id="driveId" />
 
     <!-- 公告区 -->
-    <div class="zfile-header-announcement"
-
-    >
-    </div>
+    <div class="zfile-header-announcement"></div>
 
     <!--
         文件区
@@ -16,55 +13,63 @@
      -->
     <el-row>
       <el-col
-          :offset="isFullScreen ? 0 : 3"
-          :xs="24"
-          :sm="24"
-          :lg="isFullScreen ? 24 : 18">
-        <List :drive-id="driveId" ref="List"/>
+        :offset="isFullScreen ? 0 : 3"
+        :xs="24"
+        :sm="24"
+        :lg="isFullScreen ? 24 : 18"
+      >
+        <List :drive-id="driveId" ref="List" />
       </el-col>
     </el-row>
 
     <!-- 文档区 -->
-    <el-card :class="isFullScreen ? '' : 'zfile-readme-center'"
-    >
-
-    </el-card>
+    <el-card :class="isFullScreen ? '' : 'zfile-readme-center'"> </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import Header from '../components/Header.vue'
-import List from '../components/List.vue'
+import Header from "../components/Header.vue";
+import List from "../components/List.vue";
 import MarkdownRender from "../components/MarkdownRender.vue";
 import common from "../common";
-import {useStore} from "vuex";
-import {watch} from "vue";
+import { useStore } from "vuex";
+import { watch } from "vue";
 
-let store = useStore()
+let store = useStore();
 let props = defineProps({
-  driveId: String
-})
+  driveId: String,
+});
 
 function isFullScreen() {
-  return common.isMobile() || store.getters.layout !== 'center';
+  return common.isMobile() || store.getters.layout !== "center";
 }
 
-console.log(`%cmain components`, `color:red;font-size:16px;background:transparent`)
-console.log(store.state.common)
-watch(store.state.common, (newVal, preJs) => {
-  let script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.text = newVal.config.customJs;
-  document.getElementsByTagName('head')[0].appendChild(script)
-}, {deep: true})
+console.log(
+  `%cmain components`,
+  `color:red;font-size:16px;background:transparent`
+);
+console.log(store.state.common);
+watch(
+  store.state.common,
+  (newVal, preJs) => {
+    let script = document.createElement("script");
+    script.type = "text/javascript";
+    script.text = newVal.config.customJs;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  },
+  { deep: true }
+);
 
-watch(store.state.common, (newVal) => {
-  let style = document.createElement('style');
-  style.type = 'text/css';
-  style.innerHTML = newVal.config.customCss;
-  document.getElementsByTagName('head')[0].appendChild(style)
-}, {deep: true})
-
+watch(
+  store.state.common,
+  (newVal) => {
+    let style = document.createElement("style");
+    style.type = "text/css";
+    style.innerHTML = newVal.config.customCss;
+    document.getElementsByTagName("head")[0].appendChild(style);
+  },
+  { deep: true }
+);
 </script>
 
 <style>
@@ -103,10 +108,9 @@ body {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  -webkit-transition: opacity .2s;
+  -webkit-transition: opacity 0.2s;
   transition: opacity 10s;
 }
-
 
 /* ----- icon 图标样式 ----- */
 .icon {
@@ -119,19 +123,19 @@ body {
 
 /* ----- icon 图标样式 ----- */
 
-
 /* ----- 滚动条样式 ----- */
 ::-webkit-scrollbar {
   width: 6px;
   height: 8px;
-  background: rgba(144, 147, 153, .3);
+  background: rgba(144, 147, 153, 0.3);
 }
 
 ::-webkit-scrollbar-button:vertical {
   display: none;
 }
 
-::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
   background-color: #e2e2e2;
 }
 
@@ -145,7 +149,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:vertical:active {
-  background-color: rgba(0, 0, 0, .38);
+  background-color: rgba(0, 0, 0, 0.38);
 }
 
 /* ----- 滚动条样式 ----- */

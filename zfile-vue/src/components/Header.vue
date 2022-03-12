@@ -2,31 +2,49 @@
   <el-form :inline="true" class="zfile-header" size="small">
     <el-form-item>
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{path: '/' + driveId + '/main'}">
-          {{ this.$store.state.common.config.siteName ? this.$store.state.common.config.siteName : '首页' }}
+        <el-breadcrumb-item :to="{ path: '/' + driveId + '/main' }">
+          {{
+            this.$store.state.common.config.siteName
+              ? this.$store.state.common.config.siteName
+              : "首页"
+          }}
         </el-breadcrumb-item>
-        <el-breadcrumb-item v-for="item in breadcrumbData" class="hidden-xs-only"
-                            :to="{path: '/' + driveId + '/main' + item.fullPath}"
-                            :key="item.path">{{ item.name }}
+        <el-breadcrumb-item
+          v-for="item in breadcrumbData"
+          class="hidden-xs-only"
+          :to="{ path: '/' + driveId + '/main' + item.fullPath }"
+          :key="item.path"
+          >{{ item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-form-item>
     <div class="zfile-header-drive box animate__animated animate__fadeIn">
-
-      <el-form-item v-show="this.$store.getters.debugMode" label="已开启 DEBUG 模式，使用完请及时关闭" class="zfile-debug-tips"
-                    size="small">
-        <el-button @click="resetAdminPwd" size="small" type="danger">重置密码</el-button>
+      <el-form-item
+        v-show="this.$store.getters.debugMode"
+        label="已开启 DEBUG 模式，使用完请及时关闭"
+        class="zfile-debug-tips"
+        size="small"
+      >
+        <el-button @click="resetAdminPwd" size="small" type="danger"
+          >重置密码</el-button
+        >
       </el-form-item>
 
       <el-form-item label="图片模式" size="small">
         <el-switch v-model="imgModel"></el-switch>
       </el-form-item>
 
-      <el-select size="small" v-model="currentDriveId" placeholder="请选择驱动器">
-        <el-option v-for="item in driveList"
-                   :key="item.id"
-                   :label="item.name"
-                   :value="item.id">
+      <el-select
+        size="small"
+        v-model="currentDriveId"
+        placeholder="请选择驱动器"
+      >
+        <el-option
+          v-for="item in driveList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        >
         </el-option>
       </el-select>
     </div>
@@ -34,61 +52,75 @@
 </template>
 
 <script setup lang="ts">
-import path from 'path'
-import {onBeforeMount, onMounted, reactive, toRefs, watch} from 'vue';
-import {useRoute, useRouter} from "vue-router";
-import {useStore} from "vuex";
+import path from "path";
+import { onBeforeMount, onMounted, reactive, toRefs, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from "../utils/http";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 
 let props = defineProps({
-  driveId: String
-})
+  driveId: String,
+});
 let state = reactive({
   imgModel: false,
   driveList: [],
   currentDriveId: "",
-  search: '',
+  search: "",
   breadcrumbData: [],
   searching: false,
-  timer:null
-})
-let router = useRouter()
-let route = useRoute()
-let store = useStore()
-let {imgModel, driveList, currentDriveId, search, breadcrumbData, searching,timer} = toRefs(state)
+  timer: null,
+});
+let router = useRouter();
+let route = useRoute();
+let store = useStore();
+let {
+  imgModel,
+  driveList,
+  currentDriveId,
+  search,
+  breadcrumbData,
+  searching,
+  timer,
+} = toRefs(state);
 
 function resetAdminPwd() {
-  this.$confirm('是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-    callback: action => {
-      if (action === 'confirm') {
-        axios.get('/debug/resetPwd').then((response) => {
-          if (response.data.code === 0) {
-            ElMessage({
-              type: 'success', message: "重置成功，请及时关闭 debug 功能，防止出现安全问题！"
-            })
-          } else {
-            ElMessage({
-              type: 'error', message: response.data.msg
-            })
-          }
-        });
-      }
+  this.$confirm(
+    "是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456",
+    "提示",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+      callback: (action) => {
+        if (action === "confirm") {
+          axios.get("/debug/resetPwd").then((response) => {
+            if (response.data.code === 0) {
+              ElMessage({
+                type: "success",
+                message: "重置成功，请及时关闭 debug 功能，防止出现安全问题！",
+              });
+            } else {
+              ElMessage({
+                type: "error",
+                message: response.data.msg,
+              });
+            }
+          });
+        }
+      },
     }
-  });
+  );
 }
 
 function buildBreadcrumbData() {
   state.breadcrumbData = [];
-  let fullPath:string = route.params.pathMatch;
-  fullPath = fullPath ? fullPath : '/';
+  let fullPath: string = route.params.pathMatch;
+  fullPath = fullPath ? fullPath : "/";
 
-  while (fullPath !== '/') {
+  while (fullPath !== "/") {
     let name = path.basename(fullPath);
-    state.breadcrumbData.unshift({name, fullPath});
+    state.breadcrumbData.unshift({ name, fullPath });
     fullPath = path.resolve(fullPath, "../");
   }
 }
@@ -96,18 +128,18 @@ function buildBreadcrumbData() {
 function refreshCurrentStorageStrategy() {
   state.driveList.some((item) => {
     if (item.id === state.currentDriveId) {
-      store.commit('common/updateCurrentStorageStrategy', item);
+      store.commit("common/updateCurrentStorageStrategy", item);
     }
   });
 }
 
 onBeforeMount(() => {
-  buildBreadcrumbData()
-})
+  buildBreadcrumbData();
+});
 onMounted(async () => {
-  await axios.get('/api/drive/list').then((response) => {
+  await axios.get("/api/drive/list").then((response) => {
     if (!response.data.data.isInstall) {
-      router.push('/install');
+      router.push("/install");
       return;
     }
 
@@ -118,48 +150,55 @@ onMounted(async () => {
     } else if (state.driveList.length > 0) {
       // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
       state.currentDriveId = state.driveList[0].id;
-      console.log('/' + state.driveList[0].id + '/main')
-      router.push('/' + state.driveList[0].id + '/main');
+      console.log("/" + state.driveList[0].id + "/main");
+      router.push("/" + state.driveList[0].id + "/main");
     } else if (state.driveList.length === 0) {
-      state.$confirm('当前无可用驱动器，是否跳转至管理员页面添加驱动器？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info',
-        callback: action => {
-          if (action === 'confirm') {
-            router.push('/login');
-          }
+      state.$confirm(
+        "当前无可用驱动器，是否跳转至管理员页面添加驱动器？",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "info",
+          callback: (action) => {
+            if (action === "confirm") {
+              router.push("/login");
+            }
+          },
         }
-      });
+      );
     }
 
     refreshCurrentStorageStrategy();
   });
-})
+});
 
-watch( currentDriveId, (newVal, oldVal) => {
-  store.commit('common/updateOldDriveId', oldVal);
+watch(currentDriveId, (newVal, oldVal) => {
+  store.commit("common/updateOldDriveId", oldVal);
   refreshCurrentStorageStrategy();
   if (oldVal !== "") {
-    router.push('/' + newVal + '/main');
+    router.push("/" + newVal + "/main");
   }
-})
-watch(store.state.common , (newVal) => {
-  state.imgModel = newVal.imgMode
-},{deep:true})
+});
+watch(
+  store.state.common,
+  (newVal) => {
+    state.imgModel = newVal.imgMode;
+  },
+  { deep: true }
+);
 watch(imgModel, () => {
-  store.commit('switchImgMode', state.imgModel);
-})
+  store.commit("switchImgMode", state.imgModel);
+});
 watch(route, () => {
-  buildBreadcrumbData()
-})
+  buildBreadcrumbData();
+});
 watch(search, (newVal) => {
   clearTimeout(state.timer);
   state.timer = setTimeout(() => {
-    store.commit('updateSearchParam', newVal);
+    store.commit("updateSearchParam", newVal);
   }, 150);
-})
-
+});
 </script>
 
 <style scoped>
@@ -182,7 +221,6 @@ watch(search, (newVal) => {
 .zfile-header .el-input {
   line-height: 48px;
 }
-
 
 @media only screen and (max-width: 767px) {
   .zfile-header >>> .el-breadcrumb__separator {
@@ -210,5 +248,4 @@ watch(search, (newVal) => {
   font-weight: bold;
   color: red !important;
 }
-
 </style>
