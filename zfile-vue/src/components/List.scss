@@ -1,12 +1,32 @@
 
-#List {
+:deep(#List) {
   overflow: hidden;
+  .el-table__body-wrapper {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .table-header-left {
+    margin-left: 38px;
+  }tr {
+     cursor: pointer;
+   }.el-dialog__header {/* 弹窗标题居中, 高度减少 */
+      text-align: center;
+      margin-bottom: -10px;
+      padding: 5px 0 5px 0;
+    }  .img-mode-img {
+         display: block;
+         width: 80%;
+         height: auto;
+         margin: 0 auto;
+       }
+
+  .el-table__header .cell i {
+    margin-right: 5px;
+  }
+
 }
 
-#List >>> .el-table__body-wrapper {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
+
 
 .el-table {
   margin: 20px 0 0 20px;
@@ -30,13 +50,6 @@
   margin-right: 15px;
 }
 
-#ListTable >>> .table-header-left {
-  margin-left: 38px;
-}
-
-#ListTable >>> tr {
-  cursor: pointer;
-}
 
 .el-scrollbar >>> .el-scrollbar__wrap {
   overflow-x: hidden !important;
@@ -47,12 +60,8 @@
   padding: 10px 0 0 0;
 }
 
-/* 弹窗标题居中, 高度减少 */
-#List >>> .el-dialog__header {
-  text-align: center;
-  margin-bottom: -10px;
-  padding: 5px 0 5px 0;
-}
+
+
 
 #videoDialog >>> .el-dialog__headerbtn {
   top: 10px;
@@ -124,16 +133,6 @@
 }
 
 
-#List >>> .img-mode-img {
-  display: block;
-  width: 80%;
-  height: auto;
-  margin: 0 auto;
-}
-
-#List >>> .el-table__header .cell i {
-  margin-right: 5px;
-}
 
 .zfile-dialog-link-result-qrcode {
   text-align: center;

@@ -1,47 +1,47 @@
-interface ICommonState{
+interface ICommonState {
     config: any
     currentStorageStrategy: any
-    currentDirectory:any
+    currentDirectory: any
     imgMode: boolean
     newImgMode: boolean
     oldDriveId: any
 }
 
-const state:ICommonState = {
+const state: ICommonState = {
     config: {},
     currentStorageStrategy: null,
-    currentDirectory:null,
+    currentDirectory: null,
     imgMode: false,
     newImgMode: false,
     oldDriveId: null
 }
 
 const mutations = {
-    updateOldDriveId(state:ICommonState, v) {
+    updateOldDriveId(state: ICommonState, v) {
         state.oldDriveId = v;
     },
-    updateNewImgMode(state:ICommonState, v) {
+    updateNewImgMode(state: ICommonState, v) {
         state.newImgMode = v;
     },
-    updateConfig(state:ICommonState, v) {
+    updateConfig(state: ICommonState, v) {
         state.config = v;
     },
-    currentDirectory(state:ICommonState, v) {
+    currentDirectory(state: ICommonState, v) {
         state.currentDirectory = v;
     },
-    hoverRow(state:ICommonState, v) {
+    hoverRow(state: ICommonState, v) {
         state.hoverRow = v;
     },
-    rightClickRow(state:ICommonState, v) {
+    rightClickRow(state: ICommonState, v) {
         state.rightClickRow = v;
     },
-    updateSearchParam(state:ICommonState, v) {
+    updateSearchParam(state: ICommonState, v) {
         state.searchParam = v;
     },
-    updateCurrentStorageStrategy(state:ICommonState, v) {
+    updateCurrentStorageStrategy(state: ICommonState, v) {
         state.currentStorageStrategy = v;
     },
-    switchImgMode(state:ICommonState, v) {
+    switchImgMode(state: ICommonState, v) {
         state.imgMode = v;
     },
 }
@@ -74,7 +74,7 @@ const getters = {
     showPathLink: state => {
         return state.config && state.config.showPathLink;
     },
-    tableSize: state => {
+    tableSize:( state:ICommonState) => {
         return state.config && state.config.tableSize;
     },
     currentStorageStrategyType: state => {
@@ -109,13 +109,12 @@ const getters = {
     }
 }
 
-const actions = {
-}
+const actions = {}
 
 export default {
-    namespaced:true,
-    state ,
-    mutations,
-    getters,
+    namespaced: true,
+    state,
+
+    getters, mutations,
     actions
 }

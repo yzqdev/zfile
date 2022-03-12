@@ -9,10 +9,10 @@
         ref="fileTable"
         id="ListTable"
         @sort-change="sortMethod"
-        :data=" $store.getters.tableData"
+        :data=" tableData"
         @row-click="openFolder"
-        :height=" $store.getters.showDocument &&  $store.state.common.config.readme !== null ? '50vh' : '84vh'"
-        :size=" $store.getters.tableSize"
+        :height="  showDocument &&  config.readme !== null ? '50vh' : '84vh'"
+        :size="tableSize"
         @row-contextmenu="showMenu">
       <el-table-column
           prop="name"
@@ -26,7 +26,7 @@
           <span>文件名</span>
         </template>
         <template #default="scope">
-          <template v-if="$store.getters.imgMode && scope.row.icon === 'el-icon-my-image'">
+          <template v-if=" imgMode && scope.row.icon === 'el-icon-my-image'">
             <img class="img-mode-img" :src="scope.row.url"/>
           </template>
           <template v-else>
@@ -41,7 +41,7 @@
           prop="time"
           label="修改时间"
           sortable="custom"
-          v-if="!$store.getters.imgMode && !common.isMobile()"
+          v-if="! imgMode && !common.isMobile()"
           class-name="zfile-table-col-time hidden-xs-only"
           min-width="20%">
         <template #header>
@@ -53,9 +53,9 @@
           prop="size"
           label="大小"
           class-name="zfile-table-col-size hidden-xs-only"
-          v-if="!$store.getters.imgMode && !common.isMobile()"
+          v-if="! imgMode && !common.isMobile()"
           sortable="custom"
-          :formatter="this.common.fileSizeFilter"
+          :formatter=" common.fileSizeFilter"
           min-width="15%">
         <template #header>
           <i class="el-icon-coin"></i>
@@ -64,7 +64,7 @@
       </el-table-column>
 
       <el-table-column
-          v-if="$store.getters.showOperator && !$store.getters.imgMode"
+          v-if="$store.getters.showOperator && ! imgMode"
           label="操作"
           class-name="zfile-table-col-operator"
           :min-width="common.isMobile() ? '35%' : '15%'">
@@ -111,7 +111,7 @@
 
     <el-dialog id="copyLinkDialog"
                title="生成直链结果"
-               :width="this.common.isMobile() ? '95%': '50%'"
+               :width=" common.isMobile() ? '95%': '50%'"
                :visible.sync="dialogCopyLinkVisible"
                v-if="dialogCopyLinkVisible">
       <el-row v-if="currentCopyLinkRow.row">
@@ -205,9 +205,9 @@
       </el-table>
     </el-dialog>
 
-    <audio-player :file-list=" $store.getters.filterFileByType " :audio-index="currentClickTypeIndex('audio')"/>
+    <audio-player :file-list="audios " :audio-index="currentClickTypeIndex('audio')"/>
 
-    <v-contextmenu ref="contextmenu">
+    <v-contextmenu ref="contextmenuRef">
       <v-contextmenu-item @click="openFolder(rightClickRow)">
         <i class="el-icon-view"></i>
         <label v-html="rightClickRow.type === 'FILE' ?  '预览' : '打开'"></label>
@@ -238,375 +238,424 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import   path from 'path'
 
-const VideoPlayer = () => import( './VideoPlayer.vue');
-const TextPreview = () => import( './TextPreview.vue');
-const AudioPlayer = () => import( './AudioPlayer.vue');
+import VideoPlayer from './VideoPlayer.vue'
+import TextPreview  from './TextPreview.vue'
+import AudioPlayer from './AudioPlayer.vue'
 import http from '../utils/http'
 
 let prefixPath = '/main';
-import {defineComponent} from "vue";
+import {computed, onMounted, reactive, ref, toRefs, watch} from "vue";
 import {qrcode, svg2url} from 'pure-svg-code' ;
 import {getShortLinkApi} from "../utils/shortlink";
-
-export default defineComponent({
-  components: {
-    VideoPlayer, TextPreview, AudioPlayer
+import {useRoute, useRouter} from "vue-router";
+import {useStore} from "vuex";
+import common from "../common";
+import {ElMessage} from "element-plus";
+let props=defineProps({
+  driveId:String
+})
+let router=useRouter()
+let route=useRoute()
+let store=useStore()
+let state=reactive({
+  // 是否首次初始化完成
+  initLoading: true,
+  // 是否初始化加载完成
+  loading: false,
+  // 当前鼠标悬浮的行
+  rightClickRow: {},
+  // 是否打开文本浏览器弹出
+  dialogTextVisible: false,
+  // 是否打开视频播放器弹出
+  dialogVideoVisible: false,
+  // 是否打开生成直链页面
+  dialogCopyLinkVisible: false,
+  // 查询条件
+  searchParam: {
+    path: '',
+    password: '',
+    orderBy: '',
+    orderDirection: ''
   },
-  props: ['driveId'],
-  data() {
-    return {
-      // 是否首次初始化完成
-      initLoading: true,
-      // 是否初始化加载完成
-      loading: false,
-      // 当前鼠标悬浮的行
-      rightClickRow: {},
-      // 是否打开文本浏览器弹出
-      dialogTextVisible: false,
-      // 是否打开视频播放器弹出
-      dialogVideoVisible: false,
-      // 是否打开生成直链页面
-      dialogCopyLinkVisible: false,
-      // 查询条件
-      searchParam: {
-        path: '',
-        password: '',
-        orderBy: '',
-        orderDirection: ''
-      },
-      // 当前点击文件
-      currentClickRow: {},
-      contextMenuDataAxis: {
-        x: null,
-        y: null
-      },
-      // 驱动器列表
-      driveList: [],
-      // 当前生成直链的行
-      currentCopyLinkRow: {
-        row: null,
-        img: '',
-        link: ''
-      },
-      dialogBatchCopyLinkVisible: false,
-      batchCopyLinkList: [],
-      batchCopyLinkLoading: false
+  // 当前点击文件
+  currentClickRow: {},
+  contextMenuDataAxis: {
+    x: null,
+    y: null
+  },
+  // 驱动器列表
+  driveList: [],
+  // 当前生成直链的行
+  currentCopyLinkRow: {
+    row: null,
+    img: '',
+    link: ''
+  },
+  dialogBatchCopyLinkVisible: false,
+  batchCopyLinkList: [],
+  batchCopyLinkLoading: false
+})
+
+let {batchCopyLinkList,batchCopyLinkLoading,initLoading,loading,rightClickRow,dialogBatchCopyLinkVisible,dialogCopyLinkVisible,dialogTextVisible,dialogVideoVisible,searchParam,currentClickRow,contextMenuDataAxis,driveList,currentCopyLinkRow}=toRefs(state)
+let contextmenuRef=ref(null)
+
+let audios=computed(() => {
+  return store.getters["file/filterFileByType"]('audio')
+})
+console.log(`%c这是audio`,`color:red;font-size:16px;background:transparent`)
+console.log(audios)
+let tableData=computed(() => {
+  return store.getters["file/tableData"]
+})
+let tableSize=computed(() => {
+  return store.getters["common/tableSize"]
+})
+let showDocument=computed(() => {
+  return store.getters["common/showDocument"]
+})
+let config=computed(() => {
+  return common.config
+})
+let imgMode=computed(() => {
+  return store.getters["common/imgMode"]
+})
+// 批量复制直链字段
+function batchCopyLinkField(field) {
+  let copyVal = ''
+  state.batchCopyLinkList.forEach((item, index) => {
+    copyVal += (item[field] + '\n')
+  });
+
+  // this.$copyText(copyVal).then(() => {
+  //   this.$message.success('复制成功');
+  // }, () => {
+  //   this.$message.error('复制失败');
+  // });
+}
+
+
+// 打开批量复制弹窗
+function openBatchCopyLinkDialog() {
+  state.batchCopyLinkList = [];
+  state.batchCopyLinkLoading = true;
+   loadLinkData( store.getters.file.tableData[0], 0,  store.getters.file.tableData);
+  state.dialogBatchCopyLinkVisible = true;
+}
+
+// 排序按钮
+function sortMethod({prop, order}) {
+  state.searchParam.orderBy = prop;
+  state.searchParam.orderDirection = order === "descending" ? "desc" : "asc";
+   loadFile();
+}
+// 工具方法
+function getPwd() {
+  let p = "/"+route.params.folder.join('/');
+  console.log('p=',p)
+  state.searchParam.path = p ? p.substring(5,p.length) : '/';
+  return state.searchParam.path;
+}
+function updateTitle() {
+  let basePath = path.basename(state.searchParam.path);
+
+  let config = store.state.common.config;
+  let siteName = '';
+  if (config) {
+    siteName = ' | ' + store.state.common.config.siteName;
+  }
+
+  if (basePath === '/' || basePath === '') {
+    document.title = "首页" + siteName;
+  } else {
+    document.title = basePath + siteName;
+  }
+}
+function loadLinkData(item, index, list) {
+  if (item === null || index >= list.length) {
+    state.batchCopyLinkLoading = false;
+    return;
+  }
+  index++;
+  if (item.type === 'FILE') {
+    let directlink =  common.removeDuplicateSeparator("/" + encodeURI(item.path) + "/" + encodeURI(item.name));
+
+    getShortLinkApi(props.driveId, directlink).then((response) => {
+      let link1 = response.data.data;
+      let link2 =  common.removeDuplicateSeparator(store.getters.domain + "/" + store.getters.directLinkPrefix + "/" +props.driveId + "/" + encodeURI(item.path) + "/" + encodeURI(item.name));
+      const svgString = qrcode(response.data.data);
+      let img = svg2url(svgString);
+
+      state.batchCopyLinkList.push({
+        name: item.name,
+        link1: link1,
+        link2: link2,
+        img: img
+      });
+       loadLinkData(list[index], index, list);
+    });
+  } else {
+     loadLinkData(list[index], index, list);
+  }
+}
+
+function getPathPwd() {
+  let pwd = sessionStorage.getItem("zfile-pwd-" + state.searchParam.path);
+  return pwd === null ? '' : encodeURI(pwd);
+}
+function putPathPwd(value) {
+  sessionStorage.setItem("zfile-pwd-" + state.searchParam.path, value);
+}
+function haveDocument() {
+  return store.getters.showDocument && store.state.common.config.readme !== null;
+}
+function openVideo() {
+  state.currentClickRow.url =  common.removeDuplicateSeparator(store.getters.domain + "/" + store.getters.directLinkPrefix + "/" + props.driveId + "/" + encodeURI(state.currentClickRow.path) + "/" + encodeURI(state.currentClickRow.name));
+  state.dialogVideoVisible = true;
+}
+// 右键菜单
+function showMenu(row, column, event) {
+  state.rightClickRow = row;
+  event.preventDefault();
+   contextmenuRef.value.show({
+    top: event.clientY,
+    left: event.clientX
+  });
+  contextmenuRef.value.$el.hidden = false;
+}
+
+function copyShortLink(row) {
+  let directlink =  common.removeDuplicateSeparator("/" + encodeURI(row.path) + "/" + encodeURI(row.name));
+
+  getShortLinkApi(props.driveId, directlink).then((response) => {
+    state.currentCopyLinkRow.row = row;
+    state.currentCopyLinkRow.link = response.data.data;
+    let directlink = state.common.removeDuplicateSeparator(store.getters.domain + "/" + store.getters.directLinkPrefix + "/" + props.driveId + "/" + encodeURI(row.path) + "/" + encodeURI(row.name));
+    state.currentCopyLinkRow.directlink = directlink;
+    const svgString = qrcode(response.data.data);
+    state.currentCopyLinkRow.img = svg2url(svgString);
+    state.dialogCopyLinkVisible = true;
+  });
+}
+function copyText(text) {
+  this.$copyText(text).then(() => {
+    this.$message.success('复制成功');
+  }, () => {
+    this.$message.error('复制失败');
+  });
+}
+
+
+
+function download(row:any) {
+  window.location.href = row.url;
+}
+// 文件夹密码
+function popPassword() {
+  // 如果输入了密码, 则写入到 sessionStorage 缓存中, 并重新调用加载文件.
+  this.$prompt('请输入密码', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    inputType: 'password',
+    inputValidator(val) {
+      return !!val
+    },
+    inputErrorMessage: '密码不能为空.'
+  }).then(({value}) => {
+    let cachePassword =  getPathPwd();
+    if (value !== cachePassword) {
+      putPathPwd(value);
     }
-  },
-  watch: {
-    '$route.fullPath': function () {
-      this.loadFile();
+     loadFile();
+  }).catch(() => {
+    router.push("/" + props.driveId + prefixPath + path.resolve(state.searchParam.path, '../'));
+  });
+}
+
+// 数据加载
+function loadFile() {
+  // 未指定 driveId 时, 不执行任何操作.
+  if (!props.driveId) {
+    return;
+  }
+  state.loading = true;
+
+  let url = '/api/list/' + props.driveId;
+  console.log(getPwd())
+  let param = {
+    path:  getPwd(),
+    password:  getPathPwd(),
+    orderBy: state.searchParam.orderBy,
+    orderDirection: state.searchParam.orderDirection,
+  };
+
+  let requestDriveId = props.driveId;
+  http.get(url, {params: param}).then((response) => {
+    let currentDriveId = props.driveId;
+    if (requestDriveId !== currentDriveId) {
+      return;
     }
-  },
-  mounted() {
-    this.loadFile();
-  },
-  methods: {
-    // 批量复制直链字段
-    batchCopyLinkField(field) {
-      let copyVal = ''
-      this.batchCopyLinkList.forEach((item, index) => {
-        copyVal += (item[field] + '\n')
-      });
 
-      this.$copyText(copyVal).then(() => {
-        this.$message.success('复制成功');
-      }, () => {
-        this.$message.error('复制失败');
-      });
-    },
-    // 打开批量复制弹窗
-    openBatchCopyLinkDialog() {
-      this.batchCopyLinkList = [];
-      this.batchCopyLinkLoading = true;
-      this.loadLinkData(this.$store.getters.tableData[0], 0, this.$store.getters.tableData);
-      this.dialogBatchCopyLinkVisible = true;
-    },
-    loadLinkData(item, index, list) {
-      if (item === null || index >= list.length) {
-        this.batchCopyLinkLoading = false;
-        return;
-      }
-      index++;
-      if (item.type === 'FILE') {
-        let directlink = this.common.removeDuplicateSeparator("/" + encodeURI(item.path) + "/" + encodeURI(item.name));
-
-        getShortLinkApi(this.driveId, directlink).then((response) => {
-          let link1 = response.data.data;
-          let link2 = this.common.removeDuplicateSeparator(this.$store.getters.domain + "/" + this.$store.getters.directLinkPrefix + "/" + this.driveId + "/" + encodeURI(item.path) + "/" + encodeURI(item.name));
-          const svgString = qrcode(response.data.data);
-          let img = svg2url(svgString);
-
-          this.batchCopyLinkList.push({
-            name: item.name,
-            link1: link1,
-            link2: link2,
-            img: img
-          });
-          this.loadLinkData(list[index], index, list);
-        });
-      } else {
-        this.loadLinkData(list[index], index, list);
-      }
-    },
-    // 排序按钮
-    sortMethod({prop, order}) {
-      this.searchParam.orderBy = prop;
-      this.searchParam.orderDirection = order === "descending" ? "desc" : "asc";
-      this.loadFile();
-    },
-    // 工具方法
-    getPwd() {
-      let p = this.$route.params.pathMatch;
-      this.searchParam.path = p ? p : '/';
-      return this.searchParam.path;
-    },
-    updateTitle() {
-      let basePath = path.basename(this.searchParam.path);
-
-      let config = this.$store.state.common.config;
-      let siteName = '';
-      if (config) {
-        siteName = ' | ' + this.$store.state.common.config.siteName;
-      }
-
-      if (basePath === '/' || basePath === '') {
-        document.title = "首页" + siteName;
-      } else {
-        document.title = basePath + siteName;
-      }
-    },
-    // 数据加载
-    loadFile() {
-      // 未指定 driveId 时, 不执行任何操作.
-      if (!this.driveId) {
-        return;
-      }
-      this.loading = true;
-
-      let url = '/api/list/' + this.driveId;
-      let param = {
-        path: this.getPwd(),
-        password: this.getPathPwd(),
-        orderBy: this.searchParam.orderBy,
-        orderDirection: this.searchParam.orderDirection,
-      };
-
-      let requestDriveId = this.driveId;
-      http.get(url, {params: param}).then((response) => {
-        let currentDriveId = this.driveId;
-        if (requestDriveId !== currentDriveId) {
-          return;
-        }
-
-        // 如果需要密码或密码错误进行提示, 并弹出输入密码的框.
-        if (response.data.code === this.common.responseCode.INVALID_PASSWORD) {
-          this.$message.error('密码错误，请重新输入！');
-          this.popPassword();
-          return;
-        }
-        if (response.data.code === this.common.responseCode.REQUIRED_PASSWORD) {
-          this.$message.warning('此文件夹需要密码，请输入密码！');
-          this.popPassword();
-          return;
-        }
-
-        if (response.data.code !== 0) {
-          this.$message.warning(response.data.msg);
-          return;
-        }
-
-        this.$store.commit('common/updateConfig', response.data.data.config)
-        if (this.driveId !== this.$store.getters.oldDriveId) {
-          this.$store.commit('common/updateOldDriveId', this.driveId);
-          this.$store.commit('common/updateNewImgMode', response.data.data.config.defaultSwitchToImgMode);
-        }
-        let data = response.data.data.files;
-        this.updateTitle();
-
-        // 如果不是根路径, 则构建 back 上级路径的数据.
-        let searchPath = this.searchParam.path;
-
-        if (searchPath !== '' && searchPath !== '/') {
-          let fullPath = this.$route.params.pathMatch;
-          fullPath = fullPath ? fullPath : '/';
-          console.log(`%cfuullath`,`color:red;font-size:16px;background:transparent`)
-          console.log(fullPath)
-          let parentPathName = path.basename(path.resolve(fullPath, "../"));
-          data.unshift({
-            name: parentPathName ? parentPathName : '/',
-            path: path.resolve(searchPath, '../'),
-            type: 'BACK'
-          });
-        }
-
-        this.$store.commit('file/tableData', data);
-        this.loading = false;
-        this.initLoading = false;
-      });
-    },
-    // 文件预览
-    openFolder(row) {
-      this.currentClickRow = row;
-      if (row.type === 'FILE') {
-        if (this.$store.getters.currentStorageStrategyType === 'ftp') {
-          this.$message({
-            message: 'FTP 模式，不支持预览功能，已自动调用下载',
-            type: 'warning'
-          });
-          this.download(row);
-          return;
-        }
-
-        let fileType = this.common.getFileType(row.name);
-
-        switch (fileType) {
-          case 'video':
-            this.openVideo();
-            break;
-          case 'image':
-            this.openImage();
-            break;
-          case 'text':
-            this.openText();
-            break;
-          case 'audio':
-            this.openAudio();
-            break;
-          default:
-            this.download(row);
-        }
-      } else {
-        let path;
-        if (row.type === 'BACK') {
-          path = row.path;
-        } else {
-          path = this.common.removeDuplicateSeparator(row.path + '/' + row.name)
-        }
-
-        if (path.indexOf('/') !== 0) {
-          path = '/' + path;
-        }
-
-        this.$router.push("/" + this.driveId + prefixPath + path);
-      }
-    },
-    openImage() {
-      let imageDate = [];
-      for (let image of this.$store.getters.filterFileByType('image')) {
-        imageDate.push({
-          alt: image.name,
-          src: image.url
-        });
-      }
-
-      this.layer.photos({
-        photos: {
-          "data": imageDate,
-          "start": this.currentClickTypeIndex('image')
-        }
-        , anim: 5
-        , shade: 0.5
-      });
-    },
-    openAudio() {
-    },
-    openText() {
-      this.dialogTextVisible = true;
-    },
-    openVideo() {
-      this.currentClickRow.url = this.common.removeDuplicateSeparator(this.$store.getters.domain + "/" + this.$store.getters.directLinkPrefix + "/" + this.driveId + "/" + encodeURI(this.currentClickRow.path) + "/" + encodeURI(this.currentClickRow.name));
-      this.dialogVideoVisible = true;
-    },
-    // 右键菜单
-    showMenu(row, column, event) {
-      this.rightClickRow = row;
-      event.preventDefault();
-      this.$refs.contextmenu.show({
-        top: event.clientY,
-        left: event.clientX
-      });
-      this.$refs.contextmenu.$el.hidden = false;
-    },
-    download(row) {
-      window.location.href = row.url;
-    },
-    copyShortLink(row) {
-      let directlink = this.common.removeDuplicateSeparator("/" + encodeURI(row.path) + "/" + encodeURI(row.name));
-
-      getShortLinkApi(this.driveId, directlink).then((response) => {
-        this.currentCopyLinkRow.row = row;
-        this.currentCopyLinkRow.link = response.data.data;
-        let directlink = this.common.removeDuplicateSeparator(this.$store.getters.domain + "/" + this.$store.getters.directLinkPrefix + "/" + this.driveId + "/" + encodeURI(row.path) + "/" + encodeURI(row.name));
-        this.currentCopyLinkRow.directlink = directlink;
-        const svgString = qrcode(response.data.data);
-        this.currentCopyLinkRow.img = svg2url(svgString);
-        this.dialogCopyLinkVisible = true;
-      });
-    },
-    copyText(text) {
-      this.$copyText(text).then(() => {
-        this.$message.success('复制成功');
-      }, () => {
-        this.$message.error('复制失败');
-      });
-    },
-    // 文件夹密码
-    popPassword() {
-      // 如果输入了密码, 则写入到 sessionStorage 缓存中, 并重新调用加载文件.
-      this.$prompt('请输入密码', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputType: 'password',
-        inputValidator(val) {
-          return !!val
-        },
-        inputErrorMessage: '密码不能为空.'
-      }).then(({value}) => {
-        let cachePassword = this.getPathPwd();
-        if (value !== cachePassword) {
-          this.putPathPwd(value);
-        }
-        this.loadFile();
-      }).catch(() => {
-        this.$router.push("/" + this.driveId + prefixPath + path.resolve(this.searchParam.path, '../'));
-      });
-    },
-    getPathPwd() {
-      let pwd = sessionStorage.getItem("zfile-pwd-" + this.searchParam.path);
-      return pwd === null ? '' : encodeURI(pwd);
-    },
-    putPathPwd(value) {
-      sessionStorage.setItem("zfile-pwd-" + this.searchParam.path, value);
-    },
-    haveDocument() {
-      return this.$store.getters.showDocument && this.$store.state.common.config.readme !== null;
+    // 如果需要密码或密码错误进行提示, 并弹出输入密码的框.
+    if (response.data.code ===  common.responseCode.INVALID_PASSWORD) {
+      ElMessage('密码错误，请重新输入！');
+      popPassword();
+      return;
     }
-  },
-  computed: {
-    // 当前点击类型的索引
-    currentClickTypeIndex() {
-      return (fileType) => {
-        let currentClickRow = this.currentClickRow;
-        if (currentClickRow.type !== 'FILE') {
-          return -1;
-        }
+    if (response.data.code ===  common.responseCode.REQUIRED_PASSWORD) {
+     ElMessage({
+       type:'warning',
+       message:'此文件夹需要密码，请输入密码！'
+     });
+       popPassword();
+      return;
+    }
 
-        if (JSON.stringify(currentClickRow) === '{}') {
-          return 0;
-        } else {
-          fileType = fileType ? fileType : this.common.getFileType(currentClickRow.name);
-          return this.$store.getters.filterFileByType(fileType).findIndex((item) => {
-            return item.name === currentClickRow.name;
-          })
-        }
-      }
+    if (response.data.code !== 0) {
+      ElMessage({
+        type:'warning',
+        message:response.data.msg
+      })
+      return;
+    }
+
+    store.commit('common/updateConfig', response.data.data.config)
+    if (props.driveId !== store.getters.oldDriveId) {
+      store.commit('common/updateOldDriveId', props.driveId);
+      store.commit('common/updateNewImgMode', response.data.data.config.defaultSwitchToImgMode);
+    }
+    let data = response.data.data.files;
+     updateTitle();
+
+    // 如果不是根路径, 则构建 back 上级路径的数据.
+    let searchPath = state.searchParam.path;
+
+    if (searchPath !== '' && searchPath !== '/') {
+      let fullPath = route.params.pathMatch;
+      fullPath = fullPath ? fullPath : '/';
+      console.log(`%cfuullath`,`color:red;font-size:16px;background:transparent`)
+      console.log(fullPath)
+      let parentPathName = path.basename(path.resolve(fullPath, "../"));
+      data.unshift({
+        name: parentPathName ? parentPathName : '/',
+        path: path.resolve(searchPath, '../'),
+        type: 'BACK'
+      });
+    }
+
+    store.commit('file/tableData', data);
+    state.loading = false;
+    state.initLoading = false;
+  });
+}
+// 文件预览
+function  openFolder(row:any) {
+  console.log(row)
+  console.log(`%copenfolder`,`color:red;font-size:16px;background:transparent`)
+  state.currentClickRow = row;
+  if (row.type === 'FILE') {
+    if ( store.getters.currentStorageStrategyType === 'ftp') {
+      ElMessage({
+        message: 'FTP 模式，不支持预览功能，已自动调用下载',
+        type: 'warning'
+      });
+       download(row);
+      return;
+    }
+
+    let fileType =  common.getFileType(row.name);
+
+    switch (fileType) {
+      case 'video':
+         openVideo();
+        break;
+      case 'image':
+         openImage();
+        break;
+      case 'text':
+         openText();
+        break;
+      case 'audio':
+         openAudio();
+        break;
+      default:
+        download(row);
+    }
+  } else {
+    let path;
+    if (row.type === 'BACK') {
+      path = row.path;
+    } else {
+      path =  common.removeDuplicateSeparator(row.path + '/' + row.name)
+    }
+
+    if (path.indexOf('/') !== 0) {
+      path = '/' + path;
+    }
+    console.log('path=> '+"/" + props.driveId + prefixPath + path)
+
+     // router.push( `/main`);
+     router.push("/" + props.driveId + prefixPath + path);
+  }
+}
+function openImage() {
+  let imageDate = [];
+  for (let image of  store.getters["file/filterFileByType"]('image')) {
+    imageDate.push({
+      alt: image.name,
+      src: image.url
+    });
+  }
+
+  // this.layer.photos({
+  //   photos: {
+  //     "data": imageDate,
+  //     "start": this.currentClickTypeIndex('image')
+  //   }
+  //   , anim: 5
+  //   , shade: 0.5
+  // });
+}
+function  openAudio() {
+}
+function  openText() {
+ state.dialogTextVisible = true;
+}
+
+
+
+onMounted(() => {
+  console.log(props.driveId)
+  loadFile()
+})
+
+let currentClickTypeIndex=computed(() => {
+  return (fileType:string) => {
+    let currentClickRow:any = state.currentClickRow;
+    if (currentClickRow.type !== 'FILE') {
+      return -1;
+    }
+
+    if (JSON.stringify(currentClickRow) === '{}') {
+      return 0;
+    } else {
+      fileType = fileType ? fileType :  common.getFileType(currentClickRow.name);
+      return  store.getters["file/filterFileByType"](fileType).findIndex((item) => {
+        return item.name === currentClickRow.name;
+      })
     }
   }
 })
+
+watch(route,(newVal,preVal) => {
+  loadFile()
+})
+
+
+
+
 </script>
 
 <style lang="scss" scoped>

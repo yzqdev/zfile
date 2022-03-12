@@ -19,7 +19,7 @@
                 </el-row>
             </div>
             <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addFilterItem">添加更多</el-button>
+                <el-button type="primary" size="small" icon="el-icon-plus" @click="addFilterItem">添加更多</el-button>
             </el-form-item>
             <el-form-item>
                     <span class="zfile-word-aux zfile-margin-left-unset">
@@ -35,7 +35,7 @@
         </el-form>
 
         <div slot="footer" class="zfile-filter-save-btn">
-            <el-button type="primary" size="mini" icon="el-icon-check" @click="saveFilterForm">保存</el-button>
+            <el-button type="primary" size="small" icon="el-icon-check" @click="saveFilterForm">保存</el-button>
         </div>
     </div>
 </template>

@@ -5,7 +5,7 @@
                 <el-card shadow="always">
                     <div slot="header" class="clearfix">
                         <span class="card-title">缓存数</span>
-                        <el-button size="mini" icon="el-icon-delete" class="zfile-float-right" round type="danger" @click="clearCache">清理缓存</el-button>
+                        <el-button size="small" icon="el-icon-delete" class="zfile-float-right" round type="danger" @click="clearCache">清理缓存</el-button>
                     </div>
                     <div class="card-content" v-text="driveCacheInfo.cacheCount">
                     </div>
@@ -54,7 +54,7 @@
                              label="操作">
                 <template slot-scope="scope">
                     <el-button
-                        size="mini"
+                        size="small"
                         type="primary"
                         round
                         @click="refreshCache(scope.row)">刷新缓存</el-button>

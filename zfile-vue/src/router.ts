@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory} from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 
 
 const Install = () => import( './views/Install.vue');
@@ -13,9 +13,9 @@ const API = () => import( './views/admin/API.vue');
 const DriveList = () => import( './views/admin/DriveList.vue');
 const ShortLink = () => import( './views/admin/ShortLink.vue');
 const SharePointSiteId = () => import( './views/SharePointSiteId.vue');
-const TestPage =()=>import('./views/TestPage.vue')
+const TestPage = () => import('./views/TestPage.vue')
 export default createRouter({
-    history:createWebHashHistory(),
+    history: createWebHistory(),
     // base: '/', // 基路径:默认值为'/'.如果整个单页应用在/app/下,base 就应该设为'/app/'.一般可以写成__dirname,在 webpack 中配置.
     routes: [
         {
@@ -24,19 +24,21 @@ export default createRouter({
         },
 
         {
-            path:'/test',
-            name:'test'
-            ,component:TestPage
+            path: '/test',
+            name: 'test'
+            , component: TestPage
         },
         {
             path: '/install',
             component: Install
         },
         {
-            path: '/:driveId?/main',
+            path: "/:driveId?/:folder+",
             component: Main,
+            name:'main',
             props: true
         },
+
         {
             path: '/login',
             component: Login

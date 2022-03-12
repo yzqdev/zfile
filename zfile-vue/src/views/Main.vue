@@ -39,26 +39,31 @@ import MarkdownRender from "../components/MarkdownRender.vue";
 import common from "../common";
 import {useStore} from "vuex";
 import {watch} from "vue";
-let store=useStore()
- let drive= defineProps({
-  driveId:String
-})
-function isFullScreen() {
-  return  common.isMobile() ||  store.getters.layout !== 'center';
-}
-watch(  store.state.common.config.customJs  ,(newVal,preJs) => {
-  let script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.text = newVal;
-  document.getElementsByTagName('head')[0].appendChild(script)
+
+let store = useStore()
+let props = defineProps({
+  driveId: String
 })
 
-watch( store.state.common.config.customCss ,(newVal) => {
+function isFullScreen() {
+  return common.isMobile() || store.getters.layout !== 'center';
+}
+
+console.log(`%cmain components`, `color:red;font-size:16px;background:transparent`)
+console.log(store.state.common)
+watch(store.state.common, (newVal, preJs) => {
+  let script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.text = newVal.config.customJs;
+  document.getElementsByTagName('head')[0].appendChild(script)
+}, {deep: true})
+
+watch(store.state.common, (newVal) => {
   let style = document.createElement('style');
   style.type = 'text/css';
-  style.innerHTML = newVal;
+  style.innerHTML = newVal.config.customCss;
   document.getElementsByTagName('head')[0].appendChild(style)
-})
+}, {deep: true})
 
 </script>
 

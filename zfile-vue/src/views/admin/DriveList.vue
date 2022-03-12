@@ -1,7 +1,7 @@
 <template>
     <el-card>
         <div>
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="addDrive">新增</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="small" @click="addDrive">新增</el-button>
             <span class="zfile-word-aux">提示：拖拽行可以进行排序</span>
         </div>
 
@@ -63,19 +63,19 @@
                         <template>
 
                             <el-tooltip class="item" effect="dark" content="编辑" placement="left">
-                                <el-button size="mini" class="el-icon-edit" type="primary" @click="editDrive(scope.row)"></el-button>
+                                <el-button size="small" class="el-icon-edit" type="primary" @click="editDrive(scope.row)"></el-button>
                             </el-tooltip>
 
                             <el-tooltip class="item" effect="dark" content="缓存管理" placement="top">
-                                <el-button size="mini" :disabled="!scope.row.enableCache" class="el-icon-s-operation" type="primary" @click="cacheManage(scope.row)"></el-button>
+                                <el-button size="small" :disabled="!scope.row.enableCache" class="el-icon-s-operation" type="primary" @click="cacheManage(scope.row)"></el-button>
                             </el-tooltip>
 
                             <el-tooltip class="item" effect="dark" content="文件过滤" placement="bottom">
-                                <el-button class="el-icon-view" size="mini" type="primary" @click="showFilterDialog(scope.row)"></el-button>
+                                <el-button class="el-icon-view" size="small" type="primary" @click="showFilterDialog(scope.row)"></el-button>
                             </el-tooltip>
 
                             <el-tooltip class="item" effect="dark" content="删除" placement="right">
-                                <el-button @click="deleteDrive(scope.row)" class="el-icon-delete" size="mini" type="danger"></el-button>
+                                <el-button @click="deleteDrive(scope.row)" class="el-icon-delete" size="small" type="danger"></el-button>
                             </el-tooltip>
 
                         </template>

@@ -1,6 +1,20 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
+import {onBeforeMount, onBeforeUnmount, onMounted} from "vue";
+
+
+function unloadHandler(){
+  localStorage.removeItem("aplayer-setting")
+}
+onBeforeMount(() => {
+  unloadHandler()
+})
+onMounted(() => {
+  window.addEventListener('unload', e =>  unloadHandler(e))
+})
+ onBeforeUnmount(() => {
+   window.removeEventListener('unload', e => unloadHandler(e))
+ })
+
 </script>
 
 <template>
@@ -9,11 +23,38 @@
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif !important;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #555;
+  overflow-x: hidden;
+  height: 100%;
 }
+
+html, body {
+  height: 100%;
+  margin: unset;
+  overflow: hidden;
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+/* ----- 滚动条样式 ----- */
+
+::-webkit-scrollbar {width: 6px; height: 8px; background: rgba(144,147,153,.3);}
+::-webkit-scrollbar-button:vertical{display: none;}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner{background-color: #e2e2e2;}
+::-webkit-scrollbar-thumb{border-radius: 8px; background-color: #a6a6a6;}
+::-webkit-scrollbar-thumb:vertical:hover{background-color: #7f7f7f;}
+::-webkit-scrollbar-thumb:vertical:active{background-color: rgba(0,0,0,.38);}
+
+/* ----- 滚动条样式 ----- */
 </style>

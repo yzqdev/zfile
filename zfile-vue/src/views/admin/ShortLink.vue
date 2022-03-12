@@ -79,7 +79,7 @@
                         icon="el-icon-info"
                         iconColor="red"
                         title="确定删除此直链">
-                        <el-button slot="reference" class="el-icon-delete" size="mini" type="danger">删除</el-button>
+                        <el-button slot="reference" class="el-icon-delete" size="small" type="danger">删除</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>

@@ -19,6 +19,7 @@ let common = {
         REQUIRED_PASSWORD: -2,
         INVALID_PASSWORD: -3
     },
+    config:config,
     version: config.version,
     constant: {
         fileTypeMap,

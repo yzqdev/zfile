@@ -1,18 +1,18 @@
 <template>
   <vue-aplayer v-show="fileList.length > 0 && audioIndex !== -1" ref="aplayer" id="aplayer" fixed preload="none"
-               :audio="fileList" @listSwitch="updateCover" music="ffff"/>
+               :list="fileList" @listSwitch="updateCover" autoplay music="ffff"/>
 </template>
 
 <script setup>
 import {onMounted, reactive, ref, toRefs, watch} from "vue";
-import VueAplayer from 'vueplug-aplayer/src/vue-aplayer.vue'
+import VueAplayer from '@vueplug/aplayer/src/vue-aplayer.vue'
 import axios from "../utils/http";
 
 let state = reactive({
   audioInfo: {}
 })
 let {audioInfo} = toRefs(state)
-let fileList = defineProps({
+let props = defineProps({
   fileList: Array,
   audioIndex: Number
 })
@@ -30,9 +30,9 @@ function updateCover() {
 }
 
 watch(audioInfo, () => {
-  if (this.fileList.length > 0 && this.audioIndex !== -1) {
+  if ( props.fileList.length > 0 &&props.audioIndex !== -1) {
     aplayer.value.play();
-    aplayer.switch(this.audioIndex);
+    aplayer.switch(propsaudioIndex);
   } else {
     aplayer.pause();
   }
@@ -46,11 +46,11 @@ onMounted(() => {
   // el.getElementsByClassName('aplayer-icon-loop')[0].setAttribute('title', '循环模式');
   // el.getElementsByClassName('aplayer-icon-menu')[0].setAttribute('title', '播放列表');
 })
-watch(fileList, (data) => {
+watch(props, (data) => {
   if (data.length === 0) {
     aplayer.pause();
   } else {
-    for (let file of this.fileList) {
+    for (let file of props.fileList) {
       file.artist = '';
       file.cover = '';
     }
