@@ -21,18 +21,7 @@
 </template>
 
 <script setup>
-import hljs from "highlight.js/lib/core";
-// import 'github-markdown-css';
-//
-// hljs.registerLanguage('markdown', require('highlight.js/lib/languages/markdown'));
-// hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
-// hljs.registerLanguage('css', require('highlight.js/lib/languages/css'));
-// hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'));
-// hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
-// hljs.registerLanguage('java', require('highlight.js/lib/languages/java'));
-// hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
-// hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
-// hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));
+
 let props=defineProps({
   text:String
 })
@@ -57,23 +46,21 @@ let props=defineProps({
 
 </script>
 
-<style scoped>
-.markdown-body >>> img {
-  max-height: 150vh;
-  max-width: 150vh;
-  vertical-align: middle;
-}
+<style lang="scss" scoped>
 
-.markdown-body {
+
+:deep(.markdown-body ){
   box-sizing: border-box;
   min-width: 200px;
   max-width: 980px;
   margin: 0 auto;
-  padding: 30px;
-}
-
-.markdown-body >>> pre {
-  background-color: rgba(27, 31, 35, 0.05);
+  padding: 30px;img {
+  max-height: 150vh;
+  max-width: 150vh;
+  vertical-align: middle;
+}pre {
+   background-color: rgba(27, 31, 35, 0.05);
+ }
 }
 
 .back-to-ceiling {

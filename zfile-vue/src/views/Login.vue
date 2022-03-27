@@ -19,6 +19,7 @@
       >
         <el-input
           type="text"
+          size="large"
           prefix-icon="el-icon-user"
           v-model.trim="loginForm.username"
           auto-complete="off"
@@ -31,6 +32,7 @@
         class="box animate__animated animate__fadeInUp"
       >
         <el-input
+            size="large"
           type="password"
           prefix-icon="el-icon-key"
           v-model.trim="loginForm.password"
@@ -42,11 +44,11 @@
 
       <el-form-item>
         <el-tooltip class="item" effect="dark" placement="right">
-          <div slot="content">
+          <template #content >
             将配置文件 application.properties 中 zfile.debug 修改为 true,
             访问首页即可重置 <br />
             点击可前往文档查看操作方式
-          </div>
+          </template>
 
           <el-link
             icon="el-icon-question"
@@ -60,6 +62,7 @@
 
       <el-form-item>
         <el-button
+            size="large"
           type="primary"
           class="el-col-24"
           @click="handleSubmit"
@@ -72,6 +75,7 @@
 </template>
 
 <script setup lang="ts">
+import qs from 'qs'
 import { isInstalled, loginApi } from "../utils/apis";
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -80,7 +84,7 @@ let router = useRouter();
 let route = useRoute();
 let state = reactive({
   loading: false,
-  loginForm: {},
+  loginForm: {username:'admin',password:'123456'},
   rules: {
     username: [{ required: true, message: "账号不能为空", trigger: "blur" }],
     password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
@@ -94,7 +98,7 @@ function openResetPwdDocs() {
 function handleSubmit() {
   loginFormRef.value.validate((valid: boolean) => {
     if (valid) {
-      loginApi(state.loginForm).then((response) => {
+      loginApi(qs.stringify(state.loginForm)).then((response) => {
         ElMessage({
           message: response.data.msg,
           type: "success",

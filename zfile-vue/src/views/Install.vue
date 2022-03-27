@@ -63,7 +63,7 @@
         <el-button
           type="primary"
           icon="el-icon-check"
-          size="small"
+
           @click="submitForm('form')"
           >确认</el-button
         >
@@ -193,12 +193,7 @@ export default {
   line-height: 80px;
 }
 
-.zfile-install-enter {
-  text-align: right;
-  margin-bottom: 0;
-}
 
-.zfile-install-title small {
-  font-size: 20px;
-}
+
+
 </style>

@@ -32,8 +32,8 @@
       >
         <el-switch v-model="form.showOperator" />
         <el-tooltip placement="right">
-          <div slot="content">显示下载和复制按钮, 在移动端只显示下载</div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          <template #content>显示下载和复制按钮, 在移动端只显示下载</template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -44,8 +44,8 @@
       >
         <el-switch v-model="form.showLinkBtn" />
         <el-tooltip placement="right">
-          <div slot="content">控制是否显示生成直链按钮</div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          <template #content>控制是否显示生成直链按钮</template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -56,8 +56,8 @@
       >
         <el-switch v-model="form.showShortLink" />
         <el-tooltip placement="right">
-          <div slot="content">控制是否生成直链后显示短链</div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          <template #content>控制是否生成直链后显示短链</template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -68,8 +68,8 @@
       >
         <el-switch v-model="form.showPathLink" />
         <el-tooltip placement="right">
-          <div slot="content">控制是否生成直链后显示直链</div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          <template #content>控制是否生成直链后显示直链</template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -79,11 +79,11 @@
       >
         <el-switch v-model="form.showDocument" />
         <el-tooltip placement="right">
-          <div slot="content">
+          <template #content>
             在文件列表下，显示当前文件夹中 readme.md 的内容，支持 md 和 html
             语法
-          </div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          </template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -93,8 +93,8 @@
       >
         <el-switch v-model="form.showAnnouncement" />
         <el-tooltip placement="right">
-          <div slot="content">网站顶部，显示公告内容，支持 HTML 语法</div>
-          <i class="el-icon-info zfile-info-tooltip"></i>
+          <template #content>网站顶部，显示公告内容，支持 HTML 语法</template>
+          <el-icon class="zfile-info-tooltip"><info-filled  /></el-icon>
         </el-tooltip>
       </el-form-item>
 
@@ -149,9 +149,11 @@
 <script>
 import qs from "qs";
 import { adminConfigApi, getAdminConfigApi } from "../../utils/apis";
-
-export default {
+import {InfoFilled} from '@element-plus/icons-vue'
+import {defineComponent} from "vue";
+export default defineComponent({
   name: "ViewSetting",
+  components:{InfoFilled},
   data() {
     return {
       form: {
@@ -195,7 +197,7 @@ export default {
       this.form = response.data.data;
     });
   },
-};
+});
 </script>
 
 <style scoped></style>

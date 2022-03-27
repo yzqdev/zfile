@@ -65,7 +65,7 @@ watch(
   store.state.common,
   (newVal) => {
     let style = document.createElement("style");
-    style.type = "text/css";
+
     style.innerHTML = newVal.config.customCss;
     document.getElementsByTagName("head")[0].appendChild(style);
   },

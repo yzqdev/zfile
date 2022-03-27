@@ -1,4 +1,4 @@
-let region = {
+let regionObj:any = {
   aliyun: [
     { name: "华东 1（杭州）", val: "oss-cn-hangzhou.aliyuncs.com" },
     { name: "华东 2（上海）", val: "oss-cn-shanghai.aliyuncs.com" },
@@ -71,4 +71,4 @@ let region = {
   ],
 };
 
-export default region;
+ export {regionObj}

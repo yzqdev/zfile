@@ -19,7 +19,7 @@ export const postDriveFilterApi = (driveId: string, list: any) => {
   return http.post(`/admin/drive/${driveId}/filters`, list);
 };
 export const CacheApi = (id: any, action: string) => {
-  return http.post(`'/admin/cache/${id}/${action}`);
+  return http.post(`/admin/cache/${id}/${action}`);
 };
 export const CacheFreshApi = (id: any, action: string) => {
   return http.post(`/admin/cache/${id}/auto-refresh/${action}`);

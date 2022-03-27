@@ -9,7 +9,7 @@ module.exports = {
   },
   productionSourceMap: false,
   devServer: {
-    port: 9100,
+    port: 9200,
   },
   chainWebpack: (config) => {
     config.plugins.delete("prefetch");

@@ -63,7 +63,7 @@
 
         >
           <el-menu-item v-for="(item,index) in menus" :index="item.path" @click="gotoRoute(item)">
-            <i :class="item.class"/>
+           <el-icon> <component :is="item.class" class="tab"></component></el-icon>
             <span :id="item.path">{{ item.text }}</span>
           </el-menu-item>
 
@@ -71,11 +71,9 @@
       </div>
     </div>
     <div class="zfile-admin-content">
-      <keep-alive exclude="CacheManager,SiteSetting">
         <router-view
             class="zfile-admin-content-view box animate__animated animate__fadeIn"
         />
-      </keep-alive>
     </div>
   </div>
 </template>
@@ -86,20 +84,20 @@ import axios from "axios";
 import http from "../../utils/http";
 import {onMounted, reactive, toRefs} from "vue";
 import {useRouter} from "vue-router";
-
+import {Setting,FolderOpened,View,Key,Link,Download,HomeFilled,SwitchButton} from '@element-plus/icons-vue';
 let router = useRouter()
 let state = reactive({
   latestInfo: {},
   active: "/admin/site",
   menus: [
-    {id: 'site', path: '/admin/site', class: 'el-icon-setting', text: '基本设置'},
-    {id: 'driveList', path: '/admin/drive-list', class: 'el-icon-folder-opened', text: '驱动器列表'},
-    {id: 'view', path: '/admin/view', class: 'el-icon-view', text: '显示设置'},
-    {id: 'key', path: '/admin/password', class: 'el-icon-key', text: '修改密码'},
-    {id: 'shortLink', path: '/admin/short-link', class: 'el-icon-link', text: '短链管理'},
-    {id: 'download', path: '/admin/download', class: 'el-icon-download', text: '日志下载'},
-    {id: 'home', path: '/admin/hoe', class: 'el-icon-s-home', text: '前往首页'},
-    {id: 'logout', path: '/admin/logout', class: 'el-icon-switch-button', text: '注销'},
+    {id: 'site', path: '/admin/site', class: Setting, text: '基本设置'},
+    {id: 'driveList', path: '/admin/drive-list', class: FolderOpened, text: '驱动器列表'},
+    {id: 'view', path: '/admin/view', class: View, text: '显示设置'},
+    {id: 'key', path: '/admin/password', class:Key, text: '修改密码'},
+    {id: 'shortLink', path: '/admin/short-link', class: Link, text: '短链管理'},
+    {id: 'download', path: '/admin/download', class: Download, text: '日志下载'},
+    {id: 'home', path: '/admin/hoe', class: HomeFilled, text: '前往首页'},
+    {id: 'logout', path: '/admin/logout', class: SwitchButton, text: '注销'},
   ]
 })
 let {latestInfo, active, menus} = toRefs(state)
@@ -130,6 +128,7 @@ function logout() {
 
 function rebuildTitle(index: string) {
   // 根据指定的导航 Index, 获取标题
+  //@ts-ignore
   document.title = document.getElementById(index).innerText + " | 后台管理";
 }
 
@@ -158,7 +157,7 @@ onMounted(() => {
   axios
       .get("https://api.github.com/repos/zhaojun1998/zfile/releases/latest", {
         withCredentials: false,
-        showMessage: false,
+
       })
       .then((response) => {
         state.latestInfo = response.data;
@@ -189,7 +188,7 @@ onMounted(() => {
 }
 
 .zfile-admin-top-content {
-  display: flex;
+  /*display: flex;*/
   margin: auto;
   max-width: 1200px;
 }

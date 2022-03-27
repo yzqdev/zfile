@@ -64,7 +64,7 @@
         :sort-orders="['ascending', 'descending']"
         label="Key"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <a target="_blank" :href="siteDomain + '/s/' + scope.row.key">{{
             scope.row.key
           }}</a>
@@ -91,7 +91,7 @@
       >
       </el-table-column>
       <el-table-column width="120" label="操作">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-popconfirm
             @confirm="deleteLink(scope.row.id)"
             confirmButtonText="确定"
@@ -184,6 +184,7 @@ import {
   shortLinkKeyApi,
 } from "../../utils/shortlink";
 import { getAdminConfigApi, getDrivesApi, linkListApi } from "../../utils/apis";
+import {ElMessage} from "element-plus";
 
 export default {
   name: "ShortLink",
@@ -248,7 +249,7 @@ export default {
         cancelButtonText: "取消",
       }).then(({ value }) => {
         shortLinkKeyApi({ params: { id: id, newKey: value } }).then(() => {
-          this.$message({
+         ElMessage({
             message: "修改成功",
             type: "success",
           });
@@ -264,7 +265,9 @@ export default {
       let selection = this.$refs.shortLinkTable.selection;
 
       if (selection.length === 0) {
-        this.$message.warning("请至少选中一行数据");
+        ElMessage({
+          type:'warning',message:"请至少选中一行数据"
+        })
         return;
       }
 
@@ -339,7 +342,7 @@ export default {
       });
     },
     init() {
-      linkListApi({ params: this.searchParam }).then((response) => {
+      linkListApi(  this.searchParam  ).then((response) => {
         this.linkLog = response.data.data.content;
         this.searchParam.total = response.data.data.totalElements;
         this.searchParam.limit = response.data.data.size;

@@ -18,7 +18,7 @@
       highlight-current-row
     >
       <el-table-column prop="id" align="center" width="100" label="驱动器ID">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.id }}</span>
           <i
             class="el-icon-edit-outline table-edit-icon"
@@ -38,10 +38,12 @@
         :show-overflow-tooltip="true"
         width="160"
         label="所属策略"
-      >
+      ><template v-slot="{row}">
+        {{row.type.description}}
+      </template>
       </el-table-column>
       <el-table-column prop="enable" width="100" label="是否启用">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-switch
             @change="switchEnableStatus(scope.row)"
             v-model="scope.row.enable"
@@ -49,7 +51,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="enableCache" width="100" label="缓存开启">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-switch
             @change="switchCacheEnableStatus(scope.row)"
             v-model="scope.row.enableCache"
@@ -57,7 +59,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="autoRefreshCache" width="120" label="缓存自动刷新">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-switch
             @change="switchAutoRefreshStatus(scope.row)"
             v-model="scope.row.autoRefreshCache"
@@ -65,8 +67,9 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" width="300">
-        <template slot-scope="scope">
-          <template>
+        <template v-slot="scope">
+
+
             <el-tooltip
               class="item"
               effect="dark"
@@ -78,7 +81,7 @@
                 class="el-icon-edit"
                 type="primary"
                 @click="editDrive(scope.row)"
-              ></el-button>
+              >编辑</el-button>
             </el-tooltip>
 
             <el-tooltip
@@ -93,7 +96,7 @@
                 class="el-icon-s-operation"
                 type="primary"
                 @click="cacheManage(scope.row)"
-              ></el-button>
+              >缓存</el-button>
             </el-tooltip>
 
             <el-tooltip
@@ -107,7 +110,7 @@
                 size="small"
                 type="primary"
                 @click="showFilterDialog(scope.row)"
-              ></el-button>
+              >过滤</el-button>
             </el-tooltip>
 
             <el-tooltip
@@ -121,9 +124,9 @@
                 class="el-icon-delete"
                 size="small"
                 type="danger"
-              ></el-button>
+              >删除</el-button>
             </el-tooltip>
-          </template>
+
         </template>
       </el-table-column>
     </el-table>
@@ -132,23 +135,23 @@
       width="80%"
       title="驱动器设置"
       :before-close="handleClose"
-      :modal-append-to-body="false"
-      v-if="driveEditDialogVisible"
-      :visible.sync="driveEditDialogVisible"
+
+
+      v-model="driveEditDialogVisible"
       top="10vh"
       :destroy-on-close="true"
     >
       <drive-edit
-        :drive-item="driveItem"
-        :close="closeDriveEdit"
-        :support-strategy="supportStrategy"
+          :drive-item="driveItem"
+          :close="closeDriveEdit"
+          :support-strategy="supportStrategy"
       ></drive-edit>
     </el-dialog>
 
     <el-dialog
       width="40%"
       title="过滤规则"
-      :modal-append-to-body="false"
+
       v-if="filterDialogVisible"
       :visible.sync="filterDialogVisible"
       top="10vh"
@@ -164,7 +167,6 @@
       id="cacheDialog"
       width="70%"
       title="缓存管理"
-      :modal-append-to-body="false"
       v-if="cacheManageVisible"
       :visible.sync="cacheManageVisible"
       top="10vh"
@@ -377,12 +379,13 @@ export default defineComponent({
 
       getDrivesApi().then((response) => {
         let data = response.data.data;
+        let drives=[]
+        // for (let drive in data.driveList) {
+        //   console.log()
+        //   data[drive].type = data[drive].type.key;
+        // }
 
-        for (let index in data) {
-          data[index].type = data[index].type.key;
-        }
-
-        this.driveList = response.data.data;
+        this.driveList = response.data.data.driveList;
       });
     },
   },

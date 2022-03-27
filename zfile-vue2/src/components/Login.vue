@@ -58,7 +58,7 @@ export default {
     data() {
         return {
             loading: false,
-            loginForm: {},
+            loginForm: {username:'admin',password:'123456'},
             rules: {
                 username: [{required: true, message: '账号不能为空', trigger: 'blur'}],
                 password: [{required: true, message: '密码不能为空', trigger: 'blur'}]

@@ -20,7 +20,7 @@
     </el-form-item>
     <div class="zfile-header-drive box animate__animated animate__fadeIn">
       <el-form-item
-        v-show="this.$store.getters.debugMode"
+        v-show="$store.getters.debugMode"
         label="已开启 DEBUG 模式，使用完请及时关闭"
         class="zfile-debug-tips"
         size="small"

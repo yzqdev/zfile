@@ -1,4 +1,7 @@
 import axios from "axios";
+import {getDomainApi} from "./getApiUrl";
+axios.defaults.withCredentials=true
+axios.defaults.baseURL = getDomainApi(9101);
 axios.interceptors.request.use((config) => {
   let url: any = config.url;
   // get参数编码
@@ -26,5 +29,5 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-axios.defaults.baseURL = "http://192.168.0.105:9101";
+
 export default axios;
