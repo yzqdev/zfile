@@ -94,7 +94,7 @@ public class FtpServiceImpl extends AbstractBaseFileService implements BaseFileS
             fileItemDTO.setType(ftpFile.isDirectory() ? FileTypeEnum.FOLDER : FileTypeEnum.FILE);
             fileItemDTO.setPath(path);
             if (ftpFile.isFile()) {
-                fileItemDTO.setUrl(getDownloadUrl(StringUtils.concatUrl(path, fileItemDTO.getName())));
+                fileItemDTO.setSrc(getDownloadUrl(StringUtils.concatUrl(path, fileItemDTO.getName())));
             }
             fileItemList.add(fileItemDTO);
         }
@@ -124,7 +124,7 @@ public class FtpServiceImpl extends AbstractBaseFileService implements BaseFileS
     @Override
     public FileItemDTO getFileItem(String path) {
         FileItemDTO fileItemDTO = new FileItemDTO();
-        fileItemDTO.setUrl(getDownloadUrl(path));
+        fileItemDTO.setSrc(getDownloadUrl(path));
         return fileItemDTO;
     }
 

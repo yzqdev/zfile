@@ -34,7 +34,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 前台文件管理
@@ -132,7 +131,7 @@ public class FileController {
                     .filter(fileItemDTO -> Objects.equals(ZFileConstant.README_FILE_NAME, fileItemDTO.getName()))
                     .findFirst()
                     .ifPresent(fileItemDTO -> {
-                        String readme = HttpUtil.getTextContent(fileItemDTO.getUrl());
+                        String readme = HttpUtil.getTextContent(fileItemDTO.getSrc());
                         systemConfig.setReadme(readme);
                     });
         }
@@ -160,14 +159,14 @@ public class FileController {
             if (ZFileConstant.PASSWORD_FILE_NAME.equals(fileItemDTO.getName())) {
                 String expectedPasswordContent;
                 try {
-                    expectedPasswordContent = HttpUtil.getTextContent(fileItemDTO.getUrl());
+                    expectedPasswordContent = HttpUtil.getTextContent(fileItemDTO.getSrc());
                 } catch (HttpClientErrorException httpClientErrorException) {
                     log.trace("尝试重新获取密码文件缓存中链接后仍失败, driveId: {}, path: {}, inputPassword: {}, passwordFile:{} ",
                             driveId, path, inputPassword, JSON.toJSONString(fileItemDTO), httpClientErrorException);
                     try {
                         String pwdFileFullPath = StringUtils.removeDuplicateSeparator(fileItemDTO.getPath() + ZFileConstant.PATH_SEPARATOR + fileItemDTO.getName());
                         FileItemDTO pwdFileItem = fileService.getFileItem(pwdFileFullPath);
-                        expectedPasswordContent = HttpUtil.getTextContent(pwdFileItem.getUrl());
+                        expectedPasswordContent = HttpUtil.getTextContent(pwdFileItem.getSrc());
                     } catch (Exception e) {
                         throw new PasswordVerifyException("此文件夹为加密文件夹, 但密码检查异常, 请联系管理员检查密码设置", e);
                     }

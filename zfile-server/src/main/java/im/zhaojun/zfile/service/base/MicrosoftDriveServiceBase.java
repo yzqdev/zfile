@@ -173,7 +173,7 @@ public abstract class MicrosoftDriveServiceBase extends AbstractBaseFileService 
                     if (StringUtils.isNotNullOrEmpty(proxyDomain)) {
                         originUrl = StringUtils.replaceHost(originUrl, proxyDomain);
                     }
-                    fileItemDTO.setUrl(originUrl);
+                    fileItemDTO.setSrc(originUrl);
                     fileItemDTO.setType(FileTypeEnum.FILE);
                 } else {
                     fileItemDTO.setType(FileTypeEnum.FOLDER);
@@ -220,7 +220,7 @@ public abstract class MicrosoftDriveServiceBase extends AbstractBaseFileService 
             if (StringUtils.isNotNullOrEmpty(proxyDomain)) {
                 originUrl = StringUtils.replaceHost(originUrl, proxyDomain);
             }
-            fileItemDTO.setUrl(originUrl);
+            fileItemDTO.setSrc(originUrl);
             fileItemDTO.setType(FileTypeEnum.FILE);
         } else {
             fileItemDTO.setType(FileTypeEnum.FOLDER);

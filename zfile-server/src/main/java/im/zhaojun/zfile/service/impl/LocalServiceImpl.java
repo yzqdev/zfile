@@ -95,7 +95,7 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
             fileItemDTO.setName(f.getName());
             fileItemDTO.setPath(path);
             if (f.isFile()) {
-                fileItemDTO.setUrl(getDownloadUrl(StringUtils.concatUrl(path, f.getName())));
+                fileItemDTO.setSrc(getDownloadUrl(StringUtils.concatUrl(path, f.getName())));
             }
             fileItemList.add(fileItemDTO);
         }
@@ -139,7 +139,7 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
         fileItemDTO.setName(file.getName());
         fileItemDTO.setPath(filePath);
         if (file.isFile()) {
-            fileItemDTO.setUrl(getDownloadUrl(path));
+            fileItemDTO.setSrc(getDownloadUrl(path));
         }
 
         return fileItemDTO;

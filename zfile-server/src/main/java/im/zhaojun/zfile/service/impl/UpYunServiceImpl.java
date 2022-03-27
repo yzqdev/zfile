@@ -95,7 +95,7 @@ public class UpYunServiceImpl extends AbstractBaseFileService implements BaseFil
                         fileItemDTO.setType(FileTypeEnum.FOLDER);
                     } else {
                         fileItemDTO.setType(FileTypeEnum.FILE);
-                        fileItemDTO.setUrl(getDownloadUrl(StringUtils.concatUrl(basePath + path, fileItemDTO.getName())));
+                        fileItemDTO.setSrc(getDownloadUrl(StringUtils.concatUrl(basePath + path, fileItemDTO.getName())));
                     }
                     fileItemList.add(fileItemDTO);
                 }
@@ -137,7 +137,7 @@ public class UpYunServiceImpl extends AbstractBaseFileService implements BaseFil
                 fileItemDTO.setType(FileTypeEnum.FOLDER);
             } else {
                 fileItemDTO.setType(FileTypeEnum.FILE);
-                fileItemDTO.setUrl(getDownloadUrl(StringUtils.removeDuplicateSeparator(basePath + ZFileConstant.PATH_SEPARATOR + path)));
+                fileItemDTO.setSrc(getDownloadUrl(StringUtils.removeDuplicateSeparator(basePath + ZFileConstant.PATH_SEPARATOR + path)));
             }
             return fileItemDTO;
         } catch (IOException | UpException e) {

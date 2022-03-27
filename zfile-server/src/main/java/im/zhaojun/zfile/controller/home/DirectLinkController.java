@@ -68,7 +68,7 @@ public class DirectLinkController {
         AbstractBaseFileService fileService = driveContext.get(driveId);
         FileItemDTO fileItem = fileService.getFileItem(filePath);
 
-        String url = fileItem.getUrl();
+        String url = fileItem.getSrc();
 
         if (StrUtil.equalsIgnoreCase(FileUtil.extName(fileItem.getName()), "m3u8")) {
             String textContent = HttpUtil.getTextContent(url);
@@ -93,7 +93,7 @@ public class DirectLinkController {
 
 
         if (Objects.equals(fileItem.getType(), FileTypeEnum.FOLDER)) {
-            return "redirect:" + fileItem.getUrl();
+            return "redirect:" + fileItem.getSrc();
         } else {
             return "redirect:" + url;
         }

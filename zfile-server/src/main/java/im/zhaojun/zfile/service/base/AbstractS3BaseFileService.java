@@ -76,7 +76,7 @@ public abstract class AbstractS3BaseFileService extends AbstractBaseFileService 
 
             String fullPathAndName = StringUtils.concatUrl(path, fileItemDTO.getName());
             String directlink = StringUtils.generatorLink(driveId, fullPathAndName);
-            fileItemDTO.setUrl(directlink);
+            fileItemDTO.setSrc(directlink);
 
             fileItemList.add(fileItemDTO);
         }
@@ -133,7 +133,7 @@ public abstract class AbstractS3BaseFileService extends AbstractBaseFileService 
         for (FileItemDTO fileItemDTO : list) {
             String fullPath = StringUtils.concatUrl(fileItemDTO.getPath(), fileItemDTO.getName());
             if (Objects.equals(fullPath, path)) {
-                fileItemDTO.setUrl(getDownloadUrl(path));
+                fileItemDTO.setSrc(getDownloadUrl(path));
                 return fileItemDTO;
             }
         }
