@@ -12,11 +12,7 @@ onBeforeMount(() => {
   unloadHandler();
 });
 onMounted(() => {
-  if (route.path) {
-    console.log(route.path)
 
-    console.log(route.path=='/main')
-  }
   window.addEventListener("unload", (e) => unloadHandler(e));
 });
 onBeforeUnmount(() => {

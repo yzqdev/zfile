@@ -16,7 +16,7 @@ import "virtual:svg-icons-register";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 import http from "./utils/http";
-
+console.log('http://localhost:9100/#/home/1?path=/Camera')
 app.config.globalProperties.common = common;
 app.config.globalProperties.$http = http;
 //@ts-ignore

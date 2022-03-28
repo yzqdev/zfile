@@ -18,7 +18,7 @@
         :sm="24"
         :lg="isFullScreen ? 24 : 18"
       >
-        <List :drive-id="driveId" ref="List" />
+        <folder-list ></folder-list>
       </el-col>
     </el-row>
 
@@ -37,16 +37,14 @@
 
 <script setup lang="ts">
 import Header from "../components/Header.vue";
-import List from "../components/List.vue";
+import FolderList from '../components/FolderList.vue';
 import MarkdownRender from "../components/MarkdownRender.vue";
 import common from "../common";
 import { useStore } from "vuex";
 import { watch } from "vue";
 
 let store = useStore();
-let props = defineProps({
-  driveId: String,
-});
+
 
 function isFullScreen() {
   return common.isMobile() || store.getters.layout !== "center";

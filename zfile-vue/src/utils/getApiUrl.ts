@@ -26,6 +26,6 @@ export const getApiUrl = (str: string) => {
   }
 };
 
-export const getDomainApi = (port: string, url = document.domain) => {
+export const getDomainApi = (port: number, url = document.domain) => {
   return `http://${url}:${port}`;
 };

@@ -2,31 +2,32 @@
   <el-form :inline="true" class="zfile-header" size="small">
     <el-form-item>
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' + driveId + '/main' }">
+        <el-breadcrumb-item :to="{ path: '/home' + driveId + '/' }">
           {{
             this.$store.state.common.config.siteName
-              ? this.$store.state.common.config.siteName
-              : "首页"
+                ? this.$store.state.common.config.siteName
+                : "首页"
           }}
         </el-breadcrumb-item>
         <el-breadcrumb-item
-          v-for="item in breadcrumbData"
-          class="hidden-xs-only"
-          :to="{ path: '/' + driveId + '/main' + item.fullPath }"
-          :key="item.path"
-          >{{ item.name }}
+            v-for="item in breadcrumbData"
+            class="hidden-xs-only"
+            :to="{ path: '/home' + driveId + '/' + item.fullPath }"
+            :key="item.path"
+        >{{ item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-form-item>
     <div class="zfile-header-drive box animate__animated animate__fadeIn">
       <el-form-item
-        v-show="$store.getters.debugMode"
-        label="已开启 DEBUG 模式，使用完请及时关闭"
-        class="zfile-debug-tips"
-        size="small"
+          v-show="$store.getters.debugMode"
+          label="已开启 DEBUG 模式，使用完请及时关闭"
+          class="zfile-debug-tips"
+          size="small"
       >
         <el-button @click="resetAdminPwd" size="small" type="danger"
-          >重置密码</el-button
+        >重置密码
+        </el-button
         >
       </el-form-item>
 
@@ -35,15 +36,15 @@
       </el-form-item>
 
       <el-select
-        size="small"
-        v-model="currentDriveId"
-        placeholder="请选择驱动器"
+          size="small"
+          v-model="currentDriveId"
+          placeholder="请选择驱动器"
       >
         <el-option
-          v-for="item in driveList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
+            v-for="item in driveList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
         >
         </el-option>
       </el-select>
@@ -53,14 +54,14 @@
 
 <script setup lang="ts">
 import path from "path";
-import { onBeforeMount, onMounted, reactive, toRefs, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
+import {onBeforeMount, onMounted, reactive, toRefs, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {useStore} from "vuex";
 import axios from "../utils/http";
-import { ElMessage } from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 let props = defineProps({
-  driveId: String,
+  // driveId: String,
 });
 let state = reactive({
   imgModel: false,
@@ -85,31 +86,31 @@ let {
 } = toRefs(state);
 
 function resetAdminPwd() {
-  this.$confirm(
-    "是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456",
-    "提示",
-    {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-      callback: (action) => {
-        if (action === "confirm") {
-          axios.get("/debug/resetPwd").then((response) => {
-            if (response.data.code === 0) {
-              ElMessage({
-                type: "success",
-                message: "重置成功，请及时关闭 debug 功能，防止出现安全问题！",
-              });
-            } else {
-              ElMessage({
-                type: "error",
-                message: response.data.msg,
-              });
-            }
-          });
-        }
-      },
-    }
+  ElMessageBox.confirm(
+      "是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456",
+      "提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        callback: (action) => {
+          if (action === "confirm") {
+            axios.get("/debug/resetPwd").then((response) => {
+              if (response.data.code === 0) {
+                ElMessage({
+                  type: "success",
+                  message: "重置成功，请及时关闭 debug 功能，防止出现安全问题！",
+                });
+              } else {
+                ElMessage({
+                  type: "error",
+                  message: response.data.msg,
+                });
+              }
+            });
+          }
+        },
+      }
   );
 }
 
@@ -120,7 +121,7 @@ function buildBreadcrumbData() {
 
   while (fullPath !== "/") {
     let name = path.basename(fullPath);
-    state.breadcrumbData.unshift({ name, fullPath });
+    state.breadcrumbData.unshift({name, fullPath});
     fullPath = path.resolve(fullPath, "../");
   }
 }
@@ -145,27 +146,32 @@ onMounted(async () => {
 
     state.driveList = response.data.data.driveList;
     // 如果当前 URL 参数中有驱动器 ID, 则直接用当前的.
-    if (props.driveId) {
-      state.currentDriveId = Number(props.driveId);
+    if (route.params.driveId) {
+
+      state.currentDriveId =   route.params.driveId ;
     } else if (state.driveList.length > 0) {
       // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
       state.currentDriveId = state.driveList[0].id;
-      console.log("/" + state.driveList[0].id + "/main");
-      router.push("/" + state.driveList[0].id + "/main");
-    } else if (state.driveList.length === 0) {
-      state.$confirm(
-        "当前无可用驱动器，是否跳转至管理员页面添加驱动器？",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "info",
-          callback: (action) => {
-            if (action === "confirm") {
-              router.push("/login");
-            }
-          },
+      router.push({
+        name: 'home',
+        params: {
+          driveId: state.driveList[0].id
         }
+      })
+    } else if (state.driveList.length === 0) {
+      ElMessageBox.confirm(
+          "当前无可用驱动器，是否跳转至管理员页面添加驱动器？",
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "info",
+            callback: (action) => {
+              if (action === "confirm") {
+                router.push("/login");
+              }
+            },
+          }
       );
     }
 
@@ -177,15 +183,18 @@ watch(currentDriveId, (newVal, oldVal) => {
   store.commit("common/updateOldDriveId", oldVal);
   refreshCurrentStorageStrategy();
   if (oldVal !== "") {
-    router.push("/" + newVal + "/main");
+    router.push({
+      name: 'home',
+      params: {driveId: newVal}
+    });
   }
 });
 watch(
-  store.state.common,
-  (newVal) => {
-    state.imgModel = newVal.imgMode;
-  },
-  { deep: true }
+    store.state.common,
+    (newVal) => {
+      state.imgModel = newVal.imgMode;
+    },
+    {deep: true}
 );
 watch(imgModel, () => {
   store.commit("common/switchImgMode", state.imgModel);
