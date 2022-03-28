@@ -1,5 +1,6 @@
 package im.zhaojun.zfile.controller.home;
 
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import im.zhaojun.zfile.context.DriveContext;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -94,6 +96,7 @@ public class FileController {
                            @RequestParam(required = false) String orderBy,
                            @RequestParam(required = false, defaultValue = "asc") String orderDirection) throws Exception {
         AbstractBaseFileService fileService = driveContext.get(driveId);
+
         List<FileItemDTO> fileItemList = fileService.fileList(StringUtils.removeDuplicateSeparator(ZFileConstant.PATH_SEPARATOR + path + ZFileConstant.PATH_SEPARATOR));
 
         // 创建副本, 防止排序和过滤对原数据产生影响

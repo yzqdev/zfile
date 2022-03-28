@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +73,7 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
 
 
     @Override
-    public List<FileItemDTO> fileList(String path) throws FileNotFoundException {
+    public List<FileItemDTO> fileList(String path) throws IOException {
         List<FileItemDTO> fileItemList = new ArrayList<>();
 
         String fullPath = StringUtils.removeDuplicateSeparator(filePath + path);
@@ -94,6 +96,7 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
             fileItemDTO.setSize(f.length());
             fileItemDTO.setName(f.getName());
             fileItemDTO.setPath(path);
+            fileItemDTO.setMimetype(Files.probeContentType(f.toPath()));
             if (f.isFile()) {
                 fileItemDTO.setSrc(getDownloadUrl(StringUtils.concatUrl(path, f.getName())));
             }

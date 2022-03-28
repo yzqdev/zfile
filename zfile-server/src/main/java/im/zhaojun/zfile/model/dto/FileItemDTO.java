@@ -19,5 +19,5 @@ public class FileItemDTO implements Serializable {
     private FileTypeEnum type;
     private String path;
     private String src;
-
+private String mimetype;
 }
