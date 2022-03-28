@@ -398,7 +398,7 @@ function closeFilterDialog() {
 }
 
 function addDrive() {
-  Object.assign(state.driveItem, state.$options.data().driveItem);
+  // Object.assign(state.driveItem, state.$options.data().driveItem);
   state.driveItem.id = null;
   state.driveEditDialogVisible = true;
   console.log(state.supportStrategy);

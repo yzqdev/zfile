@@ -1,5 +1,6 @@
 <template>
-  <div >
+  <article class="folder-wrapper">
+  <div v-loading="initLoading" class="folder-list">
     <el-table
         v-loading="loading"
         element-loading-text="拼命加载中"
@@ -28,7 +29,14 @@
         </template>
         <template #default="scope">
           <template v-if="imgMode && scope.row.icon === 'el-icon-my-image'">
-            <img class="img-mode-img" :src="scope.row.src" />
+            <el-image
+                class="img-mode-img" :src="scope.row.src"
+
+                :preview-src-list="imageList"
+                :initial-index="1"
+                fit="cover"
+            >
+            </el-image>
           </template>
           <template v-else>
             <svg class="icon" aria-hidden="true">
@@ -97,7 +105,7 @@
                 placement="top"
             >
               <el-icon
-                  @click="downloadFile(scope.row)"
+                  @click.stop="downloadFile(scope.row)"
                   class=" operator-btn"
               ><download/></el-icon>
             </el-tooltip>
@@ -121,7 +129,7 @@
         id="textDialog"
         :destroy-on-close="true"
         :title="currentClickRow.name"
-        :visible.sync="dialogTextVisible"
+        v-model="dialogTextVisible"
         v-if="dialogTextVisible"
         :top="'5vh'"
         :width="'90%'"
@@ -149,7 +157,7 @@
         id="copyLinkDialog"
         title="生成直链结果"
         :width="common.isMobile() ? '95%' : '50%'"
-        :visible.sync="dialogCopyLinkVisible"
+        v-model="dialogCopyLinkVisible"
         v-if="dialogCopyLinkVisible"
     >
       <el-row v-if="currentCopyLinkRow.row">
@@ -257,7 +265,7 @@
         title="批量生成直链"
         width="80%"
         :top="'80px'"
-        :visible.sync="dialogBatchCopyLinkVisible"
+        v-model="dialogBatchCopyLinkVisible"
         v-if="dialogBatchCopyLinkVisible"
     >
       <el-table
@@ -352,13 +360,7 @@
         <label>生成直链</label>
       </v-contextmenu-item>
     </v-contextmenu>
-    <!--    <el-image-->
-    <!--      style="width: 100px; height: 100px"-->
-    <!--      :preview-src-list="imageList"-->
-    <!--      :initial-index="1"-->
-    <!--      fit="cover"-->
-    <!--    >-->
-    <!--    </el-image>-->
+
     <template>
       <el-backtop
           target=".el-table__body-wrapper"
@@ -376,7 +378,7 @@
         </el-tooltip>
       </el-backtop>
     </template>
-  </div>
+  </div></article>
 </template>
 
 <script setup lang="ts">
@@ -439,7 +441,7 @@ let state = reactive({
   batchCopyLinkLoading: false,
   imageList: [],
 });
-
+import downloadjs from 'downloadjs';
 let {
   batchCopyLinkList,
   batchCopyLinkLoading,
@@ -481,7 +483,8 @@ let imgMode = computed(() => {
   return store.getters["common/imgMode"];
 });
 let tableHeight = computed(() => {
-  return showDocument.value && config.readme !== null ? "50vh" : "84vh";
+  return '84vh'
+  // return showDocument.value && config.readme !== null ? "50vh" : "84vh";
 });
 let operater = computed(() => {
   return store.getters["common/showOperator"] && !imgMode.value;
@@ -657,7 +660,10 @@ function copyText(text) {
 }
 
 function downloadFile(row: any) {
-  window.location.href = row.url;
+  console.log(`%c这是downloadfile`,`color:red;font-size:16px;background:transparent`)
+  console.log(row)
+downloadjs(row.src,row.name,row.mimetype)
+  // window.location.href = row.src;
 }
 // 文件夹密码
 function popPassword() {
@@ -887,5 +893,166 @@ watch(route, (newVal, preVal) => {
 </script>
 
 <style lang="scss" scoped>
-@import "List.scss";
+.folder-wrapper{
+  :deep(.folder-list)   {
+    overflow: hidden;
+    i{
+      font-size: 2rem;
+    }
+    .el-table__body-wrapper {
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .table-header-left {
+      margin-left: 38px;
+    }
+
+    tr  {
+      cursor: pointer;
+    }
+
+    .el-dialog__header { /* 弹窗标题居中, 高度减少 */
+      text-align: center;
+      margin-bottom: -10px;
+      padding: 5px 0 5px 0;
+    }
+
+    .img-mode-img {
+      display: block;
+      width: 80%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+     .el-table  {
+      margin: 20px 0 0 20px;
+      padding-right: 30px;
+      overflow-y: hidden;
+
+      .el-table__header {
+        .cell {
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+
+  }
+}
+
+
+
+@media screen and (max-device-width: 769px) {
+  .el-table {
+    margin: 0 0 0 0;
+    padding-right: 0;
+  }
+}
+
+.el-table::before {
+  height: 0;
+}
+
+.el-table svg {
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+
+.el-scrollbar  {.el-scrollbar__wrap {
+  overflow-x: hidden !important;
+}}
+
+/*视频弹窗样式 -- 去除内容边框*/
+
+:deep(#videoDialog){.el-dialog__body {
+  padding: 10px 0 0 0;
+}.el-dialog__headerbtn {
+   top: 10px;
+ }}
+
+
+
+
+#textDialog   {.el-dialog {
+  margin-bottom: 0;
+}}
+
+.v-contextmenu-item {label {
+  margin-left: 10px;
+}}
+
+@media screen and (max-device-width: 1920px) {
+  #videoDialog {.el-dialog {
+    margin-top: 5vh !important;
+    width: 70% !important;
+  }}
+}
+
+@media screen and (max-device-width: 769px) {
+  #videoDialog {.el-dialog {
+    margin-top: 10vh !important;
+    width: 90% !important;
+  }}
+}
+
+.operator-btn {
+  color: #1E9FFF;
+  margin-right: 20px;
+  font-size: 16px
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0
+}
+
+.back-to-ceiling {
+  right: 50px;
+  bottom: 50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  line-height: 45px;
+  background: #e7eaf1;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
+.back-to-ceiling:hover {
+  background: #d5dbe7;
+}
+
+.back-to-ceiling .Icon {
+  fill: #9aaabf;
+  background: none;
+}
+
+.back-to-ceiling .Icon--backToTopArrow {
+  height: 16px;
+  width: 16px;
+}
+
+
+.zfile-dialog-link-result-qrcode {
+  text-align: center;
+}
+
+.zfile-dialog-link-result-info .el-form-item {
+  margin-bottom: 10px;
+}
+
+#batchCopyLinkDialog > > > thead {
+  cursor: pointer;
+}
+
 </style>

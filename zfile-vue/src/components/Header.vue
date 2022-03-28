@@ -2,19 +2,18 @@
   <el-form :inline="true" class="zfile-header" size="small">
     <el-form-item>
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/home' + driveId + '/' }">
+        <el-breadcrumb-item :to="{ path: '/home/' + currentDriveId + '/' }">
           {{
-            this.$store.state.common.config.siteName
-                ? this.$store.state.common.config.siteName
+             $store.state.common.config.siteName
+                ?  $store.state.common.config.siteName
                 : "首页"
           }}
         </el-breadcrumb-item>
         <el-breadcrumb-item
             v-for="item in breadcrumbData"
             class="hidden-xs-only"
-            :to="{ path: '/home' + driveId + '/' + item.fullPath }"
-            :key="item.path"
-        >{{ item.name }}
+            :key="`/home/${currentDriveId}?path=${item.fullPath}`"
+        ><a :href="`/home/${currentDriveId}?path=${item.fullPath}`">{{item.name}}</a>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-form-item>
@@ -116,7 +115,9 @@ function resetAdminPwd() {
 
 function buildBreadcrumbData() {
   state.breadcrumbData = [];
-  let fullPath: string = route.params.pathMatch;
+  console.log(`%cbuildBreadcrumbData`,`color:red;font-size:16px;background:transparent`)
+  let fullPath: string = route.query.path;
+  console.log(fullPath)
   fullPath = fullPath ? fullPath : "/";
 
   while (fullPath !== "/") {
@@ -124,6 +125,7 @@ function buildBreadcrumbData() {
     state.breadcrumbData.unshift({name, fullPath});
     fullPath = path.resolve(fullPath, "../");
   }
+  console.log(state.breadcrumbData)
 }
 
 function refreshCurrentStorageStrategy() {

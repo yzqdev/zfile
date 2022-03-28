@@ -716,7 +716,7 @@ export default {
       this.$refs.contextmenu.$el.hidden = false;
     },
     download(row) {
-      window.location.href = row.url;
+      window.location.href = row.src;
     },
     copyShortLink(row) {
       let directlink = this.common.removeDuplicateSeparator(

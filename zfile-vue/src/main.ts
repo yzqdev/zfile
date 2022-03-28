@@ -19,6 +19,11 @@ import http from "./utils/http";
 console.log('http://localhost:9100/#/home/1?path=/Camera')
 app.config.globalProperties.common = common;
 app.config.globalProperties.$http = http;
+
+import VConsole from 'vconsole';
+
+const vConsole = new VConsole();
+// 或者使用配置参数来初始化，详情见文档
 //@ts-ignore
 app.use(MdEditorV3)
 app.use(router);
