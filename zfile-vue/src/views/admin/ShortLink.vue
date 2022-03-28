@@ -27,8 +27,8 @@
           type="primary"
           @click="init"
           size="small"
-          icon="el-icon-search"
-          >查询</el-button
+
+          ><el-icon><search /></el-icon>查询</el-button
         >
       </el-form-item>
     </el-form>
@@ -36,16 +36,16 @@
     <el-button
       type="primary"
       size="small"
-      icon="el-icon-plus"
+
       @click="openAddLinkItemDialog"
-      >新增直链</el-button
+      ><el-icon><plus/></el-icon>新增直链</el-button
     >
     <el-button
       type="danger"
       size="small"
-      icon="el-icon-delete"
+
       @click="batchDeleteLinkItem"
-      >删除所选</el-button
+      ><el-icon><delete /></el-icon>删除所选</el-button
     >
     <el-table
       :data="linkLog"
@@ -129,7 +129,7 @@
       title="直链管理"
       :modal-append-to-body="false"
       v-if="addLinkVisible"
-      :visible.sync="addLinkVisible"
+      v-model="addLinkVisible"
     >
       <el-form :model="addLinkModel" label-width="150px">
         <el-form-item label="驱动器 ID">
@@ -160,23 +160,23 @@
       <div  class="dialog-footer">
         <el-button
           type="primary"
-          icon="el-icon-check"
+
           size="small"
           @click="addLinkItemAction"
-          >保存</el-button
+          ><el-icon><check /></el-icon>保存</el-button
         >
         <el-button
-          icon="el-icon-close"
+
           size="small"
           @click="addLinkVisible = false"
-          >关闭</el-button
+          ><el-icon><Close /></el-icon>关闭</el-button
         >
       </div>
     </el-dialog>
   </el-card>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   delLinkApi,
   delShortLinkApi,
@@ -184,67 +184,67 @@ import {
   shortLinkKeyApi,
 } from "../../utils/shortlink";
 import { getAdminConfigApi, getDrivesApi, linkListApi } from "../../utils/apis";
-import {ElMessage} from "element-plus";
-
-export default {
-  name: "ShortLink",
-  data() {
-    return {
-      addLinkModel: {
-        driveId: null,
-        path: "",
-      },
-      addLinkVisible: false,
-      linkUrl: "",
-      linkLog: [],
-      searchParam: {
-        page: 1,
-        limit: 10,
-        total: 0,
-        url: "",
-        key: "",
-        orderBy: "",
-        orderDirection: "",
-      },
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            },
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            },
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            },
-          },
-        ],
-      },
-      date: ["", ""],
-      driveList: [],
-      siteDomain: "",
-    };
+import {ElMessage, ElMessageBox} from "element-plus";
+import {onMounted, reactive, ref, toRefs} from "vue";
+import {useStore} from "vuex";
+import {Check, Close, Delete, Plus, Search} from "@element-plus/icons-vue";
+let shortLinkTable=ref()
+let state=reactive({
+  addLinkModel: {
+    driveId: null,
+    path: "",
   },
-  methods: {
-    editKey(id) {
-      this.$prompt("请输入要修改为的 Key。", "提示", {
+  addLinkVisible: false,
+  linkUrl: "",
+  linkLog: [],
+  searchParam: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    url: "",
+    key: "",
+    orderBy: "",
+    orderDirection: "",
+  },
+  pickerOptions: {
+    shortcuts: [
+      {
+        text: "最近一周",
+        onClick(picker) {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+          picker.$emit("pick", [start, end]);
+        },
+      },
+      {
+        text: "最近一个月",
+        onClick(picker) {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+          picker.$emit("pick", [start, end]);
+        },
+      },
+      {
+        text: "最近三个月",
+        onClick(picker) {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+          picker.$emit("pick", [start, end]);
+        },
+      },
+    ],
+  },
+  date: ["", ""],
+  driveList: [],
+  siteDomain: "",
+} )
+let {addLinkModel,addLinkVisible,linkLog,linkUrl,searchParam,pickerOptions,date,driveList,siteDomain}=toRefs(state)
+ let store=useStore()
+  function  editKey(id) {
+     ElMessageBox.confirm("请输入要修改为的 Key。", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(({ value }) => {
@@ -253,16 +253,16 @@ export default {
             message: "修改成功",
             type: "success",
           });
-          this.init();
+          init();
         });
       });
-    },
+    }
     //点击行触发，选中或不选中复选框
-    handleRowClick(row) {
-      this.$refs.shortLinkTable.toggleRowSelection(row);
-    },
-    batchDeleteLinkItem() {
-      let selection = this.$refs.shortLinkTable.selection;
+function   handleRowClick(row) {
+     shortLinkTable.value.toggleRowSelection(row);
+    }
+function   batchDeleteLinkItem() {
+      let selection =  shortLinkTable.value.selection;
 
       if (selection.length === 0) {
         ElMessage({
@@ -271,7 +271,7 @@ export default {
         return;
       }
 
-      this.$confirm("删除后不可恢复, 是否确认删除", "提示", {
+      ElMessageBox.confirm("删除后不可恢复, 是否确认删除", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -284,96 +284,110 @@ export default {
 
             delShortLinkApi({ params: { id: arr } }).then((response) => {
               if (response.data.code === 0) {
-                this.$message.success("删除成功");
-                this.init();
+                ElMessage({
+                  type:"success"
+                  ,message:'删除成功'
+                })
+                 init();
               } else {
-                this.$message.error(response.data.msg);
+                ElMessage({type:'error',message:response.data.msg})
+
               }
             });
           }
         },
       });
-    },
-    addLinkItemAction() {
-      alert(this.$store.getters.domain);
-      this.addLinkModel.path = this.common.removeDuplicateSeparator(
-        "/" + this.addLinkModel.path
+    }
+function     addLinkItemAction() {
+      alert( store.getters.domain);
+      state.addLinkModel.path = state.common.removeDuplicateSeparator(
+        "/" + state.addLinkModel.path
       );
-      postShortLinkApi({ params: this.addLinkModel }).then(() => {
-        this.$message.success("添加成功");
-        this.init();
-        this.addLinkVisible = false;
+      postShortLinkApi({ params: state.addLinkModel }).then(() => {
+        ElMessage({
+          type:'success'
+          ,message:'添加成功'
+        })
+        init();
+        state.addLinkVisible = false;
       });
-    },
-    openAddLinkItemDialog() {
-      this.addLinkVisible = true;
-    },
-    dateChange() {
-      if (this.date) {
-        this.searchParam.dateFrom = this.date[0];
-        this.searchParam.dateTo = this.date[1];
+    }
+function  openAddLinkItemDialog() {
+      state.addLinkVisible = true;
+    }
+function   dateChange() {
+      if (state.date) {
+        state.searchParam.dateFrom = state.date[0];
+        state.searchParam.dateTo = state.date[1];
       } else {
-        this.searchParam.dateFrom = "";
-        this.searchParam.dateTo = "";
+        state.searchParam.dateFrom = "";
+        state.searchParam.dateTo = "";
       }
-    },
-    sortMethod({ prop, order }) {
-      this.searchParam.orderBy = prop;
-      this.searchParam.orderDirection = order === "descending" ? "desc" : "asc";
-      this.init();
-    },
-    handleSizeChange(val) {
-      this.searchParam.limit = val;
-      this.searchParam.page = 1;
-      this.init();
-    },
-    handleCurrentChange(val) {
-      this.searchParam.page = val;
-      this.init();
-    },
-    deleteLink(id) {
+    }
+function     sortMethod({ prop, order }) {
+      state.searchParam.orderBy = prop;
+      state.searchParam.orderDirection = order === "descending" ? "desc" : "asc";
+     init();
+    }
+function   handleSizeChange(val) {
+      state.searchParam.limit = val;
+      state.searchParam.page = 1;
+      init();
+    }
+function    handleCurrentChange(val) {
+      state.searchParam.page = val;
+    init();
+    }
+function   deleteLink(id) {
       delLinkApi(id).then((response) => {
-        if (response.data.code === this.common.responseCode.SUCCESS) {
-          this.$message.success("删除成功");
-          this.init();
+        if (response.data.code === state.common.responseCode.SUCCESS) {
+          ElMessage({
+            type:'success',message:'删除成功'
+          })
+          init();
         } else {
-          this.$message.error(response.data.msg);
+          ElMessage({
+            type:'error',message:response.data.msg
+          })
         }
       });
-    },
-    init() {
-      linkListApi(  this.searchParam  ).then((response) => {
-        this.linkLog = response.data.data.content;
-        this.searchParam.total = response.data.data.totalElements;
-        this.searchParam.limit = response.data.data.size;
+    }
+function  init() {
+      linkListApi(  state.searchParam  ).then((response) => {
+        state.linkLog = response.data.data.content;
+        state.searchParam.total = response.data.data.totalElements;
+        state.searchParam.limit = response.data.data.size;
       });
-    },
-    loadDriveList() {
+    }
+function   loadDriveList() {
       getDrivesApi().then((response) => {
-        this.driveList = response.data.data.driveList;
+        state.driveList = response.data.data.driveList;
       });
-    },
-    getDomainId() {
+    }
+function  getDomainId() {
       getAdminConfigApi().then((response) => {
-        this.siteDomain = response.data.data.domain;
+        state.siteDomain = response.data.data.domain;
       });
-    },
-  },
-  mounted() {
-    this.init();
-    this.loadDriveList();
-    this.getDomainId();
-  },
-};
+
+  }
+   onMounted(( ) => {
+      init();
+     loadDriveList();
+      getDomainId();
+   })
+
+
 </script>
 
-<style scoped>
-.zfile-admin-short-form >>> .el-form-item:first-child {
-  margin-left: 10px;
-}
+<style lang="scss" scoped>
+:deep(.zfile-admin-short-form){
+  .el-form-item:first-child {
+    margin-left: 10px;
+  }
 
-.zfile-admin-short-form >>> .el-form-item:not(:first-child) {
-  margin-left: 20px;
+  .el-form-item:not(:first-child) {
+    margin-left: 20px;
+  }
 }
 
 .el-pagination {

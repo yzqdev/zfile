@@ -47,7 +47,7 @@
         min-width="20%"
       >
         <template #header>
-          <i class="el-icon-date"></i>
+           <el-icon ><calendar/></el-icon>
           <span>修改时间</span>
         </template>
       </el-table-column>
@@ -61,7 +61,8 @@
         min-width="15%"
       >
         <template #header>
-          <i class="el-icon-coin"></i>
+          <el-icon
+            ><coin/></el-icon>
           <span>大小</span>
         </template>
       </el-table-column>
@@ -95,10 +96,10 @@
               content="下载"
               placement="top"
             >
-              <i
+              <el-icon
                 @click.stop="download(scope.row)"
                 class="el-icon-download operator-btn"
-              ></i>
+              ><download/></el-icon>
             </el-tooltip>
             <el-tooltip
               v-if="$store.getters.showLinkBtn"
@@ -107,10 +108,10 @@
               content="生成直链"
               placement="top"
             >
-              <i
+              <el-icon
                 @click.stop="copyShortLink(scope.row)"
                 class="el-icon-copy-document operator-btn"
-              ></i>
+              ><copy-document/></el-icon>
             </el-tooltip>
           </div>
         </template>
@@ -211,8 +212,8 @@
                   <el-button
                     @click="copyText(currentCopyLinkRow.directlink)"
                     type="small"
-                    icon="el-icon-copy-document"
-                  ></el-button>
+
+                  ><el-icon><copy-document/></el-icon></el-button>
                 </el-tooltip>
               </el-input>
             </el-form-item>
@@ -234,8 +235,8 @@
                   <el-button
                     @click="copyText(currentCopyLinkRow.link)"
                     type="small"
-                    icon="el-icon-copy-document"
-                  ></el-button>
+
+                  ><el-icon><copy-document/></el-icon></el-button>
                 </el-tooltip>
               </el-input>
             </el-form-item>
@@ -275,10 +276,11 @@
               content="批量复制"
               placement="top"
             >
-              <i
+              <el-icon
+
                 @click.stop="batchCopyLinkField('name')"
                 class="el-icon-copy-document operator-btn zfile-margin-left-5"
-              ></i>
+              ><copy-document/></el-icon>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -296,10 +298,10 @@
               content="批量复制"
               placement="top"
             >
-              <i
+              <el-icon
                 @click.stop="batchCopyLinkField('link1')"
-                class="el-icon-copy-document operator-btn zfile-margin-left-5"
-              ></i>
+                class=" operator-btn zfile-margin-left-5"
+              ><copy-document /></el-icon>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -318,10 +320,8 @@
               content="批量复制"
               placement="top"
             >
-              <i
-                @click.stop="batchCopyLinkField('link2')"
-                class="el-icon-copy-document operator-btn zfile-margin-left-5"
-              ></i>
+
+              <el-icon  class=" operator-btn zfile-margin-left-5" @click.stop="batchCopyLinkField('link2')"><copy-document /></el-icon>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -335,31 +335,31 @@
 
     <v-contextmenu ref="contextmenuRef">
       <v-contextmenu-item @click="openFolder(rightClickRow)">
-        <i class="el-icon-view"></i>
+        <el-icon><view/></el-icon>
         <label v-html="rightClickRow.type === 'FILE' ? '预览' : '打开'"></label>
       </v-contextmenu-item>
       <v-contextmenu-item
         @click="download(rightClickRow)"
         v-show="rightClickRow.type === 'FILE'"
       >
-        <i class="el-icon-download"></i>
+        <el-icon ><download /></el-icon>
         <label>下载</label>
       </v-contextmenu-item>
       <v-contextmenu-item
         @click="copyShortLink(rightClickRow)"
         v-show="rightClickRow.type === 'FILE'"
       >
-        <i class="el-icon-copy-document"></i>
+        <el-icon><copy-document/></el-icon>
         <label>生成直链</label>
       </v-contextmenu-item>
     </v-contextmenu>
-    <el-image
-      style="width: 100px; height: 100px"
-      :preview-src-list="imageList"
-      :initial-index="1"
-      fit="cover"
-    >
-    </el-image>
+<!--    <el-image-->
+<!--      style="width: 100px; height: 100px"-->
+<!--      :preview-src-list="imageList"-->
+<!--      :initial-index="1"-->
+<!--      fit="cover"-->
+<!--    >-->
+<!--    </el-image>-->
     <template>
       <el-backtop
         target=".el-table__body-wrapper"
@@ -382,7 +382,7 @@
 
 <script setup lang="ts">
 import path from "path";
-import { Operation } from "@element-plus/icons-vue";
+import {Coin, CopyDocument, Download, Operation, View,Calendar} from "@element-plus/icons-vue";
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
 import AudioPlayer from "./AudioPlayer.vue";
