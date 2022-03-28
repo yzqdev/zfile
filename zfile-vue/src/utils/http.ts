@@ -1,6 +1,6 @@
 import axios from "axios";
-import {getDomainApi} from "./getApiUrl";
-axios.defaults.withCredentials=true
+import { getDomainApi } from "./getApiUrl";
+axios.defaults.withCredentials = true;
 axios.defaults.baseURL = getDomainApi(9101);
 axios.interceptors.request.use((config) => {
   let url: any = config.url;

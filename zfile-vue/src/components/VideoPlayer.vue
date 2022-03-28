@@ -6,7 +6,7 @@
 import flvjs from "flv.js";
 import Hls from "hls.js";
 import DPlayer from "dplayer";
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 window.flvjs = flvjs;
 window.Hls = Hls;
@@ -89,8 +89,8 @@ export default defineComponent({
 
     let currData = this.data;
 
-    console.log(this.$store.getters['file/tableData'])
-    let tableData = this.$store.getters['file/tableData'];
+    console.log(this.$store.getters["file/tableData"]);
+    let tableData = this.$store.getters["file/tableData"];
 
     let containerVtt = false;
 

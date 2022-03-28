@@ -11,7 +11,7 @@
         <el-date-picker
           v-model="date"
           type="daterange"
-          align="right"
+
           unlink-panels
           value-format="yyyy-MM-dd"
           range-separator="至"
@@ -157,7 +157,7 @@
           </el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div  class="dialog-footer">
         <el-button
           type="primary"
           icon="el-icon-check"

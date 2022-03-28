@@ -188,7 +188,7 @@ watch(
   { deep: true }
 );
 watch(imgModel, () => {
-  store.commit('common/switchImgMode', state.imgModel);
+  store.commit("common/switchImgMode", state.imgModel);
 });
 watch(route, () => {
   buildBreadcrumbData();

@@ -6,7 +6,7 @@
     "dev": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint": "prettier --write **/*/*.{vue,json,html,jsx,ts,tsx}"
+    "lint": "prettier --write src/*/*.{vue,json,html,jsx,ts,tsx}"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",

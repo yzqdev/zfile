@@ -63,7 +63,6 @@
         <el-button
           type="primary"
           icon="el-icon-check"
-
           @click="submitForm('form')"
           >确认</el-button
         >
@@ -192,8 +191,4 @@ export default {
   -webkit-background-clip: text;
   line-height: 80px;
 }
-
-
-
-
 </style>

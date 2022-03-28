@@ -73,7 +73,7 @@
         :min-width="common.isMobile() ? '35%' : '15%'"
       >
         <template #header v-if="$store.getters[`common/showLinkBtn`]">
-          <el-icon  :size="20"><operation /></el-icon>
+          <el-icon :size="20"><operation /></el-icon>
           <span>操作</span>
           <el-tooltip
             class="item"
@@ -354,11 +354,10 @@
       </v-contextmenu-item>
     </v-contextmenu>
     <el-image
-        style="width: 100px; height: 100px"
-
-        :preview-src-list="imageList"
-        :initial-index="1"
-        fit="cover"
+      style="width: 100px; height: 100px"
+      :preview-src-list="imageList"
+      :initial-index="1"
+      fit="cover"
     >
     </el-image>
     <template>
@@ -383,7 +382,7 @@
 
 <script setup lang="ts">
 import path from "path";
-import {Operation} from '@element-plus/icons-vue';
+import { Operation } from "@element-plus/icons-vue";
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
 import AudioPlayer from "./AudioPlayer.vue";
@@ -440,7 +439,7 @@ let state = reactive({
   dialogBatchCopyLinkVisible: false,
   batchCopyLinkList: [],
   batchCopyLinkLoading: false,
-  imageList:[]
+  imageList: [],
 });
 
 let {
@@ -456,7 +455,8 @@ let {
   searchParam,
   currentClickRow,
   contextMenuDataAxis,
-  driveList,imageList,
+  driveList,
+  imageList,
   currentCopyLinkRow,
 } = toRefs(state);
 let contextmenuRef = ref(null);
@@ -482,13 +482,12 @@ let config = computed(() => {
 let imgMode = computed(() => {
   return store.getters["common/imgMode"];
 });
-let tableHeight=computed(() => {
-
-  return showDocument.value && config.readme !== null ? '50vh' : '84vh'
-})
-let operater=computed(() => {
-  return  store.getters["common/showOperator"] && !imgMode.value
-})
+let tableHeight = computed(() => {
+  return showDocument.value && config.readme !== null ? "50vh" : "84vh";
+});
+let operater = computed(() => {
+  return store.getters["common/showOperator"] && !imgMode.value;
+});
 // 批量复制直链字段
 function batchCopyLinkField(field) {
   let copyVal = "";
@@ -596,7 +595,6 @@ function haveDocument() {
   );
 }
 function openVideo() {
-
   state.currentClickRow.url = common.removeDuplicateSeparator(
     store.getters.domain +
       "/" +
@@ -608,8 +606,8 @@ function openVideo() {
       "/" +
       encodeURI(state.currentClickRow.name)
   );
-  console.log(state.currentClickRow)
-  console.log(`%c哈哈哈哈`,`color:red;font-size:16px;background:transparent`)
+  console.log(state.currentClickRow);
+  console.log(`%c哈哈哈哈`, `color:red;font-size:16px;background:transparent`);
   state.dialogVideoVisible = true;
 }
 // 右键菜单
@@ -631,7 +629,7 @@ function copyShortLink(row) {
   getShortLinkApi(props.driveId, directlink).then((response) => {
     state.currentCopyLinkRow.row = row;
     state.currentCopyLinkRow.link = response.data.data;
-    let directlink =  common.removeDuplicateSeparator(
+    let directlink = common.removeDuplicateSeparator(
       store.getters.domain +
         "/" +
         store.getters.directLinkPrefix +
@@ -737,8 +735,8 @@ function loadFile() {
       });
       return;
     }
-console.log(response.data.data.config)
-    console.log(`%c哈哈哈`,`color:red;font-size:16px;background:transparent`)
+    console.log(response.data.data.config);
+    console.log(`%c哈哈哈`, `color:red;font-size:16px;background:transparent`);
     store.commit("common/updateConfig", response.data.data.config);
     if (props.driveId !== store.getters.oldDriveId) {
       store.commit("common/updateOldDriveId", props.driveId);
@@ -828,10 +826,9 @@ function openFolder(row: any) {
   }
 }
 function openImage() {
-console.log(store.getters["file/filterFileByType"]("image"))
+  console.log(store.getters["file/filterFileByType"]("image"));
   for (let image of store.getters["file/filterFileByType"]("image")) {
-    state.imageList.push(  image.src
-     );
+    state.imageList.push(image.src);
   }
 
   // this.layer.photos({

@@ -2,7 +2,7 @@ import http from "./http";
 import qs from "qs";
 
 export const loginApi = (data: any) => {
-  console.log(http.defaults.withCredentials)
+  console.log(http.defaults.withCredentials);
   return http.post("/doLogin", data);
 };
 export const isInstalled = () => {
@@ -21,7 +21,7 @@ export const updatePassApi = (data: any) => {
   return http.post("/admin/update-pwd", data);
 };
 export const linkListApi = (data: any) => {
-  return http.get("/admin/link/list",  {params:data});
+  return http.get("/admin/link/list", { params: data });
 };
 export const getDrivesApi = () => {
   return http.get("/api/drive/list");
@@ -29,6 +29,6 @@ export const getDrivesApi = () => {
 export const getSiteApi = () => {
   return http.get("/sharepoint/getSiteId");
 };
-export const getStorageForm=(storageType:string) => {
-  return http.get(`/admin/strategy-form?storageType=${storageType}`)
-}
+export const getStorageForm = (storageType: string) => {
+  return http.get(`/admin/strategy-form?storageType=${storageType}`);
+};

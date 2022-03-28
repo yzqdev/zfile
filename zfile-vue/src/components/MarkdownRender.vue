@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div class="markdown-body" >
-
+    <div class="markdown-body">
       <md-editor-v3 v-model="text" />
     </div>
     <template>
@@ -21,46 +20,44 @@
 </template>
 
 <script setup>
+let props = defineProps({
+  text: String,
+});
 
-let props=defineProps({
-  text:String
-})
-
-    // markdownHtml() {
-    //     // url 新窗口打开.
-    //     let renderer = new marked.Renderer();
-    //     renderer.link = function() {
-    //         let link = marked.Renderer.prototype.link.apply(this, arguments);
-    //         return link.replace("<a","<a target='_blank'");
-    //     };
-    //     marked.setOptions({
-    //         renderer: renderer
-    //     });
-    //
-    //     return marked(this.text, {
-    //         highlight: function(code) {
-    //             return hljs.highlightAuto(code).value;
-    //         }
-    //     });
-    // }
-
+// markdownHtml() {
+//     // url 新窗口打开.
+//     let renderer = new marked.Renderer();
+//     renderer.link = function() {
+//         let link = marked.Renderer.prototype.link.apply(this, arguments);
+//         return link.replace("<a","<a target='_blank'");
+//     };
+//     marked.setOptions({
+//         renderer: renderer
+//     });
+//
+//     return marked(this.text, {
+//         highlight: function(code) {
+//             return hljs.highlightAuto(code).value;
+//         }
+//     });
+// }
 </script>
 
 <style lang="scss" scoped>
-
-
-:deep(.markdown-body ){
+:deep(.markdown-body) {
   box-sizing: border-box;
   min-width: 200px;
   max-width: 980px;
   margin: 0 auto;
-  padding: 30px;img {
-  max-height: 150vh;
-  max-width: 150vh;
-  vertical-align: middle;
-}pre {
-   background-color: rgba(27, 31, 35, 0.05);
- }
+  padding: 30px;
+  img {
+    max-height: 150vh;
+    max-width: 150vh;
+    vertical-align: middle;
+  }
+  pre {
+    background-color: rgba(27, 31, 35, 0.05);
+  }
 }
 
 .back-to-ceiling {

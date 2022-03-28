@@ -23,8 +23,15 @@
     </el-row>
 
     <!-- 文档区 -->
-    <el-card :class="isFullScreen ? '' : 'zfile-readme-center'"   v-if="$store.getters.showDocument && $store.state.common.config.readme !== null">
-      <markdown-render :text="$store.state.common.config.readme"/></el-card>
+    <el-card
+      :class="isFullScreen ? '' : 'zfile-readme-center'"
+      v-if="
+        $store.getters.showDocument &&
+        $store.state.common.config.readme !== null
+      "
+    >
+      <markdown-render :text="$store.state.common.config.readme"
+    /></el-card>
   </div>
 </template>
 
