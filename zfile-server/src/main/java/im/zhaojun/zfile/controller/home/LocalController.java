@@ -1,5 +1,6 @@
 package im.zhaojun.zfile.controller.home;
 
+import cn.hutool.core.lang.Console;
 import im.zhaojun.zfile.context.DriveContext;
 import im.zhaojun.zfile.model.constant.ZFileConstant;
 import im.zhaojun.zfile.service.impl.LocalServiceImpl;
@@ -17,6 +18,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * 本地存储 Controller
@@ -43,10 +46,13 @@ public class LocalController {
     @GetMapping("/file/{driveId}/{*path}")
     @ResponseBody
 
-    public void downAttachment(@PathVariable("driveId") Integer driveId,@PathVariable("path")String path, String type, final HttpServletRequest request, final HttpServletResponse response) {
+    public void downAttachment(@PathVariable("driveId") Integer driveId,@PathVariable("path")String path, String type, final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
 
         LocalServiceImpl localService = (LocalServiceImpl) driveContext.get(driveId);
-        File file = new File(StringUtils.removeDuplicateSeparator(localService.getFilePath() + ZFileConstant.PATH_SEPARATOR + path));
+
+        String realUrl= URLDecoder.decode(StringUtils.removeDuplicateSeparator(localService.getFilePath() + ZFileConstant.PATH_SEPARATOR + path),"utf-8");
+        Console.log(realUrl);
+        File file = new File(realUrl);
         FileUtil.export(request, response, file, type);
     }
 

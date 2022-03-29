@@ -1,6 +1,7 @@
 package im.zhaojun.zfile.controller.home;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import im.zhaojun.zfile.context.DriveContext;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -59,8 +61,10 @@ public class DirectLinkController {
                 HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         AntPathMatcher apm = new AntPathMatcher();
+        Console.log("bestMatchPattern: {}", bestMatchPattern);
+        Console.log("path: {}", path);
         String filePath = apm.extractPathWithinPattern(bestMatchPattern, path);
-
+Console.log("filePath: {}", filePath);
         if (filePath.length() > 0 && filePath.charAt(0) != ZFileConstant.PATH_SEPARATOR_CHAR) {
             filePath = "/" + filePath;
         }
@@ -69,7 +73,6 @@ public class DirectLinkController {
         FileItemDTO fileItem = fileService.getFileItem(filePath);
 
         String url = fileItem.getSrc();
-
         if (StrUtil.equalsIgnoreCase(FileUtil.extName(fileItem.getName()), "m3u8")) {
             String textContent = HttpUtil.getTextContent(url);
             response.setContentType("application/vnd.apple.mpegurl;charset=utf-8");

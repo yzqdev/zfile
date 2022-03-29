@@ -16,6 +16,11 @@ import im.zhaojun.zfile.service.StorageConfigService;
 import im.zhaojun.zfile.service.base.AbstractBaseFileService;
 import im.zhaojun.zfile.service.base.BaseFileService;
 import im.zhaojun.zfile.util.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import org.apache.commons.lang3.CharSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -26,6 +31,8 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,7 +88,7 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
 
         File file = new File(fullPath);
         Console.log("获取绝对卢林静路径: {}", file.getAbsolutePath());
-Console.log(file.getAbsolutePath());
+        Console.log(file.getAbsolutePath());
         if (!file.exists()) {
             throw new FileNotFoundException("文件不存在");
         }
@@ -130,24 +137,30 @@ Console.log(file.getAbsolutePath());
     @Override
     public FileItemDTO getFileItem(String path) {
         String fullPath = filePath + path;
+        Console.log("localServiceImple");
+        try {
+            Console.log(URLDecoder.decode(fullPath, "utf-8"));
+            File file = new File(URLDecoder.decode(fullPath, "utf-8"));
 
-        File file = new File(fullPath);
+            if (!file.exists()) {
+                throw new NotExistFileException();
+            }
 
-        if (!file.exists()) {
-            throw new NotExistFileException();
+            FileItemDTO fileItemDTO = new FileItemDTO();
+            fileItemDTO.setType(file.isDirectory() ? FileTypeEnum.FOLDER : FileTypeEnum.FILE);
+            fileItemDTO.setTime(new Date(file.lastModified()));
+            fileItemDTO.setSize(file.length());
+            fileItemDTO.setName(file.getName());
+            fileItemDTO.setPath(filePath);
+            if (file.isFile()) {
+                fileItemDTO.setSrc(getDownloadUrl(path));
+            }
+
+            return fileItemDTO;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-
-        FileItemDTO fileItemDTO = new FileItemDTO();
-        fileItemDTO.setType(file.isDirectory() ? FileTypeEnum.FOLDER : FileTypeEnum.FILE);
-        fileItemDTO.setTime(new Date(file.lastModified()));
-        fileItemDTO.setSize(file.length());
-        fileItemDTO.setName(file.getName());
-        fileItemDTO.setPath(filePath);
-        if (file.isFile()) {
-            fileItemDTO.setSrc(getDownloadUrl(path));
-        }
-
-        return fileItemDTO;
+        return null;
     }
 
     @Override
