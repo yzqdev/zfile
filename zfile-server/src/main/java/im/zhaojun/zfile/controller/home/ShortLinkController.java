@@ -3,6 +3,7 @@ package im.zhaojun.zfile.controller.home;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.URLUtil;
 import im.zhaojun.zfile.model.constant.ZFileConstant;
+import im.zhaojun.zfile.model.dto.ShortLinkDto;
 import im.zhaojun.zfile.model.dto.SystemConfigDTO;
 import im.zhaojun.zfile.model.entity.ShortLinkConfig;
 import im.zhaojun.zfile.model.support.ResultBean;
@@ -10,11 +11,7 @@ import im.zhaojun.zfile.service.ShortLinkConfigService;
 import im.zhaojun.zfile.service.SystemConfigService;
 import im.zhaojun.zfile.util.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -96,10 +93,10 @@ public class ShortLinkController {
     /**
      * 批量删除直链
      */
-    @DeleteMapping("admin/api/short-link")
+    @PostMapping("/admin/api/short-link")
     @ResponseBody
-    public ResultBean batchDelete(@RequestParam("id[]") Integer[] ids) {
-        for (Integer id : ids) {
+    public ResultBean batchDelete(@RequestBody ShortLinkDto shortLinkDto) {
+        for (Integer id : shortLinkDto.getIds()) {
             shortLinkConfigService.deleteById(id);
         }
         return ResultBean.success();

@@ -18,7 +18,7 @@
               }"
               :label="'表达式 ' + (index + 1)"
             >
-              <el-input size="small" v-model="item.expression"></el-input>
+              <el-input  v-model="item.expression"></el-input>
             </el-form-item>
           </el-col>
 
@@ -26,10 +26,10 @@
             <el-button
               class="zfile-filter-delete-btn"
               type="danger"
-              size="small"
+
               @click="deleteFilterItem(index)"
-              icon="el-icon-delete"
-              >删除
+
+              >删除<el-icon><delete/></el-icon>
             </el-button>
           </el-col>
         </el-row>
@@ -37,10 +37,10 @@
       <el-form-item>
         <el-button
           type="primary"
-          size="small"
-          icon="el-icon-plus"
+
+
           @click="addFilterItem"
-          >添加更多</el-button
+          ><el-icon><plus/></el-icon>添加更多</el-button
         >
       </el-form-item>
       <el-form-item>
@@ -62,10 +62,10 @@
     <div slot="footer" class="zfile-filter-save-btn">
       <el-button
         type="primary"
-        size="small"
-        icon="el-icon-check"
+
+
         @click="saveFilterForm"
-        >保存</el-button
+        >保存<el-icon><check/></el-icon></el-button
       >
     </div>
   </div>
@@ -73,9 +73,11 @@
 
 <script>
 import { getDriveFilterApi, postDriveFilterApi } from "../../utils/cache";
+import {Check, Delete, Plus} from "@element-plus/icons-vue";
 
 export default {
   name: "FilterPattern",
+  components: {Delete, Plus, Check},
   props: {
     close: {
       type: Function,

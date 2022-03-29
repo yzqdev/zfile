@@ -1,11 +1,11 @@
 <template>
   <el-card class="zfile-admin-short-card">
-    <el-form :inline="true" class="zfile-admin-short-form" :model="searchParam">
+    <el-form :inline="true"  :model="searchParam">
       <el-form-item label="直链 Key">
-        <el-input size="small" v-model="searchParam.key"></el-input>
+        <el-input   v-model="searchParam.key"></el-input>
       </el-form-item>
       <el-form-item label="路径/文件名">
-        <el-input size="small" v-model="searchParam.url"></el-input>
+        <el-input    v-model="searchParam.url"></el-input>
       </el-form-item>
       <el-form-item label="创建日期">
         <el-date-picker
@@ -13,7 +13,7 @@
             type="daterange"
 
             unlink-panels
-            value-format="yyyy-MM-dd"
+            value-format="YYYY-MM-DD"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -26,7 +26,7 @@
         <el-button
             type="primary"
             @click="init"
-            size="small"
+
 
         >
           <el-icon>
@@ -40,7 +40,6 @@
 
     <el-button
         type="primary"
-        size="small"
 
         @click="openAddLinkItemDialog"
     >
@@ -52,7 +51,6 @@
     >
     <el-button
         type="danger"
-        size="small"
 
         @click="batchDeleteLinkItem"
     >
@@ -68,6 +66,7 @@
         @sort-change="sortMethod"
         :default-sort="{ prop: 'createDate', order: 'descending' }"
         ref="shortLinkTable"
+        @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" label="序号"></el-table-column>
       <el-table-column type="index" label="序号"></el-table-column>
@@ -83,10 +82,14 @@
           <a target="_blank" :href="siteDomain + '/s/' + scope.row.key">{{
               scope.row.key
             }}</a>
-          <i
-              class="el-icon-edit-outline table-edit-icon"
+          <el-icon
+              class="  table-edit-icon"
               @click="editKey(scope.row.id)"
-          ></i>
+          >
+            <el-icon>
+              <edit/>
+            </el-icon>
+          </el-icon>
         </template>
       </el-table-column>
       <el-table-column
@@ -108,21 +111,26 @@
       <el-table-column width="120" label="操作">
         <template v-slot="scope">
           <el-popconfirm
-              @confirm="deleteLink(scope.row.id)"
+              @confirm.stop="deleteLink(scope.row.id)"
               confirmButtonText="确定"
               cancelButtonText="取消"
               icon="el-icon-info"
               iconColor="red"
               title="确定删除此直链"
           >
-            <el-button
-                #reference
-                class="el-icon-delete"
-                size="small"
-                type="danger"
-            >删除<el-icon><delete /></el-icon>
-            </el-button
-            >
+            <template #reference>
+              <el-button
+
+                  class="el-icon-delete"
+
+                  type="danger"
+              >删除
+                <el-icon>
+                  <delete/>
+                </el-icon>
+              </el-button
+              >
+            </template>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -169,15 +177,15 @@
               placeholder="请输入路径地址"
               class="input-with-select"
           >
-            <div slot="prepend">/directlink/{{ addLinkModel.driveId }}</div>
+            <template #prepend>/directlink/</template>
+            {{ addLinkModel.driveId }}
           </el-input>
         </el-form-item>
-      </el-form>
+      </el-form><template #footer>
       <div class="dialog-footer">
         <el-button
             type="primary"
 
-            size="small"
             @click="addLinkItemAction"
         >
           <el-icon>
@@ -188,7 +196,6 @@
         >
         <el-button
 
-            size="small"
             @click="addLinkVisible = false"
         >
           <el-icon>
@@ -197,7 +204,7 @@
           关闭
         </el-button
         >
-      </div>
+      </div></template>
     </el-dialog>
   </el-card>
 </template>
@@ -213,14 +220,15 @@ import {getAdminConfigApi, getDrivesApi, linkListApi} from "../../utils/apis";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {onMounted, reactive, ref, toRefs} from "vue";
 import {useStore} from "vuex";
-import {Check, Close, Delete, Plus, Search} from "@element-plus/icons-vue";
+import {Check, Close, Delete, Edit, Plus, Search} from "@element-plus/icons-vue";
+import common from "../../common";
 
 let shortLinkTable = ref()
 let state = reactive({
   addLinkModel: {
     driveId: null,
     path: "",
-  },
+  }, multipleSelection: [],
   addLinkVisible: false,
   linkUrl: "",
   linkLog: [],
@@ -275,14 +283,20 @@ let {
   linkUrl,
   searchParam,
   pickerOptions,
-  date,
+  date, multipleSelection,
   driveList,
   siteDomain
 } = toRefs(state)
 let store = useStore()
 
+function handleSelectionChange(val: any) {
+
+  state.multipleSelection = val
+  console.log(state.multipleSelection)
+}
+
 function editKey(id) {
-  ElMessageBox.confirm("请输入要修改为的 Key。", "提示", {
+  ElMessageBox.prompt("请输入要修改为的 Key。", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
   }).then(({value}) => {
@@ -302,9 +316,8 @@ function handleRowClick(row) {
 }
 
 function batchDeleteLinkItem() {
-  let selection = shortLinkTable.value.selection;
-
-  if (selection.length === 0) {
+  let selection = state.multipleSelection
+  if (state.multipleSelection.length === 0) {
     ElMessage({
       type: 'warning', message: "请至少选中一行数据"
     })
@@ -317,12 +330,12 @@ function batchDeleteLinkItem() {
     type: "warning",
     callback: (action) => {
       if (action === "confirm") {
-        let arr = [];
+        let arr: any[] = [];
         for (let index in selection) {
           arr[index] = selection[index].id;
         }
 
-        delShortLinkApi({params: {id: arr}}).then((response) => {
+        delShortLinkApi({ids: arr}).then((response) => {
           if (response.data.code === 0) {
             ElMessage({
               type: "success"
@@ -340,8 +353,7 @@ function batchDeleteLinkItem() {
 }
 
 function addLinkItemAction() {
-  alert(store.getters.domain);
-  state.addLinkModel.path = state.common.removeDuplicateSeparator(
+  state.addLinkModel.path = common.removeDuplicateSeparator(
       "/" + state.addLinkModel.path
   );
   postShortLinkApi({params: state.addLinkModel}).then(() => {
@@ -387,7 +399,7 @@ function handleCurrentChange(val) {
 
 function deleteLink(id) {
   delLinkApi(id).then((response) => {
-    if (response.data.code === state.common.responseCode.SUCCESS) {
+    if (response.data.code === common.responseCode.SUCCESS) {
       ElMessage({
         type: 'success', message: '删除成功'
       })
@@ -430,14 +442,12 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
-:deep(.zfile-admin-short-form) {
-  .el-form-item:first-child {
-    margin-left: 10px;
-  }
-
-  .el-form-item:not(:first-child) {
-    margin-left: 20px;
+<style lang="scss"  scoped>
+.zfile-admin-short-card{
+  :deep(.el-form){
+    .el-form-item{
+      margin-right: 20px;
+    }
   }
 }
 

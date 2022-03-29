@@ -6,7 +6,7 @@
           <div slot="header" class="clearfix">
             <span class="card-title">缓存数</span>
             <el-button
-              size="small"
+
               icon="el-icon-delete"
               class="zfile-float-right"
               round
@@ -43,7 +43,7 @@
       </el-col>
       <el-col :span="4">
         <el-button
-          size="small"
+
           type="primary"
           icon="el-icon-refresh"
           class="zfile-float-right"
@@ -73,7 +73,7 @@
       <el-table-column min-width="25%" label="操作">
         <template slot-scope="scope">
           <el-button
-            size="small"
+
             type="primary"
             round
             @click="refreshCache(scope.row)"

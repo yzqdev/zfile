@@ -30,7 +30,7 @@
       </el-form-item>
 
       <el-form-item class="box animate__animated animate__fadeInUp">
-        <el-button type="primary" size="small" @click="submitForm('form')"
+        <el-button type="primary"  @click="submitForm('form')"
           >保存设置</el-button
         >
       </el-form-item>
@@ -95,11 +95,11 @@ export default {
     getAdminConfigApi().then((response) => {
       this.form = response.data.data;
 
-      let serverDomain =
+      let siteDomain =
         http.defaults.baseURL === ""
           ? window.location.origin
           : http.defaults.baseURL;
-      let siteDomain = this.form.domain;
+      let serverDomain = this.form.domain;
 
       if (serverDomain !== siteDomain) {
         this.$confirm(

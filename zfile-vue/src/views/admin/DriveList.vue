@@ -4,7 +4,7 @@
       <el-button
           type="primary"
 
-          size="small"
+
           @click="addDrive"
       ><el-icon><plus /></el-icon>新增
       </el-button
@@ -79,11 +79,11 @@
               placement="left"
           >
             <el-button
-                size="small"
-                class="el-icon-edit"
+
+
                 type="primary"
                 @click="editDrive(scope.row)"
-            >编辑
+            > <el-icon><edit/></el-icon>
             </el-button>
           </el-tooltip>
 
@@ -94,12 +94,12 @@
               placement="top"
           >
             <el-button
-                size="small"
+
                 :disabled="!scope.row.enableCache"
-                class="el-icon-s-operation"
+
                 type="primary"
                 @click="cacheManage(scope.row)"
-            >缓存
+            > <el-icon><operation /></el-icon>
             </el-button>
           </el-tooltip>
 
@@ -110,11 +110,11 @@
               placement="bottom"
           >
             <el-button
-                class="el-icon-view"
-                size="small"
+
+
                 type="primary"
                 @click="showFilterDialog(scope.row)"
-            >过滤
+            > <el-icon><View /></el-icon>
             </el-button>
           </el-tooltip>
 
@@ -126,10 +126,10 @@
           >
             <el-button
                 @click="deleteDrive(scope.row)"
-                class="el-icon-delete"
-                size="small"
+
+
                 type="danger"
-            >删除
+            > <el-icon><delete/></el-icon>
             </el-button>
           </el-tooltip>
 
@@ -159,7 +159,7 @@
         title="过滤规则"
 
         v-if="filterDialogVisible"
-        :visible.sync="filterDialogVisible"
+        v-model="filterDialogVisible"
         top="10vh"
         :destroy-on-close="true"
     >
@@ -204,7 +204,7 @@ import {
 } from "../../utils/cache";
 import {getDrivesApi} from "../../utils/apis";
 import {defineComponent, onMounted, reactive, toRefs} from "vue";
-import {Edit,Plus} from '@element-plus/icons-vue'
+import {Delete, Edit, Operation, Plus, View} from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 
 let state = reactive({

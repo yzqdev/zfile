@@ -3,11 +3,7 @@ package im.zhaojun.zfile.controller.admin;
 import im.zhaojun.zfile.model.support.ResultBean;
 import im.zhaojun.zfile.service.ShortLinkConfigService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -36,7 +32,7 @@ public class ShortLinkManagerController {
         return ResultBean.success(shortLinkConfigService.find(key, url, dateFrom, dateTo, page, limit, orderBy, orderDirection));
     }
 
-    @GetMapping("/link/delete/{id}")
+    @DeleteMapping("/link/delete/{id}")
     @ResponseBody
     public ResultBean deleteById(@PathVariable Integer id) {
         shortLinkConfigService.deleteById(id);

@@ -1,5 +1,5 @@
 <template>
-  <el-form :inline="true" class="zfile-header" size="small">
+  <el-form :inline="true" class="zfile-header" >
     <el-form-item>
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home/' + currentDriveId + '/' }">
@@ -20,19 +20,19 @@
         v-show="debugMode"
         label="已开启 DEBUG 模式，使用完请及时关闭"
         class="zfile-debug-tips"
-        size="small"
+
       >
-        <el-button @click="resetAdminPwd" size="small" type="danger"
+        <el-button @click="resetAdminPwd"  type="danger"
           >重置密码
         </el-button>
       </el-form-item>
 
-      <el-form-item label="图片模式" size="small">
+      <el-form-item label="图片模式" >
         <el-switch v-model="imgModel"></el-switch>
       </el-form-item>
 
       <el-select
-        size="small"
+
         v-model="currentDriveId"
         placeholder="请选择驱动器"
       >

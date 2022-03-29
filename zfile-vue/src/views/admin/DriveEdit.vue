@@ -481,7 +481,7 @@ watch(props.driveItem, (newVal) => {
   } else {
     state.storageStrategyForm = null;
   }
-}, {deep: true, immediate: true})
+}, {deep: true, })
 
 
 function loadStrategyForm(val: any) {
