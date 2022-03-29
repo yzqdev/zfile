@@ -4,8 +4,8 @@
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home/' + currentDriveId + '/' }">
           {{
-              siteName
-                ?  siteName
+            siteName
+                ? siteName
                 : "首页"
           }}
         </el-breadcrumb-item>
@@ -84,12 +84,13 @@ let {
   searching,
   timer,
 } = toRefs(state);
-let debugMode=computed(() => {
+let debugMode = computed(() => {
   return store.getters["common/debugMode"]
 })
-let siteName=computed(() => {
+let siteName = computed(() => {
   return store.getters["common/siteName"]
 })
+
 function resetAdminPwd() {
   ElMessageBox.confirm(
       "是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456",
@@ -135,7 +136,7 @@ function buildBreadcrumbData() {
 }
 
 function refreshCurrentStorageStrategy() {
-  state.driveList.some((item:any) => {
+  state.driveList.some((item: any) => {
     if (item.id == state.currentDriveId) {
 
       store.commit("common/updateCurrentStorageStrategy", item);
@@ -143,7 +144,7 @@ function refreshCurrentStorageStrategy() {
   });
 }
 
-onBeforeMount(() => {
+onMounted(() => {
   buildBreadcrumbData();
 });
 onMounted(async () => {
@@ -157,7 +158,7 @@ onMounted(async () => {
     // 如果当前 URL 参数中有驱动器 ID, 则直接用当前的.
     if (route.params.driveId) {
 
-      state.currentDriveId = route.params.driveId;
+      state.currentDriveId =Number(route.params.driveId);
     } else if (state.driveList.length > 0) {
       // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
       state.currentDriveId = state.driveList[0].id;
@@ -219,7 +220,7 @@ watch(search, (newVal) => {
 });
 </script>
 
-<style scoped>
+<style lang="scss"  >
 .zfile-header {
   display: flex;
   flex-flow: row nowrap;
@@ -229,41 +230,49 @@ watch(search, (newVal) => {
   background: #fafafa;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   padding-left: 30px;
+
+  .el-input {
+    line-height: 48px;
+  }
+
+  .el-breadcrumb {
+    line-height: 48px;
+    font-size: 13px;
+  }
 }
 
-.zfile-header .el-breadcrumb {
-  line-height: 48px;
-  font-size: 13px;
-}
-
-.zfile-header .el-input {
-  line-height: 48px;
-}
 
 @media only screen and (max-width: 767px) {
-  .zfile-header >>> .el-breadcrumb__separator {
-    display: none !important;
+  .zfile-header {
+    .el-breadcrumb__separator {
+      display: none !important;
+    }
+
+    .el-form-item__label {
+      display: none !important;
+    }
+
+    .el-select {
+      width: 120px;
+    }
   }
 
-  .zfile-header >>> .el-form-item__label {
-    display: none !important;
-  }
 
-  .zfile-header >>> .el-select {
-    width: 120px;
-  }
 }
 
 .zfile-header-drive {
   margin-right: 20px;
+
+  .el-form-item__content {
+    vertical-align: unset;
+  }
 }
 
-.zfile-header-drive >>> .el-form-item__content {
-  vertical-align: unset;
-}
 
-.zfile-debug-tips >>> .el-form-item__label {
-  font-weight: bold;
-  color: red !important;
+.zfile-debug-tips {
+  .el-form-item__label {
+    font-weight: bold;
+    color: red !important;
+  }
 }
 </style>

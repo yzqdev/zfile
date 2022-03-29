@@ -54,14 +54,26 @@ export default {
   methods: {
     getFileSuffix(name) {
       let suffix = name.substring(name.lastIndexOf(".") + 1).toLocaleLowerCase();
-      if (suffix === "js") {
-        return "javascript";
-      }
-      return suffix;
+      console.log('拓展名是',suffix)
+      let langMap=new Map([
+          ['css','css'],
+          ['xml','xml'],
+          ['yml','yml'],
+          ['html','html'],
+          ['less','less'],
+          ['php','php'],
+          ['sh','shell'],
+          ['js','javascript'],
+          ['ts','typescript'],
+          ['json','json'],
+          ['java','java'],
+          ['go','go'],
+          ['py','python'],
+          ['cs','csharp'],
+      ])
+       return langMap.get(suffix)?langMap.get(suffix):suffix
     },
     initMonaco() {
-      console.log(`%clang`,`color:red;font-size:16px;background:transparent`)
-      console.log(this.getFileSuffix(this.file.name))
       if (this.getFileSuffix(this.file.name) !== "md") {
           monaco.editor.create(document.getElementById("container"), {
             value: this.text,

@@ -1,6 +1,6 @@
 <template>
-  <article class="folder-wrapper">
-    <div v-loading="initLoading" class="folder-list">
+  <article class="folder-wrapper" v-loading="initLoading" >
+    <div class="folder-list">
       <el-table
           v-loading="loading"
           element-loading-text="拼命加载中"
