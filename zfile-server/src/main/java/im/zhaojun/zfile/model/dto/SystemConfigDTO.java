@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import im.zhaojun.zfile.model.enums.StorageTypeEnum;
 import im.zhaojun.zfile.model.enums.StorageTypeEnumSerializerConvert;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * 系统设置传输类
  *
  * @author zhaojun
  */
-@ToString
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SystemConfigDTO {
 
     @JsonIgnore

@@ -1,6 +1,7 @@
 package im.zhaojun.zfile.service;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import im.zhaojun.zfile.cache.ZFileCache;
@@ -79,12 +80,12 @@ public class SystemConfigService {
      *          系统
      *
      */
-    public void updateSystemConfig(SystemConfigDTO systemConfigDTO) {
+    public SystemConfigDTO updateSystemConfig(SystemConfigDTO systemConfigDTO) {
         List<SystemConfig> systemConfigList = new ArrayList<>();
-
         Field[] fields = systemConfigClazz.getDeclaredFields();
         for (Field field : fields) {
             String key = field.getName();
+            Console.log("key: {}", key);
             SystemConfig systemConfig = systemConfigRepository.findByKey(key);
             if (systemConfig != null) {
                 field.setAccessible(true);
@@ -92,6 +93,9 @@ public class SystemConfigService {
 
                 try {
                     val = field.get(systemConfigDTO);
+                    Console.log("这是系统配置: {}", systemConfig);
+                    Console.log("这是post系统配置: {}", systemConfigDTO);
+                    Console.log(val);
                 } catch (IllegalAccessException e) {
                     log.error("通过反射, 从 SystemConfigDTO 获取字段 {}  时出现异常:", key, e);
                 }
@@ -105,6 +109,7 @@ public class SystemConfigService {
 
         zFileCache.removeConfig();
         systemConfigRepository.saveAll(systemConfigList);
+        return getSystemConfig();
     }
 
 
