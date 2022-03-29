@@ -4,8 +4,8 @@
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home/' + currentDriveId + '/' }">
           {{
-             $store.state.common.config.siteName
-                ?  $store.state.common.config.siteName
+            $store.state.common.config.siteName
+                ? $store.state.common.config.siteName
                 : "首页"
           }}
         </el-breadcrumb-item>
@@ -13,7 +13,7 @@
             v-for="item in breadcrumbData"
             class="hidden-xs-only"
             :key="`/home/${currentDriveId}?path=${item.fullPath}`"
-        ><a :href="`/home/${currentDriveId}?path=${item.fullPath}`">{{item.name}}</a>
+        ><a :href="`/home/${currentDriveId}?path=${item.fullPath}`">{{ item.name }}</a>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-form-item>
@@ -115,7 +115,7 @@ function resetAdminPwd() {
 
 function buildBreadcrumbData() {
   state.breadcrumbData = [];
-  console.log(`%cbuildBreadcrumbData`,`color:red;font-size:16px;background:transparent`)
+  console.log(`%cbuildBreadcrumbData`, `color:red;font-size:16px;background:transparent`)
   let fullPath: string = route.query.path;
   console.log(fullPath)
   fullPath = fullPath ? fullPath : "/";
@@ -129,8 +129,14 @@ function buildBreadcrumbData() {
 }
 
 function refreshCurrentStorageStrategy() {
-  state.driveList.some((item) => {
+  console.log(`%c当前驱动`, `color:red;font-size:16px;background:transparent`)
+  console.log(state.currentDriveId)
+  state.driveList.some((item:any) => {
+    console.log(item.id)
     if (item.id === state.currentDriveId) {
+      console.log(`%crefreshCurrentStorageStrategy`, `color:red;font-size:16px;background:transparent`)
+      console.log(state.driveList)
+
       store.commit("common/updateCurrentStorageStrategy", item);
     }
   });
@@ -150,7 +156,7 @@ onMounted(async () => {
     // 如果当前 URL 参数中有驱动器 ID, 则直接用当前的.
     if (route.params.driveId) {
 
-      state.currentDriveId =   route.params.driveId ;
+      state.currentDriveId = route.params.driveId;
     } else if (state.driveList.length > 0) {
       // 否则读取驱动器列表中的第一个, 并跳转到响应的 URL 中.
       state.currentDriveId = state.driveList[0].id;

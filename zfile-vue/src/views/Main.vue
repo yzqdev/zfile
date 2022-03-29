@@ -1,10 +1,11 @@
 <template>
   <div>
     <!-- 头部: 搜索栏、面包屑、驱动器设置 -->
-    <Header :drive-id="driveId" />
+    <Header   />
 
     <!-- 公告区 -->
-    <div class="zfile-header-announcement"></div>
+    <div class="zfile-header-announcement" v-html="announcement"
+         v-if="showAnnounce"></div>
 
     <!--
         文件区
@@ -41,7 +42,7 @@ import FolderList from '../components/FolderList.vue';
 import MarkdownRender from "../components/MarkdownRender.vue";
 import common from "../common";
 import { useStore } from "vuex";
-import { watch } from "vue";
+import {computed, watch} from "vue";
 
 let store = useStore();
 
@@ -50,10 +51,12 @@ function isFullScreen() {
   return common.isMobile() || store.getters.layout !== "center";
 }
 
-console.log(
-  `%cmain components`,
-  `color:red;font-size:16px;background:transparent`
-);
+let showAnnounce=computed(() => {
+  return store.getters['common/showAnnouncement']
+})
+let announcement=computed(() => {
+  return store.getters['common/announcement']
+})
 console.log(store.state.common);
 watch(
   store.state.common,

@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     getFileSuffix(name) {
-      let suffix = name.substr(name.lastIndexOf(".") + 1).toLocaleLowerCase();
+      let suffix = name.substring(name.lastIndexOf(".") + 1).toLocaleLowerCase();
       if (suffix === "js") {
         return "javascript";
       }

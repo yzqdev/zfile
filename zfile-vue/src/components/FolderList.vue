@@ -1,401 +1,435 @@
 <template>
   <article class="folder-wrapper">
-  <div v-loading="initLoading" class="folder-list">
-    <el-table
-        v-loading="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(255,255,255,.5)"
-        ref="fileTable"
-
-        @sort-change="sortMethod"
-        :data="tableData"
-        @row-click="openFolder"
-        :height="tableHeight"
-        :size="tableSize"
-        @row-contextmenu="showMenu"
-    >
-      <el-table-column
-          prop="name"
-          icon="el-icon-notebook-1"
-          sortable="custom"
-          class-name="zfile-table-col-name"
-          label-class-name="table-header-left"
-          min-width="100%"
-      >
-        <template #header>
-          <i class="el-icon-document hidden-xs-only"></i>
-          <span>文件名</span>
-        </template>
-        <template #default="scope">
-          <template v-if="imgMode && scope.row.icon === 'el-icon-my-image'">
-            <el-image
-                class="img-mode-img" :src="scope.row.src"
-
-                :preview-src-list="imageList"
-                :initial-index="1"
-                fit="cover"
-            >
-            </el-image>
-          </template>
-          <template v-else>
-            <svg class="icon" aria-hidden="true">
-              <use :xlink:href="'#' + scope.row.icon" />
-            </svg>
-            {{ scope.row.name }}
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column
-          prop="time"
-          label="修改时间"
-          sortable="custom"
-          v-if="!imgMode && !common.isMobile()"
-          class-name="zfile-table-col-time hidden-xs-only"
-          min-width="20%"
-      >
-        <template #header>
-          <el-icon ><calendar/></el-icon>
-          <span>修改时间</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-          prop="size"
-          label="大小"
-          class-name="zfile-table-col-size hidden-xs-only"
-          v-if="!imgMode && !common.isMobile()"
-          sortable="custom"
-          :formatter="common.fileSizeFilter"
-          min-width="15%"
-      >
-        <template #header>
-          <el-icon
-          ><coin/></el-icon>
-          <span>大小</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-          v-if="operater"
-          label="操作"
-          class-name="zfile-table-col-operator"
-          :min-width="common.isMobile() ? '35%' : '15%'"
-      >
-<!--        <template #header v-if="$store.getters[`common/showLinkBtn`]">-->
-<!--          <el-icon :size="20"><operation /></el-icon>-->
-<!--          <span>操作</span>-->
-<!--          <el-tooltip-->
-<!--              class="item"-->
-<!--              effect="dark"-->
-<!--              content="批量生成直链"-->
-<!--              placement="top"-->
-<!--          >-->
-<!--            <i-->
-<!--                @click.stop="openBatchCopyLinkDialog"-->
-<!--                class="el-icon-copy-document operator-btn hidden-xs-only zfile-margin-left-5"-->
-<!--            ></i>-->
-<!--          </el-tooltip>-->
-<!--        </template>-->
-        <template #default="scope">
-          <div v-if="scope.row.type === 'FILE'">
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="下载"
-                placement="top"
-            >
-              <el-icon
-                  @click.stop="downloadFile(scope.row)"
-                  class=" operator-btn"
-              ><download/></el-icon>
-            </el-tooltip>
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="生成直链"
-                placement="top"
-            >
-              <el-icon
-                  @click="copyShortLink(scope.row)"
-                  class=" operator-btn"
-              ><copy-document/></el-icon>
-            </el-tooltip>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-dialog
-        id="textDialog"
-        :destroy-on-close="true"
-        :title="currentClickRow.name"
-        v-model="dialogTextVisible"
-        v-if="dialogTextVisible"
-        :top="'5vh'"
-        :width="'90%'"
-    >
-      <TextPreview :file="currentClickRow" ref="textDialog" />
-    </el-dialog>
-
-    <el-dialog
-        id="videoDialog"
-        :destroy-on-close="true"
-        top="5vh"
-        width="80%"
-        :title="currentClickRow.name"
-        v-if="dialogVideoVisible"
-        v-model="dialogVideoVisible"
-    >
-      <video-player
-          v-if="dialogVideoVisible"
-          ref="videoPlayer"
-          :data="currentClickRow"
-      />
-    </el-dialog>
-
-    <el-dialog
-        id="copyLinkDialog"
-        title="生成直链结果"
-        :width="common.isMobile() ? '95%' : '50%'"
-        v-model="dialogCopyLinkVisible"
-        v-if="dialogCopyLinkVisible"
-    >
-      <el-row v-if="currentCopyLinkRow.row">
-        <el-col :span="12" :xs="24" class="zfile-dialog-link-result-qrcode">
-          <el-form>
-            <el-form-item>
-              <img :src="currentCopyLinkRow.img" alt="右键可另存为图片" />
-            </el-form-item>
-            <el-form-item class="hidden-sm-and-down">
-              <div class="zfile-word-aux zfile-margin-left-unset">
-                二维码可右键另存为图片
-              </div>
-            </el-form-item>
-            <el-form-item class="hidden-sm-and-up">
-              <div class="zfile-word-aux zfile-margin-left-unset">
-                二维码可长按另存为图片
-              </div>
-            </el-form-item>
-          </el-form>
-        </el-col>
-        <el-col :span="12" :xs="24" class="zfile-dialog-link-result-info">
-          <el-form>
-            <el-form-item>
-              <el-input
-                  disabled
-                  prefix-icon="el-icon-document"
-                  v-model="currentCopyLinkRow.row.name"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-input
-                  disabled
-                  prefix-icon="el-icon-date"
-                  v-model="currentCopyLinkRow.row.time"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-input
-                  disabled
-                  prefix-icon="el-icon-coin"
-                  v-bind:value="currentCopyLinkRow.row.size | fileSizeFormat"
-              ></el-input>
-            </el-form-item>
-            <el-form-item
-                v-if="$store.getters.showLinkBtn && $store.getters.showPathLink"
-            >
-              <el-input
-                  prefix-icon="el-icon-link"
-                  type="small"
-                  v-model="currentCopyLinkRow.directlink"
-              >
-                <el-tooltip
-                    #append
-                    class="item"
-                    effect="dark"
-                    content="复制"
-                    placement="bottom"
-                >
-                  <el-button
-                      @click="copyText(currentCopyLinkRow.directlink)"
-                      type="small"
-
-                  ><el-icon><copy-document/></el-icon></el-button>
-                </el-tooltip>
-              </el-input>
-            </el-form-item>
-            <el-form-item
-                v-if="$store.getters.showLinkBtn && $store.getters.showShortLink"
-            >
-              <el-input
-                  prefix-icon="el-icon-link"
-                  type="small"
-                  v-model="currentCopyLinkRow.link"
-              >
-                <el-tooltip
-                    #append
-                    class="item"
-                    effect="dark"
-                    content="复制"
-                    placement="bottom"
-                >
-                  <el-button
-                      @click="copyText(currentCopyLinkRow.link)"
-                      type="small"
-
-                  ><el-icon><copy-document/></el-icon></el-button>
-                </el-tooltip>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <div class="zfile-word-aux zfile-margin-left-unset">
-                直链域名取决与站点设置中的地址
-              </div>
-              <div class="zfile-word-aux zfile-margin-left-unset">
-                第一个链接为直链(带文件名)，第二个链接为短链接
-              </div>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-    </el-dialog>
-
-    <el-dialog
-        id="batchCopyLinkDialog"
-        title="批量生成直链"
-        width="80%"
-        :top="'80px'"
-        v-model="dialogBatchCopyLinkVisible"
-        v-if="dialogBatchCopyLinkVisible"
-    >
+    <div v-loading="initLoading" class="folder-list">
       <el-table
-          v-loading="batchCopyLinkLoading"
-          element-loading-text="生成直链中..."
-          :data="batchCopyLinkList"
-          max-height="400"
+          v-loading="loading"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(255,255,255,.5)"
+          ref="fileTable"
+
+          @sort-change="sortMethod"
+          :data="tableData"
+          @row-click="openFolder"
+          :height="tableHeight"
+          :size="tableSize"
+          @row-contextmenu="showMenu"
       >
-        <el-table-column label="文件名称" prop="name">
+        <el-table-column
+            prop="name"
+            icon="el-icon-notebook-1"
+            sortable="custom"
+            class-name="zfile-table-col-name"
+            label-class-name="table-header-left"
+            min-width="100%"
+        >
           <template #header>
-            <span>文件名称</span>
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="批量复制"
-                placement="top"
-            >
-              <el-icon
+            <i class="el-icon-document hidden-xs-only"></i>
+            <span>文件名</span>
+          </template>
+          <template #default="scope">
+            <template v-if="imgMode && scope.row.icon === 'el-icon-my-image'">
+              <el-image
+                  class="img-mode-img" :src="scope.row.src"
 
-                  @click.stop="batchCopyLinkField('name')"
-                  class="el-icon-copy-document operator-btn zfile-margin-left-5"
-              ><copy-document/></el-icon>
-            </el-tooltip>
+                  :preview-src-list="imageList"
+                  :initial-index="1"
+                  fit="cover"
+              >
+              </el-image>
+            </template>
+            <template v-else>
+              <svg class="icon" aria-hidden="true">
+                <use :xlink:href="'#' + scope.row.icon"/>
+              </svg>
+              {{ scope.row.name }}
+            </template>
           </template>
         </el-table-column>
         <el-table-column
-            v-if="$store.getters.showLinkBtn && $store.getters.showShortLink"
-            label="短链"
-            width="250px"
-            prop="link1"
+            prop="time"
+            label="修改时间"
+            sortable="custom"
+            v-if="!imgMode && !common.isMobile()"
+            class-name="zfile-table-col-time hidden-xs-only"
+            min-width="20%"
         >
           <template #header>
-            <span>短链</span>
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="批量复制"
-                placement="top"
-            >
-              <el-icon
-                  @click.stop="batchCopyLinkField('link1')"
-                  class=" operator-btn zfile-margin-left-5"
-              ><copy-document /></el-icon>
-            </el-tooltip>
+            <el-icon>
+              <calendar/>
+            </el-icon>
+            <span>修改时间</span>
           </template>
         </el-table-column>
         <el-table-column
-            v-if="$store.getters.showLinkBtn && $store.getters.showPathLink"
-            label="直链"
-            width="350px"
-            show-overflow-tooltip
-            prop="link2"
+            prop="size"
+            label="大小"
+            class-name="zfile-table-col-size hidden-xs-only"
+            v-if="!imgMode && !common.isMobile()"
+            sortable="custom"
+            :formatter="common.fileSizeFilter"
+            min-width="15%"
         >
           <template #header>
-            <span>直链</span>
+            <el-icon
+            >
+              <coin/>
+            </el-icon>
+            <span>大小</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+            v-if="operater"
+            label="操作"
+            class-name="zfile-table-col-operator"
+            :min-width="common.isMobile() ? '35%' : '15%'"
+        >
+          <template #header v-if="showLinkBtn">
+            <el-icon>
+              <operation/>
+            </el-icon>
+            <span>操作</span>
             <el-tooltip
                 class="item"
                 effect="dark"
-                content="批量复制"
+                content="批量生成直链"
                 placement="top"
             >
-
-              <el-icon  class=" operator-btn zfile-margin-left-5" @click.stop="batchCopyLinkField('link2')"><copy-document /></el-icon>
+              <el-icon
+                  @click.stop="openBatchCopyLinkDialog"
+                  class=" operator-btn hidden-xs-only zfile-margin-left-5"
+              >
+                <copy-document/>
+              </el-icon>
             </el-tooltip>
+          </template>
+          <template #default="scope">
+            <div v-if="scope.row.type === 'FILE'">
+              <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="下载"
+                  placement="top"
+              >
+                <el-icon
+                    @click.stop="downloadFile(scope.row)"
+                    class=" operator-btn"
+                >
+                  <download/>
+                </el-icon>
+              </el-tooltip>
+              <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="生成直链"
+                  placement="top"
+              >
+                <el-icon
+                    @click="copyShortLink(scope.row)"
+                    class=" operator-btn"
+                >
+                  <copy-document/>
+                </el-icon>
+              </el-tooltip>
+            </div>
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
 
-    <audio-player
-        :file-list="audios"
-        :audio-index="currentClickTypeIndex('audio')"
-    />
+      <el-dialog
+          id="textDialog"
+          :destroy-on-close="true"
+          :title="currentClickRow.name"
+          v-model="dialogTextVisible"
+          v-if="dialogTextVisible"
+          :top="'5vh'"
+          :width="'90%'"
+      >
+        <TextPreview :file="currentClickRow" ref="textDialog"/>
+      </el-dialog>
 
-    <v-contextmenu ref="contextmenuRef">
-      <v-contextmenu-item @click="openFolder(rightClickRow)">
-        <el-icon><view/></el-icon>
-        <label v-html="rightClickRow.type === 'FILE' ? '预览' : '打开'"></label>
-      </v-contextmenu-item>
-      <v-contextmenu-item
-          @click="downloadFile(rightClickRow)"
-          v-show="rightClickRow.type === 'FILE'"
+      <el-dialog
+          id="videoDialog"
+          :destroy-on-close="true"
+          top="5vh"
+          width="80%"
+          :title="currentClickRow.name"
+          v-if="dialogVideoVisible"
+          v-model="dialogVideoVisible"
       >
-        <el-icon ><download /></el-icon>
-        <label>下载</label>
-      </v-contextmenu-item>
-      <v-contextmenu-item
-          @click="copyShortLink(rightClickRow)"
-          v-show="rightClickRow.type === 'FILE'"
-      >
-        <el-icon><copy-document/></el-icon>
-        <label>生成直链</label>
-      </v-contextmenu-item>
-    </v-contextmenu>
+        <video-player
+            v-if="dialogVideoVisible"
+            ref="videoPlayer"
+            :data="currentClickRow"
+        />
+      </el-dialog>
 
-    <template>
-      <el-backtop
-          target=".el-table__body-wrapper"
-          :bottom="haveDocument() ? 280 : 80"
-          :right="30"
+      <el-dialog
+          id="copyLinkDialog"
+          title="生成直链结果"
+          :width="common.isMobile() ? '95%' : '50%'"
+          v-model="dialogCopyLinkVisible"
+          v-if="dialogCopyLinkVisible"
       >
-        <el-tooltip placement="top" content="回到顶部">
-          <transition name="fade">
-            <div class="back-to-ceiling">
-              <svg class="Icon Icon--backToTopArrow" aria-hidden="true">
-                <use xlink:href="#el-icon-my-to-top"></use>
-              </svg>
-            </div>
-          </transition>
-        </el-tooltip>
-      </el-backtop>
-    </template>
-  </div></article>
+        <el-row v-if="currentCopyLinkRow.row">
+          <el-col :span="12" :xs="24" class="zfile-dialog-link-result-qrcode">
+            <el-form>
+              <el-form-item>
+                <img :src="currentCopyLinkRow.img" alt="右键可另存为图片"/>
+              </el-form-item>
+              <el-form-item class="hidden-sm-and-down">
+                <div class="zfile-word-aux zfile-margin-left-unset">
+                  二维码可右键另存为图片
+                </div>
+              </el-form-item>
+              <el-form-item class="hidden-sm-and-up">
+                <div class="zfile-word-aux zfile-margin-left-unset">
+                  二维码可长按另存为图片
+                </div>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="12" :xs="24" class="zfile-dialog-link-result-info">
+            <el-form>
+              <el-form-item>
+                <el-input
+                    disabled
+                    prefix-icon="el-icon-document"
+                    v-model="currentCopyLinkRow.row.name"
+                ></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                    disabled
+                    prefix-icon="el-icon-date"
+                    v-model="currentCopyLinkRow.row.time"
+                ></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                    disabled
+                    prefix-icon="el-icon-coin"
+                    v-bind:value="  common.fileSizeFormat(currentCopyLinkRow.row.size)"
+                ></el-input>
+              </el-form-item>
+              <el-form-item
+                  v-if="showLinkBtn && showPathLink"
+              >
+                <el-input
+                    prefix-icon="el-icon-link"
+                    type="small"
+                    v-model="currentCopyLinkRow.directlink"
+                >
+                  <el-tooltip
+                      #append
+                      class="item"
+                      effect="dark"
+                      content="复制"
+                      placement="bottom"
+                  >
+                    <el-button
+                        @click="copyText(currentCopyLinkRow.directlink)"
+                        type="small"
+
+                    >
+                      <el-icon>
+                        <copy-document/>
+                      </el-icon>
+                    </el-button>
+                  </el-tooltip>
+                </el-input>
+              </el-form-item>
+              <el-form-item
+                  v-if="showLinkBtn&&showShortLink"
+              >
+                <el-input
+                    prefix-icon="el-icon-link"
+                    type="small"
+                    v-model="currentCopyLinkRow.link"
+                >
+                  <el-tooltip
+                      #append
+                      class="item"
+                      effect="dark"
+                      content="复制"
+                      placement="bottom"
+                  >
+                    <el-button
+                        @click="copyText(currentCopyLinkRow.link)"
+                        type="small"
+
+                    >
+                      <el-icon>
+                        <copy-document/>
+                      </el-icon>
+                    </el-button>
+                  </el-tooltip>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <div class="zfile-word-aux zfile-margin-left-unset">
+                  直链域名取决与站点设置中的地址
+                </div>
+                <div class="zfile-word-aux zfile-margin-left-unset">
+                  第一个链接为直链(带文件名)，第二个链接为短链接
+                </div>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-dialog>
+
+      <el-dialog
+          id="batchCopyLinkDialog"
+          title="批量生成直链"
+          width="80%"
+          :top="'80px'"
+          v-model="dialogBatchCopyLinkVisible"
+          v-if="dialogBatchCopyLinkVisible"
+      >
+        <el-table
+            v-loading="batchCopyLinkLoading"
+            element-loading-text="生成直链中..."
+            :data="batchCopyLinkList"
+            max-height="400"
+        >
+          <el-table-column label="文件名称" prop="name">
+            <template #header>
+              <span>文件名称</span>
+              <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="批量复制"
+                  placement="top"
+              >
+                <el-icon
+
+                    @click.stop="batchCopyLinkField('name')"
+                    class="el-icon-copy-document operator-btn zfile-margin-left-5"
+                >
+                  <copy-document/>
+                </el-icon>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column
+              v-if="showLinkBtn&&showShortLink"
+              label="短链"
+              width="250px"
+              prop="link1"
+          >
+            <template #header>
+              <span>短链</span>
+              <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="批量复制"
+                  placement="top"
+              >
+                <el-icon
+                    @click.stop="batchCopyLinkField('link1')"
+                    class=" operator-btn zfile-margin-left-5"
+                >
+                  <copy-document/>
+                </el-icon>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column
+              v-if="showLinkBtn&& showPathLink"
+              label="直链"
+              width="350px"
+              show-overflow-tooltip
+              prop="link2"
+          >
+            <template #header>
+              <span>直链</span>
+              <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="批量复制"
+                  placement="top"
+              >
+
+                <el-icon class=" operator-btn zfile-margin-left-5" @click.stop="batchCopyLinkField('link2')">
+                  <copy-document/>
+                </el-icon>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
+
+      <audio-player
+          :file-list="audios"
+          :audio-index="currentClickTypeIndex('audio')"
+      />
+
+      <v-contextmenu ref="contextmenuRef">
+        <v-contextmenu-item @click="openFolder(rightClickRow)">
+          <el-icon>
+            <view/>
+          </el-icon>
+          <label v-html="rightClickRow.type === 'FILE' ? '预览' : '打开'"></label>
+        </v-contextmenu-item>
+        <v-contextmenu-item
+            @click="downloadFile(rightClickRow)"
+            v-show="rightClickRow.type === 'FILE'"
+        >
+          <el-icon>
+            <download/>
+          </el-icon>
+          <label>下载</label>
+        </v-contextmenu-item>
+        <v-contextmenu-item
+            @click="copyShortLink(rightClickRow)"
+            v-show="rightClickRow.type === 'FILE'"
+        >
+          <el-icon>
+            <copy-document/>
+          </el-icon>
+          <label>生成直链</label>
+        </v-contextmenu-item>
+      </v-contextmenu>
+
+      <template>
+        <el-backtop
+            target=".el-table__body-wrapper"
+            :bottom="haveDocument() ? 280 : 80"
+            :right="30"
+        >
+          <el-tooltip placement="top" content="回到顶部">
+            <transition name="fade">
+              <div class="back-to-ceiling">
+                <svg class="Icon Icon--backToTopArrow" aria-hidden="true">
+                  <use xlink:href="#el-icon-my-to-top"></use>
+                </svg>
+              </div>
+            </transition>
+          </el-tooltip>
+        </el-backtop>
+      </template>
+    </div>
+  </article>
 </template>
 
 <script setup lang="ts">
 import path from "path";
-import {Coin, CopyDocument, Download, Operation, View,Calendar} from "@element-plus/icons-vue";
+import {Coin, CopyDocument, Download, Operation, View, Calendar} from "@element-plus/icons-vue";
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
 import AudioPlayer from "./AudioPlayer.vue";
 import http from "../utils/http";
 
 import {computed, onBeforeMount, onMounted, reactive, ref, toRefs, watch} from "vue";
-import { qrcode, svg2url } from "pure-svg-code";
-import { getShortLinkApi } from "../utils/shortlink";
-import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
+import {qrcode, svg2url} from "pure-svg-code";
+import {getShortLinkApi} from "../utils/shortlink";
+import {useRoute, useRouter} from "vue-router";
+import {useStore} from "vuex";
 import common from "../common";
 import {ElMessage, ElMessageBox} from "element-plus";
+
 let props = defineProps({
   // driveId: String,
 });
@@ -442,6 +476,7 @@ let state = reactive({
   imageList: [],
 });
 import downloadjs from 'downloadjs';
+
 let {
   batchCopyLinkList,
   batchCopyLinkLoading,
@@ -460,7 +495,15 @@ let {
   currentCopyLinkRow,
 } = toRefs(state);
 let contextmenuRef = ref(null);
-
+let showLinkBtn = computed(() => {
+  return store.getters['common/showLinkBtn']
+})
+let showShortLink = computed(() => {
+  return store.getters["common/showShortLink"]
+})
+let showPathLink = computed(() => {
+  return store.getters["common/showPathLink"]
+})
 let audios = computed(() => {
   return store.getters["file/filterFileByType"]("audio");
 });
@@ -489,6 +532,7 @@ let tableHeight = computed(() => {
 let operater = computed(() => {
   return store.getters["common/showOperator"] && !imgMode.value;
 });
+
 // 批量复制直链字段
 function batchCopyLinkField(field) {
   let copyVal = "";
@@ -516,19 +560,21 @@ function openBatchCopyLinkDialog() {
 }
 
 // 排序按钮
-function sortMethod({ prop, order }) {
+function sortMethod({prop, order}) {
   state.searchParam.orderBy = prop;
   state.searchParam.orderDirection = order === "descending" ? "desc" : "asc";
   loadFile();
 }
+
 // 工具方法
 function getPwd() {
   let p = "/" //+ route.query.folder.join("/");
   // console.log("p=", p);
   // state.searchParam.path = p ? p.substring(5, p.length) : "/";
-  state.searchParam.path=route.query.path?route.query.path:'/'
+  state.searchParam.path = route.query.path ? route.query.path : '/'
   return state.searchParam.path;
 }
+
 function updateTitle() {
   let basePath = path.basename(state.searchParam.path);
 
@@ -544,6 +590,7 @@ function updateTitle() {
     document.title = basePath + siteName;
   }
 }
+
 function loadLinkData(item, index, list) {
   if (item === null || index >= list.length) {
     state.batchCopyLinkLoading = false;
@@ -588,14 +635,17 @@ function getPathPwd() {
   let pwd = sessionStorage.getItem("zfile-pwd-" + state.searchParam.path);
   return pwd === null ? "" : encodeURI(pwd);
 }
+
 function putPathPwd(value) {
   sessionStorage.setItem("zfile-pwd-" + state.searchParam.path, value);
 }
+
 function haveDocument() {
   return (
       store.getters.showDocument && store.state.common.config.readme !== null
   );
 }
+
 function openVideo() {
   state.currentClickRow.url = common.removeDuplicateSeparator(
       store.getters.domain +
@@ -612,6 +662,7 @@ function openVideo() {
   console.log(`%c哈哈哈哈`, `color:red;font-size:16px;background:transparent`);
   state.dialogVideoVisible = true;
 }
+
 // 右键菜单
 function showMenu(row, column, event) {
   state.rightClickRow = row;
@@ -648,23 +699,25 @@ function copyShortLink(row) {
     state.dialogCopyLinkVisible = true;
   });
 }
+
 function copyText(text) {
   this.$copyText(text).then(
       () => {
-        ElMessage({type:'success',message:'复制成功'})
+        ElMessage({type: 'success', message: '复制成功'})
       },
       () => {
-        ElMessage({type:'success',message:'复制成功'})
+        ElMessage({type: 'success', message: '复制成功'})
       }
   );
 }
 
 function downloadFile(row: any) {
-  console.log(`%c这是downloadfile`,`color:red;font-size:16px;background:transparent`)
+  console.log(`%c这是downloadfile`, `color:red;font-size:16px;background:transparent`)
   console.log(row)
-downloadjs(row.src,row.name,row.mimetype)
+  downloadjs(row.src, row.name, row.mimetype)
   // window.location.href = row.src;
 }
+
 // 文件夹密码
 function popPassword() {
   // 如果输入了密码, 则写入到 sessionStorage 缓存中, 并重新调用加载文件.
@@ -677,7 +730,7 @@ function popPassword() {
     },
     inputErrorMessage: "密码不能为空.",
   })
-      .then(({ value }) => {
+      .then(({value}) => {
         let cachePassword = getPathPwd();
         if (value !== cachePassword) {
           putPathPwd(value);
@@ -686,11 +739,11 @@ function popPassword() {
       })
       .catch(() => {
         router.push({
-          name:'home',
-          params:{
-            driveId:route.params.driveId
-          },query:{
-            path:state.searchParam.path
+          name: 'home',
+          params: {
+            driveId: route.params.driveId
+          }, query: {
+            path: state.searchParam.path
           }
         })
 
@@ -715,7 +768,7 @@ function loadFile() {
   };
 
   let requestDriveId = route.params.driveId;
-  http.get(url, { params: param }).then((response) => {
+  http.get(url, {params: param}).then((response) => {
     let currentDriveId = route.params.driveId;
     if (requestDriveId !== currentDriveId) {
       return;
@@ -775,7 +828,7 @@ function loadFile() {
       });
     }
     console.log(data)
-    console.log(`%c上面是table`,`color:red;font-size:16px;background:transparent`)
+    console.log(`%c上面是table`, `color:red;font-size:16px;background:transparent`)
 
     // store.commit('file/tableData',tmp)
     store.commit("file/tableData", data);
@@ -784,6 +837,7 @@ function loadFile() {
     state.initLoading = false;
   });
 }
+
 // 文件预览
 function openFolder(row: any) {
   console.log(row);
@@ -793,7 +847,7 @@ function openFolder(row: any) {
   );
   state.currentClickRow = row;
   if (row.type === "FILE") {
-    if (store.getters.currentStorageStrategyType === "ftp") {
+    if (store.getters["common/currentStorageStrategyType"] === "ftp") {
       ElMessage({
         message: "FTP 模式，不支持预览功能，已自动调用下载",
         type: "warning",
@@ -833,15 +887,16 @@ function openFolder(row: any) {
     }
 
     router.push({
-      name:'home',
-      params:{
-        driveId:route.params.driveId
-      },query:{
-        path:path
+      name: 'home',
+      params: {
+        driveId: route.params.driveId
+      }, query: {
+        path: path
       }
     })
   }
 }
+
 function openImage() {
   console.log(store.getters["file/filterFileByType"]("image"));
   for (let image of store.getters["file/filterFileByType"]("image")) {
@@ -857,13 +912,16 @@ function openImage() {
   //   , shade: 0.5
   // });
 }
-function openAudio() {}
+
+function openAudio() {
+}
+
 function openText() {
   state.dialogTextVisible = true;
 }
 
 onMounted(() => {
-  console.log(route.params );
+  console.log(route.params);
   loadFile();
 });
 
@@ -893,12 +951,14 @@ watch(route, (newVal, preVal) => {
 </script>
 
 <style lang="scss" scoped>
-.folder-wrapper{
-  :deep(.folder-list)   {
+.folder-wrapper {
+  :deep(.folder-list) {
     overflow: hidden;
-    i{
+
+    i {
       font-size: 2rem;
     }
+
     .el-table__body-wrapper {
       overflow-x: hidden;
       overflow-y: auto;
@@ -908,7 +968,7 @@ watch(route, (newVal, preVal) => {
       margin-left: 38px;
     }
 
-    tr  {
+    tr {
       cursor: pointer;
     }
 
@@ -925,7 +985,7 @@ watch(route, (newVal, preVal) => {
       margin: 0 auto;
     }
 
-     .el-table  {
+    .el-table {
       margin: 20px 0 0 20px;
       padding-right: 30px;
       overflow-y: hidden;
@@ -942,7 +1002,6 @@ watch(route, (newVal, preVal) => {
 
   }
 }
-
 
 
 @media screen and (max-device-width: 769px) {
@@ -962,41 +1021,53 @@ watch(route, (newVal, preVal) => {
 }
 
 
-.el-scrollbar  {.el-scrollbar__wrap {
-  overflow-x: hidden !important;
-}}
+.el-scrollbar {
+  .el-scrollbar__wrap {
+    overflow-x: hidden !important;
+  }
+}
 
 /*视频弹窗样式 -- 去除内容边框*/
 
-:deep(#videoDialog){.el-dialog__body {
-  padding: 10px 0 0 0;
-}.el-dialog__headerbtn {
-   top: 10px;
- }}
+:deep(#videoDialog) {
+  .el-dialog__body {
+    padding: 10px 0 0 0;
+  }
+
+  .el-dialog__headerbtn {
+    top: 10px;
+  }
+}
 
 
+#textDialog {
+  .el-dialog {
+    margin-bottom: 0;
+  }
+}
 
-
-#textDialog   {.el-dialog {
-  margin-bottom: 0;
-}}
-
-.v-contextmenu-item {label {
-  margin-left: 10px;
-}}
+.v-contextmenu-item {
+  label {
+    margin-left: 10px;
+  }
+}
 
 @media screen and (max-device-width: 1920px) {
-  #videoDialog {.el-dialog {
-    margin-top: 5vh !important;
-    width: 70% !important;
-  }}
+  #videoDialog {
+    .el-dialog {
+      margin-top: 5vh !important;
+      width: 70% !important;
+    }
+  }
 }
 
 @media screen and (max-device-width: 769px) {
-  #videoDialog {.el-dialog {
-    margin-top: 10vh !important;
-    width: 90% !important;
-  }}
+  #videoDialog {
+    .el-dialog {
+      margin-top: 10vh !important;
+      width: 90% !important;
+    }
+  }
 }
 
 .operator-btn {
