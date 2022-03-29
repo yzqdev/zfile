@@ -92,6 +92,9 @@ const getters = {
   debugMode: (state: ICommonState) => {
     return state.config && state.config.debugMode;
   },
+  siteName: (state: ICommonState) => {
+    return state.config && state.config.siteName;
+  },
   domain: (state: ICommonState) => {
     return state.config && state.config.domain;
   },

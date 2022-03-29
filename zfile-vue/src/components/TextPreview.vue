@@ -16,8 +16,8 @@
 </template>
 
 <script>
-
-
+import * as monaco from 'monaco-editor'
+import './useWorker'
 export default {
   name: "TextPreview",
   components: {},
@@ -60,14 +60,14 @@ export default {
       return suffix;
     },
     initMonaco() {
+      console.log(`%clang`,`color:red;font-size:16px;background:transparent`)
+      console.log(this.getFileSuffix(this.file.name))
       if (this.getFileSuffix(this.file.name) !== "md") {
-        import("monaco-editor/esm/vs/editor/editor.api").then(({ editor }) => {
-          editor.create(document.getElementById("container"), {
+          monaco.editor.create(document.getElementById("container"), {
             value: this.text,
             language: this.getFileSuffix(this.file.name),
             theme: "vs",
           });
-        });
       }
     },
   },

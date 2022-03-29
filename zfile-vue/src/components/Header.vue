@@ -4,8 +4,8 @@
       <el-breadcrumb separator="/" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home/' + currentDriveId + '/' }">
           {{
-            $store.state.common.config.siteName
-                ? $store.state.common.config.siteName
+              siteName
+                ?  siteName
                 : "首页"
           }}
         </el-breadcrumb-item>
@@ -13,13 +13,14 @@
             v-for="item in breadcrumbData"
             class="hidden-xs-only"
             :key="`/home/${currentDriveId}?path=${item.fullPath}`"
-        ><a :href="`/home/${currentDriveId}?path=${item.fullPath}`">{{ item.name }}</a>
+            :to="`/home/${currentDriveId}?path=${item.fullPath}`"
+        > {{ item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-form-item>
     <div class="zfile-header-drive box animate__animated animate__fadeIn">
       <el-form-item
-          v-show="$store.getters.debugMode"
+          v-show="debugMode"
           label="已开启 DEBUG 模式，使用完请及时关闭"
           class="zfile-debug-tips"
           size="small"
@@ -53,7 +54,7 @@
 
 <script setup lang="ts">
 import path from "path";
-import {onBeforeMount, onMounted, reactive, toRefs, watch} from "vue";
+import {computed, onBeforeMount, onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useStore} from "vuex";
 import axios from "../utils/http";
@@ -83,7 +84,12 @@ let {
   searching,
   timer,
 } = toRefs(state);
-
+let debugMode=computed(() => {
+  return store.getters["common/debugMode"]
+})
+let siteName=computed(() => {
+  return store.getters["common/siteName"]
+})
 function resetAdminPwd() {
   ElMessageBox.confirm(
       "是否确认重置后台管理员密码？重置后用户名/密码将强制修改为 admin 123456",
@@ -129,13 +135,8 @@ function buildBreadcrumbData() {
 }
 
 function refreshCurrentStorageStrategy() {
-  console.log(`%c当前驱动`, `color:red;font-size:16px;background:transparent`)
-  console.log(state.currentDriveId)
   state.driveList.some((item:any) => {
-    console.log(item.id)
-    if (item.id === state.currentDriveId) {
-      console.log(`%crefreshCurrentStorageStrategy`, `color:red;font-size:16px;background:transparent`)
-      console.log(state.driveList)
+    if (item.id == state.currentDriveId) {
 
       store.commit("common/updateCurrentStorageStrategy", item);
     }
