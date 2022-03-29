@@ -1,5 +1,6 @@
 package im.zhaojun.zfile.service.impl;
 
+import cn.hutool.core.lang.Console;
 import im.zhaojun.zfile.exception.InitializeDriveException;
 import im.zhaojun.zfile.exception.NotExistFileException;
 import im.zhaojun.zfile.model.constant.StorageConfigConstant;
@@ -79,7 +80,8 @@ public class LocalServiceImpl extends AbstractBaseFileService implements BaseFil
         String fullPath = StringUtils.removeDuplicateSeparator(filePath + path);
 
         File file = new File(fullPath);
-
+        Console.log("获取绝对卢林静路径: {}", file.getAbsolutePath());
+Console.log(file.getAbsolutePath());
         if (!file.exists()) {
             throw new FileNotFoundException("文件不存在");
         }

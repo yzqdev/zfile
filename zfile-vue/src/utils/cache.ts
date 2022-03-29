@@ -27,7 +27,7 @@ export const CacheFreshApi = (id: any, action: string) => {
 export const cacheInfoApi = (currentCacheManageId: any) => {
   return http.get(`/admin/cache/${currentCacheManageId}/info`);
 };
-export const refreshCacheApi = (currentCacheManageId: any, data:any) => {
+export const refreshCacheApi = (currentCacheManageId: any, data: any) => {
   return http.get(`/admin/cache/${currentCacheManageId}/refresh`, data);
 };
 export const cacheClearApi = (currentCacheManageId: any) => {

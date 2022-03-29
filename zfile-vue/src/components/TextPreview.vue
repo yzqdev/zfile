@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import * as monaco from 'monaco-editor'
-import './useWorker'
+import * as monaco from "monaco-editor";
+import "./useWorker";
 export default {
   name: "TextPreview",
   components: {},
@@ -53,33 +53,35 @@ export default {
   },
   methods: {
     getFileSuffix(name) {
-      let suffix = name.substring(name.lastIndexOf(".") + 1).toLocaleLowerCase();
-      console.log('拓展名是',suffix)
-      let langMap=new Map([
-          ['css','css'],
-          ['xml','xml'],
-          ['yml','yml'],
-          ['html','html'],
-          ['less','less'],
-          ['php','php'],
-          ['sh','shell'],
-          ['js','javascript'],
-          ['ts','typescript'],
-          ['json','json'],
-          ['java','java'],
-          ['go','go'],
-          ['py','python'],
-          ['cs','csharp'],
-      ])
-       return langMap.get(suffix)?langMap.get(suffix):suffix
+      let suffix = name
+        .substring(name.lastIndexOf(".") + 1)
+        .toLocaleLowerCase();
+      console.log("拓展名是", suffix);
+      let langMap = new Map([
+        ["css", "css"],
+        ["xml", "xml"],
+        ["yml", "yml"],
+        ["html", "html"],
+        ["less", "less"],
+        ["php", "php"],
+        ["sh", "shell"],
+        ["js", "javascript"],
+        ["ts", "typescript"],
+        ["json", "json"],
+        ["java", "java"],
+        ["go", "go"],
+        ["py", "python"],
+        ["cs", "csharp"],
+      ]);
+      return langMap.get(suffix) ? langMap.get(suffix) : suffix;
     },
     initMonaco() {
       if (this.getFileSuffix(this.file.name) !== "md") {
-          monaco.editor.create(document.getElementById("container"), {
-            value: this.text,
-            language: this.getFileSuffix(this.file.name),
-            theme: "vs",
-          });
+        monaco.editor.create(document.getElementById("container"), {
+          value: this.text,
+          language: this.getFileSuffix(this.file.name),
+          theme: "vs",
+        });
       }
     },
   },
@@ -106,7 +108,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content  {
+.content {
   img {
     max-height: 150vh;
     max-width: 150vh;
@@ -119,7 +121,6 @@ export default {
     }
   }
 }
-
 
 .dialog-scroll {
   height: calc(100vh - 5vh - 54px - 55px - 5vh);

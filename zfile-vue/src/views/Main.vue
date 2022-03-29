@@ -1,11 +1,14 @@
 <template>
   <div>
     <!-- 头部: 搜索栏、面包屑、驱动器设置 -->
-    <Header   />
+    <Header />
 
     <!-- 公告区 -->
-    <div class="zfile-header-announcement" v-html="announcement"
-         v-if="showAnnounce"></div>
+    <div
+      class="zfile-header-announcement"
+      v-html="announcement"
+      v-if="showAnnounce"
+    ></div>
 
     <!--
         文件区
@@ -19,7 +22,7 @@
         :sm="24"
         :lg="isFullScreen ? 24 : 18"
       >
-        <folder-list ></folder-list>
+        <folder-list></folder-list>
       </el-col>
     </el-row>
 
@@ -38,25 +41,24 @@
 
 <script setup lang="ts">
 import Header from "../components/Header.vue";
-import FolderList from '../components/FolderList.vue';
+import FolderList from "../components/FolderList.vue";
 import MarkdownRender from "../components/MarkdownRender.vue";
 import common from "../common";
 import { useStore } from "vuex";
-import {computed, watch} from "vue";
+import { computed, watch } from "vue";
 
 let store = useStore();
-
 
 function isFullScreen() {
   return common.isMobile() || store.getters.layout !== "center";
 }
 
-let showAnnounce=computed(() => {
-  return store.getters['common/showAnnouncement']
-})
-let announcement=computed(() => {
-  return store.getters['common/announcement']
-})
+let showAnnounce = computed(() => {
+  return store.getters["common/showAnnouncement"];
+});
+let announcement = computed(() => {
+  return store.getters["common/announcement"];
+});
 console.log(store.state.common);
 watch(
   store.state.common,

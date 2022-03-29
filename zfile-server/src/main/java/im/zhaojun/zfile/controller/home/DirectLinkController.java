@@ -51,7 +51,7 @@ public class DirectLinkController {
                              final HttpServletResponse response) throws IOException {
         DriveConfig driveConfig = driveConfigService.findById(driveId);
         Boolean enable = driveConfig.getEnable();
-        if (!enable) {
+        if (Boolean.FALSE.equals(enable)) {
             throw new NotEnabledDriveException();
         }
 
