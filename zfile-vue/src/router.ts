@@ -48,6 +48,7 @@ export default createRouter({
 
     {
       path: "/login",
+      name:'login',
       component: Login,
     },
     {
@@ -60,7 +61,8 @@ export default createRouter({
       children: [
         {
           path: "",
-          name: "主页",
+          name: "adminIndex",
+
           component: SiteSetting,
         },
         {

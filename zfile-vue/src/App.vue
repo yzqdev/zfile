@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { onBeforeMount, onBeforeUnmount, onMounted } from "vue";
+import {onBeforeMount, onBeforeUnmount, onMounted, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {useCookies} from "@vueuse/integrations/useCookies";
 
+const {
+  get,
+  getAll,
+  set,
+  remove,
+  addChangeListener,
+  removeChangeListener
+} = useCookies(['satoken'], {doNotParse: false, autoUpdateDependencies: false})
 
 const router=useRouter()
 const route=useRoute()
 function unloadHandler() {
   localStorage.removeItem("aplayer-setting");
 }
+
 onBeforeMount(() => {
   unloadHandler();
 });
@@ -18,6 +28,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("unload", (e) => unloadHandler(e));
 });
+watch(route,(newVal) => {
+  if (newVal.path.includes("login")&&get("satoken")) {
+    router.push({name:'adminIndex'})
+  }
+},{immediate:true})
 </script>
 
 <template>
