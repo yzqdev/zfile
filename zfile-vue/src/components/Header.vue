@@ -62,6 +62,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "../utils/http";
 import { ElMessage, ElMessageBox } from "element-plus";
+import http from "../utils/http";
 
 let props = defineProps({
   // driveId: String,
@@ -104,7 +105,7 @@ function resetAdminPwd() {
       type: "warning",
       callback: (action) => {
         if (action === "confirm") {
-          axios.get("/debug/resetPwd").then((response) => {
+          http.get("/debug/resetPwd").then((response) => {
             if (response.data.code === 0) {
               ElMessage({
                 type: "success",

@@ -52,7 +52,7 @@ zfile:
         readme: readme.md
     db:
         path: ${user.home}/.zfile/db/zfile
-    debug: false
+    debug: true
     directLinkPrefix: directlink
     log:
         path: ${user.home}/.zfile/logs
