@@ -479,6 +479,7 @@ let state = reactive({
     row: null,
     img: "",
     link: "",
+    directlink:''
   },
   dialogBatchCopyLinkVisible: false,
   batchCopyLinkList: [],
@@ -556,7 +557,13 @@ function batchCopyLinkField(field) {
   state.batchCopyLinkList.forEach((item, index) => {
     copyVal += item[field] + "\n";
   });
-
+copy(copyVal)
+  // if (copied) {
+  //   ElMessage({
+  //     type:'success'
+  //     ,message:'复制成功'
+  //   })
+  // }
   // this.$copyText(copyVal).then(() => {
   //   this.$message.success('复制成功');
   // }, () => {
@@ -569,9 +576,9 @@ function openBatchCopyLinkDialog() {
   state.batchCopyLinkList = [];
   state.batchCopyLinkLoading = true;
   loadLinkData(
-    store.getters.file.tableData[0],
+    store.getters["file/tableData"][0],
     0,
-    store.getters.file.tableData
+    store.getters["file/tableData"]
   );
   state.dialogBatchCopyLinkVisible = true;
 }
@@ -622,9 +629,9 @@ function loadLinkData(item, index, list) {
     getShortLinkApi(route.params.driveId, directlink).then((response) => {
       let link1 = response.data.data;
       let link2 = common.removeDuplicateSeparator(
-        store.getters.domain +
+        store.getters["common/domain"] +
           "/" +
-          store.getters.directLinkPrefix +
+          store.getters["common/directLinkPrefix"]+
           "/" +
           route.params.driveId +
           "/" +

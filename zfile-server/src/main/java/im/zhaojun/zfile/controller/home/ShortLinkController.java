@@ -28,7 +28,7 @@ public class ShortLinkController {
     @Resource
     private ShortLinkConfigService shortLinkConfigService;
 
-    @GetMapping("/api/short-link")
+    @PostMapping("/api/short-link")
     @ResponseBody
     public ResultBean shortLink(String driveId, String path) {
         SystemConfigDTO systemConfig = systemConfigService.getSystemConfig();

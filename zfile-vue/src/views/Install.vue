@@ -1,7 +1,7 @@
 <template>
   <div v-loading="fullLoading" class="zfile-install">
     <el-form
-      ref="form"
+      ref="installFormRef"
       :rules="rules"
       :model="form"
       label-width="auto"
@@ -63,7 +63,7 @@
         <el-button
           type="primary"
           icon="el-icon-check"
-          @click="submitForm('form')"
+          @click="submitForm "
           >确认</el-button
         >
       </el-form-item>
@@ -71,95 +71,95 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import qs from "qs";
+import {onMounted, reactive, ref, toRefs} from "vue";
+import http from "../utils/http";
+import {isInstalled} from "../utils/apis";
+import {useRouter} from "vue-router";
+import {ElMessage} from "element-plus";
 
-export default {
-  name: "Install",
-  data() {
-    return {
-      fullLoading: false,
-      form: {
-        siteName: "",
-        username: "",
-        password: "",
-        domain: "",
-      },
-      loading: false,
-      rules: {
-        siteName: [
-          { required: true, message: "请输入站点名称", trigger: "change" },
-        ],
-        username: [
-          { required: true, message: "请输入管理员账号", trigger: "change" },
-        ],
-        password: [
-          { required: true, message: "请输入管理员密码", trigger: "change" },
-        ],
-        domain: [
-          {
-            required: true,
-            type: "url",
-            message: "请输入正确的域名，需以 http:// 或 https:// 开头",
-            trigger: "change",
-          },
-        ],
-      },
-    };
-  },
-  mounted() {
-    this.form.domain =
-      this.$http.defaults.baseURL === ""
-        ? window.location.origin
-        : this.$http.defaults.baseURL;
 
-    this.fullLoading = true;
-    this.$http.get("/is-installed").then((response) => {
-      if (response.data.code !== 0) {
-        this.$router.push("/main");
-      }
-      this.fullLoading = false;
-    });
-  },
-  methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+   let state=reactive({
+     fullLoading: false,
+     form: {
+       siteName: "",
+       username: "",
+       password: "",
+       domain: "",
+     },
+     loading: false,
+     rules: {
+       siteName: [
+         { required: true, message: "请输入站点名称", trigger: "change" },
+       ],
+       username: [
+         { required: true, message: "请输入管理员账号", trigger: "change" },
+       ],
+       password: [
+         { required: true, message: "请输入管理员密码", trigger: "change" },
+       ],
+       domain: [
+         {
+           required: true,
+           type: "url",
+           message: "请输入正确的域名，需以 http:// 或 https:// 开头",
+           trigger: "change",
+         },
+       ],
+     },
+   });
+   let router=useRouter()
+   let {fullLoading,form,loading,rules}=toRefs(state)
+  onMounted(async  () => {
+    state.form.domain=http.defaults.baseURL===''? window.location.origin
+        :  http.defaults.baseURL;
+    state.fullLoading=true
+   let {data}=await isInstalled()
+    if (data.code!=0) {
+      router.push({name:'main'})
+
+    }
+    state.fullLoading=false
+  })
+ let installFormRef=ref()
+   function submitForm( ) {
+      installFormRef.value.validate((valid:boolean) => {
         if (valid) {
-          this.loading = true;
-          let that = this;
-          this.$http
-            .post("/doInstall", qs.stringify(this.form))
+          state.loading = true;
+
+           http
+            .post("/doInstall", qs.stringify(state.form))
             .then((response) => {
-              this.loading = false;
+              state.loading = false;
               let data = response.data;
               if (data.code === 0) {
-                this.$message({
+                ElMessage({
                   message: "初始化成功",
                   type: data.code === 0 ? "success" : "error",
                   duration: 1500,
                   onClose() {
-                    that.$router.push("/main");
+                    router.push("/main");
                   },
                 });
               } else {
-                this.$message({
+                ElMessage({
                   message: data.msg,
                   type: "error",
                   duration: 3000,
                   onClose() {
-                    that.$router.push("/main");
+                    router.push("/main");
                   },
                 });
               }
             });
         } else {
-          this.loading = false;
+          state.loading = false;
           return false;
         }
       });
-    },
-  },
-};
+    }
+
 </script>
 
 <style scoped>

@@ -356,7 +356,7 @@ function addLinkItemAction() {
   state.addLinkModel.path = common.removeDuplicateSeparator(
       "/" + state.addLinkModel.path
   );
-  postShortLinkApi({params: state.addLinkModel}).then(() => {
+  postShortLinkApi(  state.addLinkModel ).then(() => {
     ElMessage({
       type: 'success'
       , message: '添加成功'
