@@ -23,7 +23,7 @@
           min-width="100%"
         >
           <template #header>
-            <i class="el-icon-document hidden-xs-only"></i>
+            <el-icon class="hidden-xs-only"><document /></el-icon>
             <span>文件名</span>
           </template>
           <template #default="scope">

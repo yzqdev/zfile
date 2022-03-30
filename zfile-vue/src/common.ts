@@ -26,7 +26,7 @@ const fileTypeMap: any = {
         "java",
         "vue",
         "log",
-        "sh",
+        "sh"
     ],
     executable: ["exe", "dll", "com", "vbs"],
     archive: ["7z", "zip", "rar", "tar", "gz"],
@@ -49,7 +49,7 @@ const fileTypeMap: any = {
 
 import config from "../package.json";
 
-const iconFileType = [
+const iconFileType = [...new Set([
     "css",
     "go",
     "html",
@@ -59,13 +59,35 @@ const iconFileType = [
     "py",
     "rb",
     "rust",
-    "script",
+    "script","map",'lock',
     "md",
     "apk",
     "deb",
     "rpm",
+    "java",    "docx","xlsx",'pptx','ppt',
+    "js",
+    "jsx",
+    "ts",
+    "tsx",
+    "json",
+    "md",
+    "xml",
+    "yml",
+    "yaml",
+    "txt","mp4","mkv",'psd',
+    "py",
+    "go",
+    "html",
+    "less",
+    "php",
+    "rb",
+    "rust",
+    "script",
     "java",
-];
+    "vue",
+    "log",
+    "sh",
+])];
 
 let common = {
     responseCode: {
@@ -97,7 +119,7 @@ let common = {
         return common.fileSizeFormat(bytes);
     },
     getFileIconName(file: File) {
-        let ICON_PREFIX = "el-icon-my-";
+        let ICON_PREFIX = "icon-";
         let iconName;
         if (file.type === "BACK" || file.type === "FOLDER") {
             return ICON_PREFIX + file.type.toLowerCase();
@@ -105,7 +127,7 @@ let common = {
             let fileSuffix = this.getFileSuffix(file.name);
             let fileType = this.getFileType(file.name);
 
-            if (iconFileType.indexOf(fileSuffix) !== -1) {
+            if (iconFileType.includes(fileSuffix) ) {
                 iconName = ICON_PREFIX + fileSuffix;
             } else if (fileType) {
                 iconName = ICON_PREFIX + fileType;
