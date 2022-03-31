@@ -351,10 +351,13 @@
           </el-table-column>
         </el-table>
       </el-dialog>
-
+      <div class="name">
+        {{ currentAudioName }}
+      </div>
       <audio-player
-        :file-list="audios"
-        :audio-index="currentClickTypeIndex('audio')"
+          ref="audioPlayer"
+        :audio-list="audios.map((elm) => elm.src)"
+        :before-play="handleBeforePlay"
       />
 
       <v-contextmenu ref="contextmenuRef">
@@ -421,7 +424,7 @@ import {
 } from "@element-plus/icons-vue";
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
-import AudioPlayer from "./AudioPlayer.vue";
+import AudioPlayer from "./AudioPlayer/AudioPlayer.vue";
 import http from "../utils/http";
 
 import {
@@ -484,7 +487,8 @@ let state = reactive({
   dialogBatchCopyLinkVisible: false,
   batchCopyLinkList: [],
   batchCopyLinkLoading: false,
-  imageList: [],
+  imageList: [], currentAudioName: undefined
+
 });
 import downloadjs from "downloadjs";
 import { useClipboard } from "@vueuse/core";
@@ -504,7 +508,7 @@ let {
   searchParam,
   currentClickRow,
   contextMenuDataAxis,
-  driveList,
+  driveList,currentAudioName,
   imageList,
   currentCopyLinkRow,
 } = toRefs(state);
@@ -519,7 +523,7 @@ let showShortLink = computed(() => {
 let showPathLink = computed(() => {
   return store.getters["common/showPathLink"];
 });
-let audios = computed(() => {
+let audios:any = computed(() => {
   return store.getters["file/filterFileByType"]("audio");
 });
 let rowSize = computed(() => {
@@ -530,7 +534,16 @@ console.log(audios);
 let tableData = computed(() => {
   return store.getters["file/tableData"];
 });
+let audioPlayer=ref()
+function   handleBeforePlay(next) {
+  console.log(`%chandlebefoerpaly`,`color:red;font-size:16px;background:transparent`)
+  console.log(audioPlayer.value.currentPlayIndex)
+  console.log(audios.value)
+  state.currentAudioName =
+      audios.value[ audioPlayer.value.currentPlayIndex].name
 
+  next() // Start play
+}
 let tableSize = computed(() => {
   return store.getters["common/tableSize"];
 });
@@ -1143,7 +1156,10 @@ watch(route, (newVal, preVal) => {
 .zfile-dialog-link-result-info .el-form-item {
   margin-bottom: 10px;
 }
-
+.name {
+  text-align: center;
+  line-height: 80px;
+}
 #batchCopyLinkDialog {
   thead {
     cursor: pointer;

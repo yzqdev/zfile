@@ -206,6 +206,7 @@ import {getDrivesApi} from "../../utils/apis";
 import {defineComponent, onMounted, reactive, toRefs} from "vue";
 import {Delete, Edit, Operation, Plus, View} from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
+import common from "../../common";
 
 let state = reactive({
   loading: false,
@@ -372,7 +373,7 @@ function deleteDrive(row) {
     callback: (action) => {
       if (action === "confirm") {
         delDriveApi(row.id).then((response) => {
-          if (response.data.code === state.common.responseCode.SUCCESS) {
+          if (response.data.code ===  common.responseCode.SUCCESS) {
             ElMessage({
               type:'success',message:'删除成功'
             })

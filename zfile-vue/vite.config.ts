@@ -5,9 +5,9 @@ import * as path from "path";
 const resolve = path.resolve;
 import {createSvgIconsPlugin} from 'vite-plugin-svg-icons'
 import svgLoader from 'vite-svg-loader'
-
+import viteCompression from 'vite-plugin-compression';
 export default defineConfig({
-    plugins: [vue({reactivityTransform: true}), createSvgIconsPlugin({
+    plugins: [vue({reactivityTransform: true}),viteCompression(), createSvgIconsPlugin({
         // 指定需要缓存的图标文件夹
         iconDirs: [path.resolve(process.cwd(), 'src/icons')],
         // 指定symbolId格式
@@ -37,7 +37,13 @@ export default defineConfig({
     },
     build: {
         outDir: 'zfile-vue'
-        ,
+        , terserOptions: {
+            // 生产环境下移除console
+            compress: {
+                drop_console: true,
+                drop_debugger: true
+            }
+        }
         // sourcemap: true,
         // minify: false,
     },

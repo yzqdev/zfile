@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import MarkdownRender from "../MarkdownRender";
+import MarkdownRender from "@/components/MarkdownRender.vue";
 export default {
   name: "API",
   components: { MarkdownRender },
