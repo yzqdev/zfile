@@ -6,9 +6,7 @@ import {
 
 const Install = () => import("./views/Install.vue");
 const Main = () => import("./views/Main.vue");
-const ResetPass=() => {
-  return import('./views/ResetPass.vue')
-}
+
 const Admin = () => import("./views/admin/Index.vue");
 const Login = () => import("./views/Login.vue");
 const SiteSetting = () => import("./views/admin/SiteSetting.vue");
@@ -52,10 +50,6 @@ export default createRouter({
       path: "/login",
       name:'login',
       component: Login,
-    },{
-      path: "/resetpass",
-      name:'resetpass',
-      component: ResetPass,
     },
     {
       path: "/sharepoint-util",
