@@ -74,7 +74,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.19</version>
+            <version>5.7.22</version>
         </dependency>
 
         <!-- 存储策略相关 API, 对象存储、FTP、 Rest API-->

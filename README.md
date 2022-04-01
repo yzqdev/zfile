@@ -24,4 +24,3 @@ yarn dev
 ![首页](./res/md.png)
 ![首页](./res/shell.png)
 ![首页](./res/admin.png)
-![首页](./res/pic1.png)
