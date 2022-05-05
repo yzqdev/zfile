@@ -11,7 +11,7 @@ import javax.persistence.Id;
  *
  * @author zhaojun
  */
-@Entity(name = "DRIVER_CONFIG")
+@Entity(name = "driver_config")
 @Data
 public class DriveConfig {
 

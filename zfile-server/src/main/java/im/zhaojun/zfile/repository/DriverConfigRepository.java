@@ -36,7 +36,7 @@ public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integ
      *          驱动器 ID
      */
     @Modifying
-    @Query(value="update DRIVER_CONFIG set orderNum = :orderNum where id = :id")
+    @Query(value="update driver_config set orderNum = :orderNum where id = :id")
     void updateSetOrderNumById(Integer orderNum, Integer id);
 
 
@@ -45,7 +45,7 @@ public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integ
      *
      * @return  驱动器最大 ID
      */
-    @Query(nativeQuery = true, value = "select max(id) max from DRIVER_CONFIG")
+    @Query(nativeQuery = true, value = "select max(id) max from driver_config")
     Integer selectMaxId();
 
 
@@ -59,7 +59,7 @@ public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integ
      *          驱动器新 ID
      */
     @Modifying
-    @Query(value="update DRIVER_CONFIG set id = :newId where id = :updateId")
+    @Query(value="update driver_config set id = :newId where id = :updateId")
     void updateId(Integer updateId, Integer newId);
 
 }
