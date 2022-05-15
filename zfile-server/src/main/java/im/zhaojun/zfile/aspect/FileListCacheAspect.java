@@ -42,7 +42,7 @@ public class FileListCacheAspect {
 
         // 获取当前驱动器
         AbstractBaseFileService fileService = ((AbstractBaseFileService) point.getTarget());
-        Integer driveId = fileService.driveId;
+        String driveId = fileService.driveId;
 
         // 判断驱动器是否开启了缓存
         DriveConfig driveConfig = driveConfigService.findById(driveId);

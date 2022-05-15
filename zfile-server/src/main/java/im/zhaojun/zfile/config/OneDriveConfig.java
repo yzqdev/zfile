@@ -31,7 +31,7 @@ public class OneDriveConfig {
 
         ClientHttpRequestInterceptor interceptor = (httpRequest, bytes, clientHttpRequestExecution) -> {
             HttpHeaders headers = httpRequest.getHeaders();
-            Integer driveId = Integer.valueOf(((List)headers.get("driveId")).get(0).toString());
+            String driveId =  ((List)headers.get("driveId")).get(0).toString() ;
 
             StorageConfig accessTokenConfig =
                     storageConfigService.findByDriveIdAndKey(driveId, StorageConfigConstant.ACCESS_TOKEN_KEY);

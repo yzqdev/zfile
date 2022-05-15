@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,7 +36,7 @@ public class DriveContext implements ApplicationContextAware {
      * Map<Integer, AbstractBaseFileService>
      * Map<驱动器 ID, 驱动器连接 Service>
      */
-    private static Map<Integer, AbstractBaseFileService> drivesServiceMap = new ConcurrentHashMap<>();
+    private static Map<String, AbstractBaseFileService> drivesServiceMap = new ConcurrentHashMap<>();
 
     @Resource
     private DriverConfigRepository driverConfigRepository;
@@ -64,7 +65,7 @@ public class DriveContext implements ApplicationContextAware {
      * @param   driveId
      *          驱动器 ID.
      */
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         AbstractBaseFileService baseFileService = getBeanByDriveId(driveId);
         if (baseFileService != null) {
             if (log.isDebugEnabled()) {
@@ -87,7 +88,7 @@ public class DriveContext implements ApplicationContextAware {
      *
      * @return  驱动器对应的 Service
      */
-    public AbstractBaseFileService get(Integer driveId) {
+    public AbstractBaseFileService get(String driveId) {
         AbstractBaseFileService abstractBaseFileService = drivesServiceMap.get(driveId);
         if (abstractBaseFileService == null) {
             throw new InvalidDriveException("此驱动器不存在或初始化失败, 请检查后台参数配置");
@@ -102,7 +103,7 @@ public class DriveContext implements ApplicationContextAware {
      * @param   driveId
      *          驱动器 ID
      */
-    public void destroy(Integer driveId) {
+    public void destroy(String driveId) {
         if (log.isDebugEnabled()) {
             log.debug("清理驱动器上下文对象, driveId: {}", driveId);
         }
@@ -118,14 +119,19 @@ public class DriveContext implements ApplicationContextAware {
      *
      * @return  驱动器对应未初始化的 Service
      */
-    private AbstractBaseFileService getBeanByDriveId(Integer driveId) {
-        StorageTypeEnum storageTypeEnum =driverConfigRepository.findById(driveId).get().getType() ;
-        Map<String, AbstractBaseFileService> beansOfType = SpringContextHolder.getBeansOfType(AbstractBaseFileService.class);
-        for (AbstractBaseFileService value : beansOfType.values()) {
-            if (Objects.equals(value.getStorageTypeEnum(), storageTypeEnum)) {
-                return SpringContextHolder.getBean(value.getClass());
+    private AbstractBaseFileService getBeanByDriveId(String driveId) {
+        log.info(driveId + "驱动器");
+        Optional<DriveConfig> driveConfig=driverConfigRepository.findById(driveId);
+        if (driveConfig.isPresent()){
+            StorageTypeEnum storageTypeEnum =driveConfig.get().getType() ;
+            Map<String, AbstractBaseFileService> beansOfType = SpringContextHolder.getBeansOfType(AbstractBaseFileService.class);
+            for (AbstractBaseFileService value : beansOfType.values()) {
+                if (Objects.equals(value.getStorageTypeEnum(), storageTypeEnum)) {
+                    return SpringContextHolder.getBean(value.getClass());
+                }
             }
         }
+
         return null;
     }
 
@@ -139,7 +145,7 @@ public class DriveContext implements ApplicationContextAware {
      * @param   newId
      *          驱动器新 ID
      */
-    public void updateDriveId(Integer updateId, Integer newId) {
+    public void updateDriveId(String updateId, String newId) {
         AbstractBaseFileService fileService = drivesServiceMap.remove(updateId);
         fileService.setDriveId(newId);
         drivesServiceMap.put(newId, fileService);

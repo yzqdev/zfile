@@ -19,14 +19,14 @@ public interface FilterConfigRepository extends JpaRepository<FilterConfig, Inte
      * @param       driveId
      *              驱动器 ID
      */
-    List<FilterConfig> findByDriveId(Integer driveId);
+    List<FilterConfig> findByDriveId(String driveId);
 
     /**
      * 根据驱动器 ID 删除其所有的规则
      * @param       driveId
      *              驱动器 ID
      */
-    void deleteByDriveId(Integer driveId);
+    void deleteByDriveId(String driveId);
 
 
     /**
@@ -40,5 +40,5 @@ public interface FilterConfigRepository extends JpaRepository<FilterConfig, Inte
      */
     @Modifying
     @Query(value="update FILTER_CONFIG set driveId = :newId where driveId = :updateId")
-    void updateDriveId(Integer updateId, Integer newId);
+    void updateDriveId(String updateId, String newId);
 }

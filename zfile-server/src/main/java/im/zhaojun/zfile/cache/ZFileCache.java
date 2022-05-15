@@ -55,7 +55,7 @@ public class ZFileCache {
      * key: 文件夹路径
      * value: 文件夹中内容
      */
-    private ConcurrentMap<Integer, MyTimedCache<DriveCacheKey, List<FileItemDTO>>> drivesCache = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, MyTimedCache<DriveCacheKey, List<FileItemDTO>>> drivesCache = new ConcurrentHashMap<>();
 
     /**
      * 系统设置缓存
@@ -75,7 +75,7 @@ public class ZFileCache {
      * @param   value
      *          文件夹中列表
      */
-    public synchronized void put(Integer driveId, String key, List<FileItemDTO> value) {
+    public synchronized void put(String driveId, String key, List<FileItemDTO> value) {
         getCacheByDriveId(driveId).put(new DriveCacheKey(driveId, key), value);
     }
 
@@ -91,7 +91,7 @@ public class ZFileCache {
      *
      * @return  驱动器中文件夹的内容
      */
-    public List<FileItemDTO> get(Integer driveId, String key) {
+    public List<FileItemDTO> get(String driveId, String key) {
         return getCacheByDriveId(driveId).get(new DriveCacheKey(driveId, key), false);
     }
 
@@ -102,7 +102,7 @@ public class ZFileCache {
      * @param   driveId
      *          驱动器 ID
      */
-    public void clear(Integer driveId) {
+    public void clear(String driveId) {
         if (log.isDebugEnabled()) {
             log.debug("清空驱动器所有缓存, driveId: {}", driveId);
         }
@@ -118,7 +118,7 @@ public class ZFileCache {
      *
      * @return  已缓存文件夹数量
      */
-    public int cacheCount(Integer driveId) {
+    public int cacheCount(String driveId) {
         return getCacheByDriveId(driveId).size();
     }
 
@@ -134,7 +134,7 @@ public class ZFileCache {
      *
      * @return  搜索结果, 包含文件夹和文件.
      */
-    public List<FileItemDTO> find(Integer driveId, String key) {
+    public List<FileItemDTO> find(String driveId, String key) {
         List<FileItemDTO> result = new ArrayList<>();
 
         DriveConfig driveConfig = driverConfigRepository.getOne(driveId);
@@ -171,7 +171,7 @@ public class ZFileCache {
      *
      * @return      所有缓存 key
      */
-    public Set<String> keySet(Integer driveId) {
+    public Set<String> keySet(String driveId) {
         Iterator<CacheObj<DriveCacheKey, List<FileItemDTO>>> cacheObjIterator = getCacheByDriveId(driveId).cacheObjIterator();
         Set<String> keys = new HashSet<>();
         while (cacheObjIterator.hasNext()) {
@@ -190,7 +190,7 @@ public class ZFileCache {
      * @param   key
      *          文件夹路径
      */
-    public void remove(Integer driveId, String key) {
+    public void remove(String driveId, String key) {
         getCacheByDriveId(driveId).remove(new DriveCacheKey(driveId, key));
     }
 
@@ -252,7 +252,7 @@ public class ZFileCache {
      *
      * @return  驱动器对应的缓存
      */
-    private synchronized MyTimedCache<DriveCacheKey, List<FileItemDTO>> getCacheByDriveId(Integer driveId) {
+    private synchronized MyTimedCache<DriveCacheKey, List<FileItemDTO>> getCacheByDriveId(String driveId) {
         MyTimedCache<DriveCacheKey, List<FileItemDTO>> driveCache = drivesCache.get(driveId);
         if (driveCache == null) {
             driveCache = new MyTimedCache<>(timeout * 1000);
@@ -271,7 +271,7 @@ public class ZFileCache {
      *
      * @return  缓存命中数
      */
-    public int getHitCount(Integer driveId) {
+    public int getHitCount(String driveId) {
         return Math.toIntExact(getCacheByDriveId(driveId).getHitCount());
     }
 
@@ -284,7 +284,7 @@ public class ZFileCache {
      *
      * @return  缓存未命中数
      */
-    public int getMissCount(Integer driveId) {
+    public int getMissCount(String driveId) {
         return Math.toIntExact(getCacheByDriveId(driveId).getMissCount());
     }
 
@@ -295,7 +295,7 @@ public class ZFileCache {
      * @param   driveId
      *          驱动器 ID
      */
-    public void startAutoCacheRefresh(Integer driveId) {
+    public void startAutoCacheRefresh(String driveId) {
         if (log.isDebugEnabled()) {
             log.debug("开启缓存自动刷新 driveId: {}", driveId);
         }
@@ -318,7 +318,7 @@ public class ZFileCache {
      * @param   driveId
      *          驱动器 ID
      */
-    public void stopAutoCacheRefresh(Integer driveId) {
+    public void stopAutoCacheRefresh(String driveId) {
         if (log.isDebugEnabled()) {
             log.debug("停止缓存自动刷新 driveId: {}", driveId);
         }

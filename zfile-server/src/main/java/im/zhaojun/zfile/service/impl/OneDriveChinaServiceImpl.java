@@ -40,7 +40,7 @@ public class OneDriveChinaServiceImpl extends AbstractOneDriveServiceBase implem
     private String scope;
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

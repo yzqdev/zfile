@@ -1,6 +1,7 @@
 package im.zhaojun.zfile.model.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +18,9 @@ import javax.persistence.Lob;
 public class SystemConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    @GenericGenerator(name = "idGenerator", strategy = "im.zhaojun.zfile.util.SnowFlakeIdGenerator")
+    @GeneratedValue(generator = "idGenerator")
+    private String id;
 
     @Column(name = "k")
     private String key;

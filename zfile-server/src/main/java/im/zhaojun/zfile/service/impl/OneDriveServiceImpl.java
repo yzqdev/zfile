@@ -40,7 +40,7 @@ public class OneDriveServiceImpl extends AbstractOneDriveServiceBase implements 
     protected String scope;
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

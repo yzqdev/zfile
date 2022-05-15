@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DriveCacheKey {
 
-    private Integer driveId;
+    private String driveId;
 
     private String key;
 

@@ -54,7 +54,7 @@ public class DriveController {
      * @return  驱动器基本信息
      */
     @GetMapping("/drive/{driveId}")
-    public ResultBean driveItem(@PathVariable Integer driveId) {
+    public ResultBean driveItem(@PathVariable String driveId) {
         DriveConfigDTO driveConfig = driveConfigService.findDriveConfigDTOById(driveId);
         return ResultBean.success(driveConfig);
     }
@@ -77,7 +77,7 @@ public class DriveController {
      *          驱动器 ID
      */
     @DeleteMapping("/drive/{driveId}")
-    public ResultBean deleteDriveItem(@PathVariable Integer driveId) {
+    public ResultBean deleteDriveItem(@PathVariable String driveId) {
         driveConfigService.deleteById(driveId);
         return ResultBean.success();
     }
@@ -90,7 +90,7 @@ public class DriveController {
      *          驱动器 ID
      */
     @PostMapping("/drive/{driveId}/enable")
-    public ResultBean enable(@PathVariable Integer driveId) {
+    public ResultBean enable(@PathVariable String driveId) {
         DriveConfig driveConfig = driveConfigService.findById(driveId);
         driveConfig.setEnable(true);
         driveConfigService.updateDriveConfig(driveConfig);
@@ -105,7 +105,7 @@ public class DriveController {
      *          驱动器 ID
      */
     @PostMapping("/drive/{driveId}/disable")
-    public ResultBean disable(@PathVariable Integer driveId) {
+    public ResultBean disable(@PathVariable String driveId) {
         DriveConfig driveConfig = driveConfigService.findById(driveId);
         driveConfig.setEnable(false);
         driveConfigService.updateDriveConfig(driveConfig);
@@ -120,7 +120,7 @@ public class DriveController {
      *          驱动器 ID
      */
     @GetMapping("/drive/{driveId}/filters")
-    public ResultBean getFilters(@PathVariable Integer driveId) {
+    public ResultBean getFilters(@PathVariable String driveId) {
         return ResultBean.success(filterConfigService.findByDriveId(driveId));
     }
 
@@ -132,7 +132,7 @@ public class DriveController {
      *          驱动器 ID
      */
     @PostMapping("/drive/{driveId}/filters")
-    public ResultBean saveFilters(@RequestBody List<FilterConfig> filter, @PathVariable Integer driveId) {
+    public ResultBean saveFilters(@RequestBody List<FilterConfig> filter, @PathVariable String driveId) {
         filterConfigService.batchSave(filter, driveId);
         return ResultBean.success();
     }
@@ -161,7 +161,7 @@ public class DriveController {
      *          驱动器新 ID
      */
     @PostMapping("/drive/updateId")
-    public ResultBean updateDriveId(Integer updateId, Integer newId) {
+    public ResultBean updateDriveId(String updateId,String newId) {
         DriveConfig driveConfig = driveConfigService.findById(newId);
         if (driveConfig != null) {
             return ResultBean.error("已存在的 ID，请更换 ID 后重试。");

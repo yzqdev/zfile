@@ -121,7 +121,7 @@ public class SystemConfigService {
      *
      * @return  前台系统设置
      */
-    public SystemFrontConfigDTO getSystemFrontConfig(Integer driveId) {
+    public SystemFrontConfigDTO getSystemFrontConfig(String driveId) {
         SystemConfigDTO systemConfig = getSystemConfig();
         SystemFrontConfigDTO systemFrontConfigDTO = new SystemFrontConfigDTO();
         BeanUtils.copyProperties(systemConfig, systemFrontConfigDTO);

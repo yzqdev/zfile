@@ -49,7 +49,7 @@ public class UpYunServiceImpl extends AbstractBaseFileService implements BaseFil
     private String basePath;
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

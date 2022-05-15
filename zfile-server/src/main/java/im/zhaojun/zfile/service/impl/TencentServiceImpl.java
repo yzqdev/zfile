@@ -31,7 +31,7 @@ public class TencentServiceImpl extends AbstractS3BaseFileService implements Bas
     private static final Logger log = LoggerFactory.getLogger(TencentServiceImpl.class);
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

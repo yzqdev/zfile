@@ -43,7 +43,7 @@ public abstract class AbstractBaseFileService implements BaseFileService {
     /**
      * 驱动器 ID
      */
-    public Integer driveId;
+    public String driveId;
 
     /***
      * 获取指定路径下的文件及文件夹, 默认缓存 60 分钟，每隔 30 分钟刷新一次.
@@ -73,7 +73,7 @@ public abstract class AbstractBaseFileService implements BaseFileService {
      * @param   driveId
      *          驱动器 ID
      */
-    public abstract void init(Integer driveId);
+    public abstract void init(String driveId);
 
 
     /**
@@ -171,11 +171,11 @@ public abstract class AbstractBaseFileService implements BaseFileService {
      */
     public abstract FileItemDTO getFileItem(String path);
 
-    public Integer getDriveId() {
+    public String getDriveId() {
         return driveId;
     }
 
-    public void setDriveId(Integer driveId) {
+    public void setDriveId(String driveId) {
         this.driveId = driveId;
     }
 }

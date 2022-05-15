@@ -32,7 +32,7 @@ public class S3ServiceImpl extends AbstractS3BaseFileService implements BaseFile
     private static final Logger log = LoggerFactory.getLogger(S3ServiceImpl.class);
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

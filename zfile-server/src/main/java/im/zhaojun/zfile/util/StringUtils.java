@@ -149,7 +149,7 @@ public class StringUtils {
      * @param fullPath      文件全路径
      * @return              生成结果
      */
-    public static String generatorLink(Integer driveId, String fullPath) {
+    public static String generatorLink(String driveId, String fullPath) {
         SystemConfigService systemConfigService = SpringContextHolder.getBean(SystemConfigService.class);
         String domain = systemConfigService.getDomain();
         return concatUrl(domain, ZFileConstant.DIRECT_LINK_PREFIX, String.valueOf(driveId), fullPath);

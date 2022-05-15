@@ -13,7 +13,7 @@ import java.util.List;
  * @author zhaojun
  */
 @Repository
-public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integer> {
+public interface DriverConfigRepository extends JpaRepository<DriveConfig, String> {
 
     /**
      * 根据存储策略类型获取所有驱动器
@@ -46,7 +46,7 @@ public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integ
      * @return  驱动器最大 ID
      */
     @Query(nativeQuery = true, value = "select max(id) max from driver_config")
-    Integer selectMaxId();
+    String selectMaxId();
 
 
     /**
@@ -60,6 +60,6 @@ public interface DriverConfigRepository extends JpaRepository<DriveConfig, Integ
      */
     @Modifying
     @Query(value="update driver_config set id = :newId where id = :updateId")
-    void updateId(Integer updateId, Integer newId);
+    void updateId(String updateId, String newId);
 
 }

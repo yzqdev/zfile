@@ -94,7 +94,7 @@ public class DriveConfigService {
      *
      * @return  驱动器设置
      */
-    public DriveConfig findById(Integer id) {
+    public DriveConfig findById(String id) {
         return driverConfigRepository.findById(id).orElse(null);
     }
 
@@ -107,7 +107,7 @@ public class DriveConfigService {
      *
      * @return  驱动器 DTO
      */
-    public DriveConfigDTO findDriveConfigDTOById(Integer id) {
+    public DriveConfigDTO findDriveConfigDTOById(String id) {
         DriveConfig driveConfig = driverConfigRepository.getOne(id);
 
         DriveConfigDTO driveConfigDTO = new DriveConfigDTO();
@@ -152,7 +152,7 @@ public class DriveConfigService {
      *
      * @return  驱动器对应的存储策略.
      */
-    public StorageTypeEnum findStorageTypeById(Integer id) {
+    public StorageTypeEnum findStorageTypeById(String id) {
         return driverConfigRepository.findById(id).get().getType();
     }
 
@@ -183,9 +183,11 @@ public class DriveConfigService {
         BeanUtils.copyProperties(driveConfigDTO, driveConfig);
 
         if (driveConfig.getId() == null) {
-            Integer nextId = selectNextId();
+            String nextId = selectNextId();
             driveConfig.setId(nextId);
         }
+        log.info("这是driver");
+        log.info(driveConfig.toString());
         driverConfigRepository.save(driveConfig);
 
         // 保存存储策略设置.
@@ -235,10 +237,10 @@ public class DriveConfigService {
      *
      * @return  驱动器最大 ID
      */
-    public Integer selectNextId() {
-        Integer maxId = driverConfigRepository.selectMaxId();
+    public String selectNextId() {
+        String maxId = driverConfigRepository.selectMaxId();
         if (maxId == null) {
-            return 1;
+            return "1";
         } else {
             return maxId + 1;
         }
@@ -255,7 +257,7 @@ public class DriveConfigService {
      *          驱动器新 ID
      */
     @Transactional
-    public void updateId(Integer updateId, Integer newId) {
+    public void updateId(String updateId, String newId) {
         zFileCache.clear(updateId);
         driverConfigRepository.updateId(updateId, newId);
         storageConfigRepository.updateDriveId(updateId, newId);
@@ -277,7 +279,7 @@ public class DriveConfigService {
      *          驱动器 ID
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(Integer id) {
+    public void deleteById(String id) {
         if (log.isDebugEnabled()) {
             log.debug("尝试删除驱动器, driveId: {}", id);
         }
@@ -317,7 +319,7 @@ public class DriveConfigService {
      * @param   cacheEnable
      *          是否启用缓存
      */
-    public void updateCacheStatus(Integer driveId, Boolean cacheEnable) {
+    public void updateCacheStatus(String driveId, Boolean cacheEnable) {
         DriveConfig driveConfig = findById(driveId);
         if (driveConfig != null) {
             driveConfig.setEnableCache(cacheEnable);
@@ -332,7 +334,7 @@ public class DriveConfigService {
      *          驱动器 ID
      * @return  缓存信息
      */
-    public CacheInfoDTO findCacheInfo(Integer driveId) {
+    public CacheInfoDTO findCacheInfo(String driveId) {
         int hitCount = zFileCache.getHitCount(driveId);
         int missCount = zFileCache.getMissCount(driveId);
         Set<String> keys = zFileCache.keySet(driveId);
@@ -352,7 +354,7 @@ public class DriveConfigService {
      * @param   key
      *          缓存 key (文件夹名称)
      */
-    public void refreshCache(Integer driveId, String key) throws Exception {
+    public void refreshCache(String driveId, String key) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("手动刷新缓存 driveId: {}, key: {}", driveId, key);
         }
@@ -368,7 +370,7 @@ public class DriveConfigService {
      * @param   driveId
      *          驱动器 ID
      */
-    public void startAutoCacheRefresh(Integer driveId) {
+    public void startAutoCacheRefresh(String driveId) {
         DriveConfig driveConfig = findById(driveId);
         driveConfig.setAutoRefreshCache(true);
         driverConfigRepository.save(driveConfig);
@@ -382,7 +384,7 @@ public class DriveConfigService {
      * @param   driveId
      *          驱动器 ID
      */
-    public void stopAutoCacheRefresh(Integer driveId) {
+    public void stopAutoCacheRefresh(String driveId) {
         DriveConfig driveConfig = findById(driveId);
         driveConfig.setAutoRefreshCache(false);
         driverConfigRepository.save(driveConfig);
@@ -395,7 +397,7 @@ public class DriveConfigService {
      * @param   driveId
      *          驱动器 ID
      */
-    public void clearCache(Integer driveId) {
+    public void clearCache(String driveId) {
         zFileCache.clear(driveId);
     }
 

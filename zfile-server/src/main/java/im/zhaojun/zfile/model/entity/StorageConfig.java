@@ -3,6 +3,7 @@ package im.zhaojun.zfile.model.entity;
 import im.zhaojun.zfile.model.enums.StorageTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +21,9 @@ import javax.persistence.Lob;
 public class StorageConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    @GenericGenerator(name = "idGenerator", strategy = "im.zhaojun.zfile.util.SnowFlakeIdGenerator")
+    @GeneratedValue(generator = "idGenerator")
+    private String id;
 
     private StorageTypeEnum type;
 
@@ -33,7 +35,7 @@ public class StorageConfig {
     //@Lob
     private String value;
 
-    private Integer driveId;
+    private String driveId;
 
     public StorageConfig(String key, String title) {
         this.key = key;

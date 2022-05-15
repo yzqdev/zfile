@@ -23,12 +23,12 @@ public class FilterConfigService {
     @Resource
     private FilterConfigRepository filterConfigRepository;
 
-    public List<FilterConfig> findByDriveId(Integer driveId) {
+    public List<FilterConfig> findByDriveId(String driveId) {
         return filterConfigRepository.findByDriveId(driveId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void batchSave(List<FilterConfig> filterConfigList, Integer driveId) {
+    public void batchSave(List<FilterConfig> filterConfigList, String driveId) {
         filterConfigRepository.deleteByDriveId(driveId);
         filterConfigRepository.saveAll(filterConfigList);
     }
@@ -41,7 +41,7 @@ public class FilterConfigService {
      *          文件名
      * @return  是否显示
      */
-    public boolean filterResultIsHidden(Integer driveId, String fileName) {
+    public boolean filterResultIsHidden(String driveId, String fileName) {
         List<FilterConfig> filterConfigList = findByDriveId(driveId);
 
         for (FilterConfig filterConfig : filterConfigList) {

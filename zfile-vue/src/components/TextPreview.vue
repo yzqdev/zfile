@@ -35,7 +35,7 @@ export default {
     let file = this.file;
 
     this.$http
-      .get(file.url, { withCredentials: false })
+      .get(file.src, { withCredentials: false })
       .then((response) => {
         this.loading = false;
         this.text = response.data;

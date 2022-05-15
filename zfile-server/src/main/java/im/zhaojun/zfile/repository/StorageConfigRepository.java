@@ -34,7 +34,7 @@ public interface StorageConfigRepository extends JpaRepository<StorageConfig, In
      *
      * @return  此驱动器所有的配置信息
      */
-    List<StorageConfig> findByDriveIdOrderById(Integer driveId);
+    List<StorageConfig> findByDriveIdOrderById(String driveId);
 
 
     /**
@@ -45,7 +45,7 @@ public interface StorageConfigRepository extends JpaRepository<StorageConfig, In
      *
      * @return  此驱动器所有的配置信息
      */
-    List<StorageConfig> findByDriveId(Integer driveId);
+    List<StorageConfig> findByDriveId(String driveId);
 
 
     /**
@@ -54,7 +54,7 @@ public interface StorageConfigRepository extends JpaRepository<StorageConfig, In
      * @param   driveId
      *          驱动器 ID
      */
-    void deleteByDriveId(Integer driveId);
+    void deleteByDriveId(String driveId);
 
 
     /**
@@ -68,7 +68,7 @@ public interface StorageConfigRepository extends JpaRepository<StorageConfig, In
      *
      * @return  KEY 对应的对象
      */
-    StorageConfig findByDriveIdAndKey(Integer driveId, String key);
+    StorageConfig findByDriveIdAndKey(String driveId, String key);
 
 
     /**
@@ -82,6 +82,6 @@ public interface StorageConfigRepository extends JpaRepository<StorageConfig, In
      */
     @Modifying
     @Query(value="update STORAGE_CONFIG set driveId = :newId where driveId = :updateId")
-    void updateDriveId(Integer updateId, Integer newId);
+    void updateDriveId(String updateId,String newId);
 
 }

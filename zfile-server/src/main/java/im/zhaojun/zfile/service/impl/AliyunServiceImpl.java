@@ -31,7 +31,7 @@ public class AliyunServiceImpl extends AbstractS3BaseFileService implements Base
     private static final Logger log = LoggerFactory.getLogger(AliyunServiceImpl.class);
 
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
             storageConfigService.selectStorageConfigMapByDriveId(driveId);

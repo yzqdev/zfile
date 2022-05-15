@@ -64,3 +64,7 @@ zfile:
       maxFileSizeKb: 512
   tmp:
     path: ${user.home}/.zfile/tmp
+#雪花算法
+snowflake:
+  datacenter-id: 1
+  worker-id: 0

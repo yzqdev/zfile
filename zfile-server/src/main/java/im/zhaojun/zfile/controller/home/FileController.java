@@ -90,7 +90,7 @@ public class FileController {
      * @return  当前路径下所有文件及文件夹
      */
     @GetMapping("/list/{driveId}")
-    public ResultBean list(@PathVariable(name = "driveId") Integer driveId,
+    public ResultBean list(@PathVariable(name = "driveId") String driveId,
                            @RequestParam(defaultValue = "/") String path,
                            @RequestParam(required = false) String password,
                            @RequestParam(required = false) String orderBy,
@@ -155,7 +155,7 @@ public class FileController {
      *          用户输入的密码
      * @return  是否校验通过
      */
-    private VerifyResult verifyPassword(List<FileItemDTO> fileItemList, Integer driveId, String path, String inputPassword) {
+    private VerifyResult verifyPassword(List<FileItemDTO> fileItemList, String driveId, String path, String inputPassword) {
         AbstractBaseFileService fileService = driveContext.get(driveId);
 
         for (FileItemDTO fileItemDTO : fileItemList) {
@@ -230,7 +230,7 @@ public class FileController {
      * @param   driveId
      *          驱动器 ID
      */
-    private void filterFileList(List<FileItemDTO> fileItemList, Integer driveId) {
+    private void filterFileList(List<FileItemDTO> fileItemList, String driveId) {
         if (fileItemList == null) {
             return;
         }

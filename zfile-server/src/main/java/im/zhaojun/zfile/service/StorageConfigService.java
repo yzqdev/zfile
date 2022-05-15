@@ -25,12 +25,12 @@ public class StorageConfigService {
     }
 
 
-    public List<StorageConfig> selectStorageConfigByDriveId(Integer driveId) {
+    public List<StorageConfig> selectStorageConfigByDriveId(String driveId) {
         return storageConfigRepository.findByDriveIdOrderById(driveId);
     }
 
 
-    public StorageConfig findByDriveIdAndKey(Integer driveId, String key) {
+    public StorageConfig findByDriveIdAndKey(String driveId, String key) {
         return storageConfigRepository.findByDriveIdAndKey(driveId, key);
     }
 
@@ -44,7 +44,7 @@ public class StorageConfigService {
     }
 
 
-    public Map<String, StorageConfig> selectStorageConfigMapByDriveId(Integer driveId) {
+    public Map<String, StorageConfig> selectStorageConfigMapByDriveId(String driveId) {
         Map<String, StorageConfig> map = new HashMap<>(24);
         for (StorageConfig storageConfig : selectStorageConfigByDriveId(driveId)) {
             map.put(storageConfig.getKey(), storageConfig);

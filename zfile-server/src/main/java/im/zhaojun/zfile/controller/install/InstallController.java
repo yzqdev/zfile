@@ -23,7 +23,7 @@ public class InstallController {
 
     @GetMapping("/is-installed")
     public ResultBean isInstall() {
-        if (!StringUtils.isEmpty(systemConfigService.getAdminUsername())) {
+        if (StringUtils.hasText(systemConfigService.getAdminUsername())) {
             return ResultBean.error("请勿重复初始化");
         }
         return ResultBean.success();

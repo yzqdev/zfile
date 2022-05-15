@@ -50,7 +50,7 @@ public class FtpServiceImpl extends AbstractBaseFileService implements BaseFileS
 
     @SneakyThrows(IOException.class)
     @Override
-    public void init(Integer driveId) {
+    public void init(String driveId) {
         this.driveId = driveId;
         Map<String, StorageConfig> stringStorageConfigMap =
                 storageConfigService.selectStorageConfigMapByDriveId(driveId);

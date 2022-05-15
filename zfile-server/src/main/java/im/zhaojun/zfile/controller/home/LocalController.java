@@ -46,7 +46,7 @@ public class LocalController {
     @GetMapping("/file/{driveId}/{*path}")
     @ResponseBody
 
-    public void downAttachment(@PathVariable("driveId") Integer driveId,@PathVariable("path")String path, String type, final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
+    public void downAttachment(@PathVariable("driveId") String driveId,@PathVariable("path")String path, String type, final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
 
         LocalServiceImpl localService = (LocalServiceImpl) driveContext.get(driveId);
 

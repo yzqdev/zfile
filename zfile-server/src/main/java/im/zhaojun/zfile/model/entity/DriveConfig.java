@@ -2,6 +2,7 @@ package im.zhaojun.zfile.model.entity;
 
 import im.zhaojun.zfile.model.enums.StorageTypeEnum;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,8 +19,9 @@ import javax.persistence.Id;
 public class DriveConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    @GenericGenerator(name = "idGenerator", strategy = "im.zhaojun.zfile.util.SnowFlakeIdGenerator")
+    @GeneratedValue(generator = "idGenerator")
+    private String id;
 
     private Boolean enable;
 
