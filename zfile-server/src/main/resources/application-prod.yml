@@ -1,10 +1,9 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     password: 123456
-
-    url: jdbc:mysql://127.0.0.1:3306/zfile?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: root
+    url: jdbc:postgresql://localhost:5432/zfile?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: postgres
   h2:
     console:
       enabled: ${zfile.debug}

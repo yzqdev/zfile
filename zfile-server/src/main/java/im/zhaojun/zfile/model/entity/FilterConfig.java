@@ -15,7 +15,7 @@ import javax.persistence.Id;
 public class FilterConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     private Integer driveId;

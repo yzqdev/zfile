@@ -53,7 +53,7 @@ public class SystemConfigService {
 
         SystemConfigDTO systemConfigDTO = new SystemConfigDTO();
         List<SystemConfig> systemConfigList = systemConfigRepository.findAll();
-
+        System.out.println(systemConfigList);
         for (SystemConfig systemConfig : systemConfigList) {
             String key = systemConfig.getKey();
 

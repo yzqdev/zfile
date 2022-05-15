@@ -17,13 +17,13 @@ import javax.persistence.Lob;
 public class SystemConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     @Column(name = "k")
     private String key;
 
-    @Lob
+    //@Lob
     private String value;
 
     private String remark;

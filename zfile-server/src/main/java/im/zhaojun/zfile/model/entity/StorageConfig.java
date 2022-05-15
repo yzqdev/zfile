@@ -20,7 +20,7 @@ import javax.persistence.Lob;
 public class StorageConfig {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     private StorageTypeEnum type;
@@ -30,7 +30,7 @@ public class StorageConfig {
 
     private String title;
 
-    @Lob
+    //@Lob
     private String value;
 
     private Integer driveId;
