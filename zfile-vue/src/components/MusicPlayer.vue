@@ -5,42 +5,60 @@
 <script setup>
 import 'aplayer/dist/APlayer.min.css';
 import APlayer from 'aplayer';
-import {onBeforeMount, onMounted, watch} from "vue";
+import {nextTick, onBeforeMount, onMounted, watch} from "vue";
 import {useRoute} from "vue-router";
 let props=defineProps({
   audioList:{
     type:Array
+  },current:{
+    type:Number
   }
 })
 let route=useRoute()
 let audios=$ref([]);
 console.log('audio==.',audios)
 
-watch(route,(val,oldVal)=>{
+watch(props.current,(val,oldValue) => {
+  console.log(props.current)
+  nextTick(() => {
+
+console.log("current",window.ap)
+    window.ap.list.switch(props.current)
+  })
+}, {deep:true,immediate:true})
+watch(props.audioList.length ,(val,oldVal)=>{
     console.log(`%c路由切换,显示英语`,`color:red;font-size:16px;background:transparent`)
-    console.log(val)
+    console.log('props=>',val)
     props.audioList.map((item) => {
       item. url=encodeURI(item.src)
-      audios.push(item)
+
+      audios.push({
+        name: item.name,
+        artist: 'artist1',
+        url: encodeURI(item.src),
+        theme: '#ebd0c2'
+      })
     })
+  console.log(audios)
+
 },{immediate:true})
 onMounted(() => {
-
-  const ap = new APlayer({
+nextTick(() => {
+  window.ap = new APlayer({
     container: document.getElementById('player'),
-    mini: false,
-    autoplay: false,
+
     theme: '#FADFA3',
-    loop: 'all',
-    order: 'random',
+
+    fixed: true,
     preload: 'auto',
     volume: 0.7,
-    mutex: true,
-    listFolded: false,
-    listMaxHeight: 90,
-    lrcType: 3,
+
     audio:audios
   });
+  console.log("nextick ap=>",window.ap)
+
+})
+
 })
 </script>
 
