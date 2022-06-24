@@ -1,8 +1,8 @@
 import http from "./http";
 import qs from "qs";
-export const resetPassApi=() => {
-  return http.get('/debug/resetPwd')
-}
+export const resetPassApi = () => {
+  return http.get("/debug/resetPwd");
+};
 export const loginApi = (data: any) => {
   console.log(http.defaults.withCredentials);
   return http.post("/doLogin", data);

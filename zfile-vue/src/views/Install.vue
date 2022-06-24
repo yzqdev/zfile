@@ -60,10 +60,7 @@
       </el-form-item>
 
       <el-form-item class="zfile-install-enter">
-        <el-button
-          type="primary"
-          icon="el-icon-check"
-          @click="submitForm "
+        <el-button type="primary" icon="el-icon-check" @click="submitForm"
           >确认</el-button
         >
       </el-form-item>
@@ -73,93 +70,90 @@
 
 <script setup lang="ts">
 import qs from "qs";
-import {onMounted, reactive, ref, toRefs} from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import http from "../utils/http";
-import {isInstalled} from "../utils/apis";
-import {useRouter} from "vue-router";
-import {ElMessage} from "element-plus";
+import { isInstalled } from "../utils/apis";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
+let state = reactive({
+  fullLoading: false,
+  form: {
+    siteName: "",
+    username: "",
+    password: "",
+    domain: "",
+  },
+  loading: false,
+  rules: {
+    siteName: [
+      { required: true, message: "请输入站点名称", trigger: "change" },
+    ],
+    username: [
+      { required: true, message: "请输入管理员账号", trigger: "change" },
+    ],
+    password: [
+      { required: true, message: "请输入管理员密码", trigger: "change" },
+    ],
+    domain: [
+      {
+        required: true,
+        type: "url",
+        message: "请输入正确的域名，需以 http:// 或 https:// 开头",
+        trigger: "change",
+      },
+    ],
+  },
+});
+let router = useRouter();
+let { fullLoading, form, loading, rules } = toRefs(state);
+onMounted(async () => {
+  state.form.domain =
+    http.defaults.baseURL === ""
+      ? window.location.origin
+      : http.defaults.baseURL;
+  state.fullLoading = true;
+  let { data } = await isInstalled();
+  if (data.code != 0) {
+    router.push({ name: "main" });
+  }
+  state.fullLoading = false;
+});
+let installFormRef = ref();
+function submitForm() {
+  installFormRef.value.validate((valid: boolean) => {
+    if (valid) {
+      state.loading = true;
 
-   let state=reactive({
-     fullLoading: false,
-     form: {
-       siteName: "",
-       username: "",
-       password: "",
-       domain: "",
-     },
-     loading: false,
-     rules: {
-       siteName: [
-         { required: true, message: "请输入站点名称", trigger: "change" },
-       ],
-       username: [
-         { required: true, message: "请输入管理员账号", trigger: "change" },
-       ],
-       password: [
-         { required: true, message: "请输入管理员密码", trigger: "change" },
-       ],
-       domain: [
-         {
-           required: true,
-           type: "url",
-           message: "请输入正确的域名，需以 http:// 或 https:// 开头",
-           trigger: "change",
-         },
-       ],
-     },
-   });
-   let router=useRouter()
-   let {fullLoading,form,loading,rules}=toRefs(state)
-  onMounted(async  () => {
-    state.form.domain=http.defaults.baseURL===''? window.location.origin
-        :  http.defaults.baseURL;
-    state.fullLoading=true
-   let {data}=await isInstalled()
-    if (data.code!=0) {
-      router.push({name:'main'})
-
-    }
-    state.fullLoading=false
-  })
- let installFormRef=ref()
-   function submitForm( ) {
-      installFormRef.value.validate((valid:boolean) => {
-        if (valid) {
-          state.loading = true;
-
-           http
-            .post("/doInstall", qs.stringify(state.form))
-            .then((response) => {
-              state.loading = false;
-              let data = response.data;
-              if (data.code === 0) {
-                ElMessage({
-                  message: "初始化成功",
-                  type: data.code === 0 ? "success" : "error",
-                  duration: 1500,
-                  onClose() {
-                    router.push("/main");
-                  },
-                });
-              } else {
-                ElMessage({
-                  message: data.msg,
-                  type: "error",
-                  duration: 3000,
-                  onClose() {
-                    router.push("/main");
-                  },
-                });
-              }
-            });
+      http.post("/doInstall", qs.stringify(state.form)).then((response) => {
+        state.loading = false;
+        let data = response.data;
+        if (data.code === 0) {
+          ElMessage({
+            message: "初始化成功",
+            type: data.code === 0 ? "success" : "error",
+            duration: 1500,
+            onClose() {
+              router.push("/main");
+            },
+          });
         } else {
-          state.loading = false;
-          return false;
+          ElMessage({
+            message: data.msg,
+            type: "error",
+            duration: 3000,
+            onClose() {
+              router.push("/main");
+            },
+          });
         }
       });
+    } else {
+      state.loading = false;
+      return false;
     }
-
+  });
+}
 </script>
 
 <style scoped>

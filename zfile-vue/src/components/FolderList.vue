@@ -123,7 +123,10 @@
                 content="生成直链"
                 placement="top"
               >
-                <el-icon @click.stop="copyShortLink(scope.row)" class="operator-btn">
+                <el-icon
+                  @click.stop="copyShortLink(scope.row)"
+                  class="operator-btn"
+                >
                   <copy-document />
                 </el-icon>
               </el-tooltip>
@@ -354,10 +357,9 @@
       <div class="name">
         {{ currentAudioName }}
       </div>
-      <audio-player
-          ref="audioPlayer"
-        :audio-list="audios.map((elm) => elm.src)"
-        :before-play="handleBeforePlay"
+      <music-player
+        ref="audioPlayer"
+        :audio-list="audios"
       />
 
       <v-contextmenu ref="contextmenuRef">
@@ -424,7 +426,7 @@ import {
 } from "@element-plus/icons-vue";
 import VideoPlayer from "./VideoPlayer.vue";
 import TextPreview from "./TextPreview.vue";
-import AudioPlayer from "./AudioPlayer/AudioPlayer.vue";
+import MusicPlayer from "./MusicPlayer.vue";
 import http from "../utils/http";
 
 import {
@@ -482,13 +484,13 @@ let state = reactive({
     row: null,
     img: "",
     link: "",
-    directlink:''
+    directlink: "",
   },
   dialogBatchCopyLinkVisible: false,
   batchCopyLinkList: [],
   batchCopyLinkLoading: false,
-  imageList: [], currentAudioName: undefined
-
+  imageList: [],
+  currentAudioName: undefined,
 });
 import downloadjs from "downloadjs";
 import { useClipboard } from "@vueuse/core";
@@ -508,7 +510,8 @@ let {
   searchParam,
   currentClickRow,
   contextMenuDataAxis,
-  driveList,currentAudioName,
+  driveList,
+  currentAudioName,
   imageList,
   currentCopyLinkRow,
 } = toRefs(state);
@@ -523,7 +526,9 @@ let showShortLink = computed(() => {
 let showPathLink = computed(() => {
   return store.getters["common/showPathLink"];
 });
-let audios:any = computed(() => {
+
+
+let audios: any = computed(() => {
   return store.getters["file/filterFileByType"]("audio");
 });
 let rowSize = computed(() => {
@@ -534,16 +539,19 @@ console.log(audios);
 let tableData = computed(() => {
   return store.getters["file/tableData"];
 });
-let audioPlayer=ref()
-function   handleBeforePlay(next) {
-  console.log(`%chandlebefoerpaly`,`color:red;font-size:16px;background:transparent`)
-  console.log(audioPlayer.value.currentPlayIndex)
-  console.log(audios.value)
-  state.currentAudioName =
-      audios.value[ audioPlayer.value.currentPlayIndex].name
-
-  next() // Start play
-}
+let audioPlayer = ref();
+// function handleBeforePlay(next) {
+//   console.log(
+//     `%chandlebefoerpaly`,
+//     `color:red;font-size:16px;background:transparent`
+//   );
+//   console.log(audioPlayer.value.currentPlayIndex);
+//   console.log(audios.value);
+//   state.currentAudioName =
+//     audios.value[audioPlayer.value.currentPlayIndex].name;
+//
+//   next(); // Start play
+// }
 let tableSize = computed(() => {
   return store.getters["common/tableSize"];
 });
@@ -570,7 +578,7 @@ function batchCopyLinkField(field) {
   state.batchCopyLinkList.forEach((item, index) => {
     copyVal += item[field] + "\n";
   });
-copy(copyVal)
+  copy(copyVal);
   // if (copied) {
   //   ElMessage({
   //     type:'success'
@@ -644,7 +652,7 @@ function loadLinkData(item, index, list) {
       let link2 = common.removeDuplicateSeparator(
         store.getters["common/domain"] +
           "/" +
-          store.getters["common/directLinkPrefix"]+
+          store.getters["common/directLinkPrefix"] +
           "/" +
           route.params.driveId +
           "/" +
@@ -946,7 +954,9 @@ function openImage() {
   // });
 }
 
-function openAudio() {}
+function openAudio() {
+
+}
 
 function openText() {
   state.dialogTextVisible = true;

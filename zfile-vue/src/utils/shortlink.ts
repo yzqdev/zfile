@@ -12,7 +12,9 @@ export const postShortLinkApi = (data: any) => {
 };
 
 export const getShortLinkApi = (driveId: string, directlink: string) => {
-  return http.post("/api/short-link", qs.stringify({ driveId: driveId, path: directlink })
+  return http.post(
+    "/api/short-link",
+    qs.stringify({ driveId: driveId, path: directlink })
   );
 };
 export const delLinkApi = (id: any) => {

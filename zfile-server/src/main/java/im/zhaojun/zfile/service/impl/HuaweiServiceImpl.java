@@ -66,7 +66,9 @@ public class HuaweiServiceImpl extends AbstractS3BaseFileService implements Base
 
     @Override
     public List<StorageConfig> storageStrategyConfigList() {
-        return new ArrayList<StorageConfig>() {{
+        return new ArrayList<StorageConfig>() {private static final long serialVersionUID = 1L;
+
+		{
             add(new StorageConfig("accessKey", "AccessKey"));
             add(new StorageConfig("secretKey", "SecretKey"));
             add(new StorageConfig("bucketName", "云存储服务名称"));

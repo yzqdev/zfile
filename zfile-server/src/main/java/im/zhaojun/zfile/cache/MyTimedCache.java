@@ -21,9 +21,9 @@ public class MyTimedCache<K, V> extends TimedCache<K, V> {
         super(timeout);
     }
 
-    public MyTimedCache(long timeout, Map<K, CacheObj<K, V>> map) {
-        super(timeout, map);
-    }
+    //public MyTimedCache(long timeout, Map<K, CacheObj<K, V>> map) {
+    //    super(timeout, map);
+    //}
 
     @Override
     protected void onRemove(K key, V cachedObject) {
