@@ -22,7 +22,6 @@ import org.springframework.web.servlet.HandlerMapping;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -64,7 +63,8 @@ public class DirectLinkController {
         Console.log("bestMatchPattern: {}", bestMatchPattern);
         Console.log("path: {}", path);
         String filePath = apm.extractPathWithinPattern(bestMatchPattern, path);
-Console.log("filePath: {}", filePath);
+        Console.log(filePath);
+        Console.log("filePath: {}", filePath);
         if (filePath.length() > 0 && filePath.charAt(0) != ZFileConstant.PATH_SEPARATOR_CHAR) {
             filePath = "/" + filePath;
         }

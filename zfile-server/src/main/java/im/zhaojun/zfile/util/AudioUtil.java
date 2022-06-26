@@ -12,6 +12,8 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import im.zhaojun.zfile.model.constant.ZFileConstant;
 import im.zhaojun.zfile.model.dto.AudioInfoDTO;
+import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +26,10 @@ import java.net.URL;
  * 音频解析工具类
  * @author zhaojun
  */
+@Slf4j
 public class AudioUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(AudioUtil.class);
+    
 
     public static AudioInfoDTO getAudioInfo(String url) throws Exception {
         String query = new URL(URLUtil.decode(url)).getQuery();
